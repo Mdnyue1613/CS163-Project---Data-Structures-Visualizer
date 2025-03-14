@@ -1,5 +1,6 @@
 #include "../header/GUI.h"
 #include "../header/BOX.h"
+#include "../header/InputBox.h"
 #include <iostream>
 
 void GUI::startProgram() {
@@ -66,6 +67,14 @@ void GUI::drawMenu() {
 void GUI::drawDS1() {
     if (isOpenDS1 == false) return;
     ClearBackground(YELLOW);
+    Rectangle a = {100, 20, 50, 50};
+    BOX box;
+    box.setRec(a);
+    box.setColor(WHITE);
+    box.setOutline(BLACK);
+    TextBox insert;
+    insert.setTextBox(box);
+    insert.draw();
     BACK();
 }
 
