@@ -5,21 +5,15 @@
             "name": "Debug Raylib",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/bin/game.exe",
-            "args": [],
-            "stopAtEntry": false,
+            "program": "${workspaceFolder}/bin/main",
             "cwd": "${workspaceFolder}",
-            "environment": [],
-            "externalConsole": true,
-            "MIMode": "gdb",
+            "MIMode": "lldb",
             "setupCommands": [
-                {
-                    "description": "Enable pretty-printing for gdb",
-                    "text": "-enable-pretty-printing",
-                    "ignoreFailures": true
-                }
+                { "description": "Enable pretty-printing", "text": "-enable-pretty-printing", "ignoreFailures": true }
             ],
-            "preLaunchTask": "Build Raylib Project"
+            "preLaunchTask": "Build",
+            "externalConsole": false,
+            "stopAtEntry": false
         }
     ]
 }
