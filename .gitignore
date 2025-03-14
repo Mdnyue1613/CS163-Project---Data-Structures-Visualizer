@@ -1,0 +1,20 @@
+# Ignore compiled binaries
+/bin/
+*.exe
+*.out
+*.o
+
+# Ignore VS Code settings
+.vscode/
+
+# Ignore macOS system files
+.DS_Store
+
+# Ignore build artifacts
+CMakeFiles/
+CMakeCache.txt
+Makefile
+
+# Ignore logs and temp files
+*.log
+*.tmp
