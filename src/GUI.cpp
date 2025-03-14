@@ -1,92 +1,129 @@
 #include "../header/GUI.h"
 #include "../header/BOX.h"
+#include "../header/InputBox.h"
+#include <iostream>
 
 void GUI::startProgram() {
     InitWindow(1200, 800, "Hello Raylib");
     SetTargetFPS(60);
-
-    while(!WindowShouldClose()) {
-        BeginDrawing();
+    while(isOpenDS1 || isOpenDS2 || isOpenDS3 || isOpenDS4 || isOpenMenu) {
         drawMenu();
         drawDS1();
         drawDS2();
         drawDS3();
         drawDS4();
-        EndDrawing();
     }
-
     CloseWindow();
 }
 
 void GUI::drawMenu() {
-    if(GUI::isOpenMenu == false) return;
-    // divide screen
-    ClearBackground(RAYWHITE);
-    float space_x = GetScreenWidth() / 10;
-    float space_y = GetScreenHeight() / 7;
+    while(GUI::isOpenMenu == true) {
+        BeginDrawing();
+        ClearBackground(RAYWHITE);
+        float space_x = GetScreenWidth() / 10;
+        float space_y = GetScreenHeight() / 7;
 
-    // set menu size
-    float MenuWidth = space_x * 3;
-    float MenuHeight = space_y * 2;
-    vector<Rectangle> MENU;
-    Rectangle Menu1 = {space_x, space_y, MenuWidth, MenuHeight};
-    Rectangle Menu2 = {space_x, space_y + MenuHeight + space_y * 2, MenuWidth, MenuHeight};
-    Rectangle Menu3 = {space_x + MenuWidth + space_x * 2, space_y, MenuWidth, MenuHeight};
-    Rectangle Menu4 = {space_x + MenuWidth + space_x * 2, space_y + MenuHeight + space_y * 2, MenuWidth, MenuHeight};
+        // set menu size
+        float MenuWidth = space_x * 3;
+        float MenuHeight = space_y * 2;
+        vector<Rectangle> MENU;
+        Rectangle Menu1 = {space_x, space_y, MenuWidth, MenuHeight}; MENU.push_back(Menu1);
+        Rectangle Menu2 = {space_x, space_y + MenuHeight + space_y * 2, MenuWidth, MenuHeight}; MENU.push_back(Menu2);
+        Rectangle Menu3 = {space_x + MenuWidth + space_x * 2, space_y, MenuWidth, MenuHeight}; MENU.push_back(Menu3);
+        Rectangle Menu4 = {space_x + MenuWidth + space_x * 2, space_y + MenuHeight + space_y * 2, MenuWidth, MenuHeight}; MENU.push_back(Menu4);
 
-    // DrawRectangle(space_x, space_y, MenuWidth, MenuHeight, YELLOW);
-    // DrawRectangle(space_x, space_y + MenuHeight + space_y * 2, MenuWidth, MenuHeight, RED );
-    // DrawRectangle(space_x + MenuWidth + space_x * 2, space_y, MenuWidth, MenuHeight, BLUE);
-    // DrawRectangle(space_x + MenuWidth + space_x * 2, space_y + MenuHeight + space_y * 2, MenuWidth, MenuHeight, PINK );
+        vector<BOX> menu(4);
+        for(int i = 0; i < 4; i++) {
+            menu[i].setRec(MENU[i]);
+            menu[i].setOutline(BLACK);
+            if (menu[i].isMove()) menu[i].setColor(Color(GRAY));
+            else menu[i].setColor(WHITE);
+            menu[i].draw();
+        }
 
-    BOX menu1;
-    menu1.setColor(WHITE);
-    menu1.setSize(space_x, space_y, MenuWidth, MenuHeight);
-    menu1.setOutline(BLACK);
-    menu1.draw();
-
-    Vector2 mouse = GetMousePosition();
-    if (CheckCollisionPointRec(mouse, Menu1) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-        isOpenDS1 = 1;
-        isOpenMenu = 0;
-    }
-    if (CheckCollisionPointRec(mouse, Menu2) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-        isOpenDS2 = 1;
-        isOpenMenu = 0;
-    }
-    if (CheckCollisionPointRec(mouse, Menu3) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-        isOpenDS3 = 1;
-        isOpenMenu = 0;
-    }
-    if (CheckCollisionPointRec(mouse, Menu4) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-        isOpenDS4 = 1;
-        isOpenMenu = 0;
+        if (menu[0].isClick()) {
+            isOpenDS1 = 1;
+            isOpenMenu = 0;
+        }
+        if (menu[1].isClick()) {
+            isOpenDS2 = 1;
+            isOpenMenu = 0;
+        }
+        if (menu[2].isClick()) {
+            isOpenDS3 = 1;
+            isOpenMenu = 0;
+        }
+        if (menu[3].isClick()) {
+            isOpenDS4 = 1;
+            isOpenMenu = 0;
+        }
+        EndDrawing();
+        if(WindowShouldClose()) {
+            isOpenMenu = 0;
+            break;
+        }
     }
 }
 
 
 void GUI::drawDS1() {
-    if (isOpenDS1 == false) return;
-    ClearBackground(YELLOW);
-    BACK();
+    Rectangle a = {100, 20, 50, 50};
+    BOX box;
+    box.setRec(a);
+    box.setColor(WHITE);
+    box.setOutline(BLACK);
+    TextBox insert;
+    insert.setTextBox(box);
+    while (GUI::isOpenDS1) {
+        BeginDrawing();
+        ClearBackground(YELLOW);
+        insert.draw();
+        BACK();
+        EndDrawing();
+        if(WindowShouldClose()) {
+            isOpenDS1 = 0;
+            break;
+        }
+    }
 }
 
 void GUI::drawDS2() {
-    if (isOpenDS2 == false) return;
-    ClearBackground(RED);
-    BACK();
+    while(GUI::isOpenDS2) {
+        BeginDrawing();
+        ClearBackground(RED);
+        BACK();
+        EndDrawing();
+        if(WindowShouldClose()) {
+            isOpenDS2 = 0;
+            break;
+        }
+    }
 }
 
 void GUI::drawDS3() {
-    if (isOpenDS3 == false) return;
-    ClearBackground(BLUE);
-    BACK();
+    while (GUI::isOpenDS3) {
+        BeginDrawing();
+        ClearBackground(BLUE);
+        BACK();
+        EndDrawing();
+        if(WindowShouldClose()) {
+            isOpenDS3 = 0;
+            break;
+        }
+    }
 }
 
 void GUI::drawDS4() {
-    if (isOpenDS4 == false) return;
-    ClearBackground(PINK);
-    BACK();
+    while (isOpenDS4) {
+        BeginDrawing();
+        ClearBackground(PINK);
+        BACK();
+        EndDrawing();
+        if(WindowShouldClose()) {
+            isOpenDS4 = 0;
+            break;
+        }
+    }
 }
 
 void GUI::BACK() {

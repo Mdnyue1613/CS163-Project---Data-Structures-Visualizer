@@ -1,3 +1,4 @@
+#pragma once
 #include "raylib.h"
 
 struct BOX
@@ -9,6 +10,6 @@ struct BOX
     void setColor(Color color);
     void setOutline(Color color);
     void setSize(float x,  float y, int width, int height);
+    void setRec(Rectangle rec);
     void draw();
-
 };

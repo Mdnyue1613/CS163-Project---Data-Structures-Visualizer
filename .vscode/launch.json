@@ -6,6 +6,7 @@
           "type": "cppdbg",
           "request": "launch",
           "program": "${workspaceFolder}/bin/game.exe",
+          "preLaunchTask": "Build Raylib Project",
           "args": [],
           "stopAtEntry": false,
           "cwd": "${workspaceFolder}",
