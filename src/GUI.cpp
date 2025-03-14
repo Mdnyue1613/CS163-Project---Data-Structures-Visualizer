@@ -1,4 +1,4 @@
-#include "..\header\GUI.h"
+#include "../header/GUI.h"
 
 void GUI::startProgram() {
     InitWindow(800, 600, "Hello Raylib");
