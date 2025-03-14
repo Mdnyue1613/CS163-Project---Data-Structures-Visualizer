@@ -8,6 +8,8 @@
             "args": [
                 "./src/*.cpp",
                 "-o", "./bin/game.exe",
+                "main.cpp",
+                "-o", "main",
                 "-I", "C:/raylib/include",
                 "-L", "C:/raylib/lib",
                 "-lraylib", "-lopengl32", "-lgdi32", "-lwinmm"
