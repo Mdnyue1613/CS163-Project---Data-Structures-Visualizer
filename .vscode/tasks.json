@@ -6,21 +6,13 @@
             "type": "shell",
             "command": "g++",
             "args": [
-                "${workspaceFolder}/src/*.cpp",
-                "-o", "${workspaceFolder}/bin/game.exe",
-                "-I", "${workspaceFolder}/include",
-                "-L", "${workspaceFolder}/lib",
-                "-lraylib",
-                "-lopengl32",
-                "-lgdi32",
-                "-lwinmm"
+                "./src/*.cpp",
+                "-o", "./bin/game.exe",
+                "-I", "C:/raylib/include",
+                "-L", "C:/raylib/lib",
+                "-lraylib", "-lopengl32", "-lgdi32", "-lwinmm"
             ],
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-            "problemMatcher": ["$gcc"],
-            "detail": "Generated task for building Raylib project"
+            "group": { "kind": "build", "isDefault": true }
         }
     ]
 }
