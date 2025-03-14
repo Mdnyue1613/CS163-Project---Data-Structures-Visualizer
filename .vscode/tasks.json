@@ -6,8 +6,8 @@
             "type": "shell",
             "command": "g++",
             "args": [
-                "main.cpp",
-                "-o", "main",
+                "./src/*.cpp",
+                "-o", "./bin/game.exe",
                 "-I", "C:/raylib/include",
                 "-L", "C:/raylib/lib",
                 "-lraylib", "-lopengl32", "-lgdi32", "-lwinmm"
