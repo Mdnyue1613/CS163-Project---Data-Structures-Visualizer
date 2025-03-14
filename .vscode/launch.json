@@ -5,7 +5,7 @@
           "name": "Debug Raylib",
           "type": "cppdbg",
           "request": "launch",
-          "program": "${workspaceFolder}/main",
+          "program": "${workspaceFolder}/bin/game.exe",
           "args": [],
           "stopAtEntry": false,
           "cwd": "${workspaceFolder}",
