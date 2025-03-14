@@ -1,4 +1,5 @@
-#include "..\header\GUI.h"
+#include "../header/GUI.h"
+#include "../header/BOX.h"
 
 void GUI::startProgram() {
     InitWindow(1200, 800, "Hello Raylib");
@@ -33,10 +34,16 @@ void GUI::drawMenu() {
     Rectangle Menu3 = {space_x + MenuWidth + space_x * 2, space_y, MenuWidth, MenuHeight};
     Rectangle Menu4 = {space_x + MenuWidth + space_x * 2, space_y + MenuHeight + space_y * 2, MenuWidth, MenuHeight};
 
-    DrawRectangle(space_x, space_y, MenuWidth, MenuHeight, YELLOW);
-    DrawRectangle(space_x, space_y + MenuHeight + space_y * 2, MenuWidth, MenuHeight, RED );
-    DrawRectangle(space_x + MenuWidth + space_x * 2, space_y, MenuWidth, MenuHeight, BLUE);
-    DrawRectangle(space_x + MenuWidth + space_x * 2, space_y + MenuHeight + space_y * 2, MenuWidth, MenuHeight, PINK );
+    // DrawRectangle(space_x, space_y, MenuWidth, MenuHeight, YELLOW);
+    // DrawRectangle(space_x, space_y + MenuHeight + space_y * 2, MenuWidth, MenuHeight, RED );
+    // DrawRectangle(space_x + MenuWidth + space_x * 2, space_y, MenuWidth, MenuHeight, BLUE);
+    // DrawRectangle(space_x + MenuWidth + space_x * 2, space_y + MenuHeight + space_y * 2, MenuWidth, MenuHeight, PINK );
+
+    BOX menu1;
+    menu1.setColor(WHITE);
+    menu1.setSize(space_x, space_y, MenuWidth, MenuHeight);
+    menu1.setOutline(BLACK);
+    menu1.draw();
 
     Vector2 mouse = GetMousePosition();
     if (CheckCollisionPointRec(mouse, Menu1) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
