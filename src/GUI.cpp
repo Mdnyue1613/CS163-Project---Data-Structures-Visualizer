@@ -1,5 +1,6 @@
 #include "../header/GUI.h"
 #include "../header/BOX.h"
+#include <iostream>
 
 void GUI::startProgram() {
     InitWindow(1200, 800, "Hello Raylib");
@@ -29,36 +30,33 @@ void GUI::drawMenu() {
     float MenuWidth = space_x * 3;
     float MenuHeight = space_y * 2;
     vector<Rectangle> MENU;
-    Rectangle Menu1 = {space_x, space_y, MenuWidth, MenuHeight};
-    Rectangle Menu2 = {space_x, space_y + MenuHeight + space_y * 2, MenuWidth, MenuHeight};
-    Rectangle Menu3 = {space_x + MenuWidth + space_x * 2, space_y, MenuWidth, MenuHeight};
-    Rectangle Menu4 = {space_x + MenuWidth + space_x * 2, space_y + MenuHeight + space_y * 2, MenuWidth, MenuHeight};
+    Rectangle Menu1 = {space_x, space_y, MenuWidth, MenuHeight}; MENU.push_back(Menu1);
+    Rectangle Menu2 = {space_x, space_y + MenuHeight + space_y * 2, MenuWidth, MenuHeight}; MENU.push_back(Menu2);
+    Rectangle Menu3 = {space_x + MenuWidth + space_x * 2, space_y, MenuWidth, MenuHeight}; MENU.push_back(Menu3);
+    Rectangle Menu4 = {space_x + MenuWidth + space_x * 2, space_y + MenuHeight + space_y * 2, MenuWidth, MenuHeight}; MENU.push_back(Menu4);
 
-    // DrawRectangle(space_x, space_y, MenuWidth, MenuHeight, YELLOW);
-    // DrawRectangle(space_x, space_y + MenuHeight + space_y * 2, MenuWidth, MenuHeight, RED );
-    // DrawRectangle(space_x + MenuWidth + space_x * 2, space_y, MenuWidth, MenuHeight, BLUE);
-    // DrawRectangle(space_x + MenuWidth + space_x * 2, space_y + MenuHeight + space_y * 2, MenuWidth, MenuHeight, PINK );
+    vector<BOX> menu(4);
+    for(int i = 0; i < 4; i++) {
+        menu[i].setRec(MENU[i]);
+        menu[i].setOutline(BLACK);
+        if (menu[i].isMove()) menu[i].setColor(Color(GRAY));
+        else menu[i].setColor(WHITE);
+        menu[i].draw();
+    }
 
-    BOX menu1;
-    menu1.setColor(WHITE);
-    menu1.setSize(space_x, space_y, MenuWidth, MenuHeight);
-    menu1.setOutline(BLACK);
-    menu1.draw();
-
-    Vector2 mouse = GetMousePosition();
-    if (CheckCollisionPointRec(mouse, Menu1) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+    if (menu[0].isClick()) {
         isOpenDS1 = 1;
         isOpenMenu = 0;
     }
-    if (CheckCollisionPointRec(mouse, Menu2) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+    if (menu[1].isClick()) {
         isOpenDS2 = 1;
         isOpenMenu = 0;
     }
-    if (CheckCollisionPointRec(mouse, Menu3) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+    if (menu[2].isClick()) {
         isOpenDS3 = 1;
         isOpenMenu = 0;
     }
-    if (CheckCollisionPointRec(mouse, Menu4) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+    if (menu[3].isClick()) {
         isOpenDS4 = 1;
         isOpenMenu = 0;
     }
