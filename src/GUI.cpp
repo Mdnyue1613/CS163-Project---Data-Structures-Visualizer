@@ -1,7 +1,7 @@
 #include "..\header\GUI.h"
 
 void GUI::startProgram() {
-    InitWindow(800, 600, "Hello Raylib");
+    InitWindow(1200, 800, "Hello Raylib");
     SetTargetFPS(60);
 
     while(!WindowShouldClose()) {
