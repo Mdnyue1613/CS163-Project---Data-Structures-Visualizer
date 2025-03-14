@@ -3,11 +3,11 @@ using namespace std;
 
 bool BOX::isMove()
 {
-
+    return false;
 }
 bool BOX::isClick()
 {
-
+    return false;
 }
 void BOX::setColor(Color color)
 {
