@@ -2,7 +2,7 @@
 
 void TextBox::setTextBox(BOX box) {
     this->box = box;
-    this->posNum_x = box.rec.x + 10;
+    this->posNum_x = box.rec.x + 5;
     this->posNum_y = box.rec.y;
     isClick = 0;
 }
@@ -30,7 +30,6 @@ void TextBox::afterClick() {
     }
 void TextBox::draw() {
     box.draw();
-
     if (box.isMove()) {
         HideCursor();
         afterMove();
