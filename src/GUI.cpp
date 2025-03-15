@@ -36,7 +36,7 @@ void GUI::drawMenu() {
         for(int i = 0; i < 4; i++) {
             menu[i].setRec(MENU[i]);
             menu[i].setOutline(BLACK);
-            if (menu[i].isMove()) menu[i].setColor(Color(GRAY));
+            if (menu[i].isMove()) menu[i].setColor(Color(BLUE));
             else menu[i].setColor(WHITE);
             menu[i].draw();
         }
