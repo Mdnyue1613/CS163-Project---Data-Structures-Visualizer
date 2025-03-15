@@ -1,6 +1,7 @@
 #include "../header/GUI.h"
 #include "../header/BOX.h"
-#include "../header/InputBox.h"
+#include "../header/LInputBox.h"
+#include "../header/AVL.h"
 #include <iostream>
 
 void GUI::startProgram() {
@@ -67,16 +68,20 @@ void GUI::drawMenu() {
 
 
 void GUI::drawDS1() {
-    Rectangle a = {100, 20, 50, 50};
+    Image img = LoadImage("../Assets/Tree-Photoroom.png");
+    Texture2D TreeTexture = LoadTextureFromImage(img);
+    Rectangle beforeButton = {18, 16, 47.2, 47.2};
+    Rectangle a = {100, 20, 100, 30};
     BOX box;
     box.setRec(a);
     box.setColor(WHITE);
     box.setOutline(BLACK);
-    TextBox insert;
+    LTextBox insert;
     insert.setTextBox(box);
     while (GUI::isOpenDS1) {
         BeginDrawing();
-        ClearBackground(YELLOW);
+        ClearBackground(WHITE);
+        DrawTexture(TreeTexture, 0, 0, WHITE);
         insert.draw();
         BACK();
         EndDrawing();
@@ -85,6 +90,7 @@ void GUI::drawDS1() {
             break;
         }
     }
+    UnloadTexture(TreeTexture);
 }
 
 void GUI::drawDS2() {
@@ -127,7 +133,7 @@ void GUI::drawDS4() {
 }
 
 void GUI::BACK() {
-    Rectangle BackButton = {(float)GetScreenWidth() - 100, 0, 50, 50};
+    Rectangle BackButton = {(float)GetScreenWidth() - 100, 0, 100, 30};
     DrawRectangleRec(BackButton, GRAY);
     Vector2 mouse = GetMousePosition();
     if (CheckCollisionPointRec(mouse, BackButton) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)){

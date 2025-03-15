@@ -5,7 +5,7 @@
 #include <string>
 #include <cstring>
 
-struct TextBox
+struct LTextBox
 {   
     int posNum_x, posNum_y;
     BOX box;
