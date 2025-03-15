@@ -10,11 +10,11 @@ struct TextBox
     int posNum_x, posNum_y;
     BOX box;
     bool isClick;
-    void setState();
-    void setTextBox(BOX box);
-    void afterMove();
-    void afterClick();
-    void draw();
+    void setState(); // update isClick
+    void setTextBox(BOX box); // set box
+    void afterMove(); // handle when the box covers the mouse
+    void afterClick(); // handle when the box is being chosen
+    void draw(); // update
 };
 
 // struct OptionBox
