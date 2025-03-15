@@ -1,0 +1,27 @@
+{
+  "version": "0.2.0",
+  "configurations": [ // Your own configurations here
+      {
+          "name": "Debug Raylib", // Name of debuging tasks
+          "type": "cppdbg", // Type of debugger
+          "request": "launch", // When user click debug
+          "program": "${workspaceFolder}/bin/game", // Directory to the resultant program
+          "preLaunchTask": "Build Visualizer", // Build the program before run
+          "args": [],
+          "stopAtEntry": false,
+          "cwd": "${workspaceFolder}", // Current working directory
+          "environment": [],
+          "externalConsole": true, // true = open an external console, false = use built-in terminal in VS code
+          "MIMode": "gdb", // Specify debugger to use
+          "setupCommands": [
+            { 
+                "description": "Enable pretty-printing", 
+                "text": "-enable-pretty-printing", 
+                "ignoreFailures": true 
+            }
+          ]
+      }
+  ]
+}
+
+

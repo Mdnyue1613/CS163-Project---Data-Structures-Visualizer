@@ -68,8 +68,7 @@ void GUI::drawMenu() {
 
 
 void GUI::drawDS1() {
-    Image img = LoadImage("../Assets/Tree-Photoroom.png");
-    Texture2D TreeTexture = LoadTextureFromImage(img);
+    Texture2D TreeTexture = LoadTexture("../Assets/Tree-Photoroom.png");
     Rectangle beforeButton = {18, 16, 47.2, 47.2};
     Rectangle a = {100, 20, 100, 30};
     BOX box;
