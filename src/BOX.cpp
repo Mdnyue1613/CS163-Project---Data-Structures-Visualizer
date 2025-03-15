@@ -3,10 +3,12 @@ using namespace std;
 
 bool BOX::isMove()
 {
-    return false;
+    if (CheckCollisionPointRec(GetMousePosition(), rec) == true) return true;
+    return 0;
 }
 bool BOX::isClick()
 {
+    if (isMove() && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) return true;
     return false;
 }
 void BOX::setColor(Color color)
@@ -25,6 +27,10 @@ void BOX::setSize(float x,  float y, int width, int height)
     a.height = height;
     a.width = width;
     this -> rec = a;
+}
+
+void BOX::setRec(Rectangle rec) {
+    this->rec = rec;
 }
 void BOX::draw()
 {
