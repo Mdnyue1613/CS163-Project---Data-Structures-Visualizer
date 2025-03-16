@@ -39,3 +39,10 @@ void LTextBox::draw() {
     setState();
     if (isClick) afterClick(); 
 }
+
+void LOptionBox::setOption(char option[]) {
+    strcpy(this->option, option);
+}
+void LOptionBox::setBox(BOX box) {
+    this->box = box;
+}

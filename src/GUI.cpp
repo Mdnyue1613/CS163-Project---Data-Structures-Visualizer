@@ -3,7 +3,6 @@
 #include "../header/LInputBox.h"
 #include "../header/AVL.h"
 #include <iostream>
-
 void GUI::startProgram() {
     InitWindow(1200, 800, "Hello Raylib");
     SetTargetFPS(60);
@@ -16,7 +15,6 @@ void GUI::startProgram() {
     }
     CloseWindow();
 }
-
 void GUI::drawMenu() {
     while(GUI::isOpenMenu == true) {
         BeginDrawing();
@@ -68,20 +66,9 @@ void GUI::drawMenu() {
 
 
 void GUI::drawDS1() {
-    Texture2D TreeTexture = LoadTexture("../Assets/Tree-Photoroom.png");
-    Rectangle beforeButton = {18, 16, 47.2, 47.2};
-    Rectangle a = {100, 20, 100, 30};
-    BOX box;
-    box.setRec(a);
-    box.setColor(WHITE);
-    box.setOutline(BLACK);
-    LTextBox insert;
-    insert.setTextBox(box);
     while (GUI::isOpenDS1) {
         BeginDrawing();
         ClearBackground(WHITE);
-        DrawTexture(TreeTexture, 0, 0, WHITE);
-        insert.draw();
         BACK();
         EndDrawing();
         if(WindowShouldClose()) {
@@ -89,7 +76,6 @@ void GUI::drawDS1() {
             break;
         }
     }
-    UnloadTexture(TreeTexture);
 }
 
 void GUI::drawDS2() {
@@ -106,9 +92,18 @@ void GUI::drawDS2() {
 }
 
 void GUI::drawDS3() {
+    Texture2D TreeTexture = LoadTexture("./Assets/Tree.png");
+    Rectangle a = {100, 20, 100, 30};
+    BOX box;
+    box.setRec(a);
+    box.setColor(WHITE);
+    box.setOutline(BLACK);
+    LTextBox insert;
+    insert.setTextBox(box);
     while (GUI::isOpenDS3) {
         BeginDrawing();
-        ClearBackground(BLUE);
+        DrawTexture(TreeTexture, 0, 0, WHITE);
+        insert.draw();
         BACK();
         EndDrawing();
         if(WindowShouldClose()) {
@@ -116,6 +111,7 @@ void GUI::drawDS3() {
             break;
         }
     }
+    UnloadTexture(TreeTexture);
 }
 
 void GUI::drawDS4() {
@@ -132,10 +128,19 @@ void GUI::drawDS4() {
 }
 
 void GUI::BACK() {
-    Rectangle BackButton = {(float)GetScreenWidth() - 100, 0, 100, 30};
-    DrawRectangleRec(BackButton, GRAY);
-    Vector2 mouse = GetMousePosition();
-    if (CheckCollisionPointRec(mouse, BackButton) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)){
+    Rectangle Button = {1104, 12, 70.7, 51.7};
+    BOX BackButton;
+    BackButton.setRec(Button);
+    const Rectangle HandCursorTexture = {0, 0, 15.5, 20};
+    Rectangle HandDest = {GetMousePosition().x, GetMousePosition().y, 15.5, 20};
+    if (BackButton.isMove()) {
+        SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
+    }
+    else {
+        SetMouseCursor(MOUSE_CURSOR_DEFAULT);
+    }
+    if (BackButton.isClick()) {
+        ShowCursor();
         isOpenMenu = 1;
         isOpenDS1 = isOpenDS2 = isOpenDS3 = isOpenDS4 = 0;
     }

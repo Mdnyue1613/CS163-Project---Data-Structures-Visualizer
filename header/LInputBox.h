@@ -17,16 +17,10 @@ struct LTextBox
     void draw();
 };
 
-// struct OptionBox
-// {
-//     BOX box;
-//     char option[20];
-//     void draw();
-//     void afterClick();
-// };
-
-
-// struct InputBox
-// {
-
-// };
+struct LOptionBox
+{
+    BOX box;
+    char option[20];
+    void setOption(char option[]);
+    void setBox(BOX box);
+};
