@@ -10,6 +10,7 @@ struct LTextBox
     int posNum_x, posNum_y;
     BOX box;
     bool isClick;
+    LTextBox();
     void setState();
     void setTextBox(BOX box);
     void afterMove();
@@ -23,4 +24,11 @@ struct LOptionBox
     char option[20];
     void setOption(char option[]);
     void setBox(BOX box);
+    void draw();
+};
+
+struct ActionBox {
+    LOptionBox action;
+    ActionBox();
+    void draw();
 };

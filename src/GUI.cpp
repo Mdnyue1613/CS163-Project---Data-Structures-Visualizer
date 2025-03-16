@@ -93,17 +93,13 @@ void GUI::drawDS2() {
 
 void GUI::drawDS3() {
     Texture2D TreeTexture = LoadTexture("./Assets/Tree.png");
-    Rectangle a = {100, 20, 100, 30};
-    BOX box;
-    box.setRec(a);
-    box.setColor(WHITE);
-    box.setOutline(BLACK);
     LTextBox insert;
-    insert.setTextBox(box);
+    ActionBox action;
     while (GUI::isOpenDS3) {
         BeginDrawing();
         DrawTexture(TreeTexture, 0, 0, WHITE);
         insert.draw();
+        action.draw();
         BACK();
         EndDrawing();
         if(WindowShouldClose()) {
@@ -140,7 +136,7 @@ void GUI::BACK() {
         SetMouseCursor(MOUSE_CURSOR_DEFAULT);
     }
     if (BackButton.isClick()) {
-        ShowCursor();
+        SetMouseCursor(MOUSE_CURSOR_DEFAULT);
         isOpenMenu = 1;
         isOpenDS1 = isOpenDS2 = isOpenDS3 = isOpenDS4 = 0;
     }

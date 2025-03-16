@@ -1,5 +1,13 @@
 #include "../header/LInputBox.h"
 
+LTextBox::LTextBox() {
+    Rectangle a = {6, 200, 293.9, 44.6};
+    BOX box;
+    box.setRec(a);
+    box.setColor(WHITE);
+    box.setOutline(BLACK);
+    setTextBox(box);
+}
 void LTextBox::setTextBox(BOX box) {
     this->box = box;
     this->posNum_x = box.rec.x + 5;
@@ -45,4 +53,32 @@ void LOptionBox::setOption(char option[]) {
 }
 void LOptionBox::setBox(BOX box) {
     this->box = box;
+}
+
+void LOptionBox::draw() {
+    box.draw();
+    if (box.isMove()) {
+        box.setColor(GRAY);
+    }
+    else {
+        box.setColor(WHITE);
+    }
+    float textWidth = MeasureText(option, 16);
+    float text_x = box.rec.x + box.rec.width / 2 - textWidth / 2;
+    float text_y = box.rec.y + box.rec.height / 2 - 8;
+    DrawText(option, text_x, text_y, 16, BLACK);
+}
+
+ActionBox::ActionBox() {
+    char s[20] = "Insert";
+    Rectangle a = {6, 90, 293.9, 44.6};
+    BOX box;
+    box.setRec(a);
+    box.setOutline(BLACK);
+    box.setColor(WHITE);
+    action.setBox(box);
+    action.setOption(s);
+}
+void ActionBox::draw() {
+    action.draw();
 }
