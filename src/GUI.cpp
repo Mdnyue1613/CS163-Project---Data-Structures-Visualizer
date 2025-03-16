@@ -1,6 +1,8 @@
 #include "../header/GUI.h"
 #include "../header/BOX.h"
+#include "../header/TEXTBOX.h"
 #include "../header/InputBox.h"
+#include "../header/GraphVisualize.h"
 #include <iostream>
 
 void GUI::startProgram() {
@@ -114,16 +116,18 @@ void GUI::drawDS3() {
 }
 
 void GUI::drawDS4() {
-    while (isOpenDS4) {
-        BeginDrawing();
-        ClearBackground(PINK);
-        BACK();
-        EndDrawing();
-        if(WindowShouldClose()) {
-            isOpenDS4 = 0;
-            break;
-        }
-    }
+    // while (isOpenDS4) {
+    //     BeginDrawing();
+    //     ClearBackground(PINK);
+    //     BACK();
+    //     EndDrawing();
+    //     if(WindowShouldClose()) {
+    //         isOpenDS4 = 0;
+    //         break;
+    //     }
+    // }
+
+    GraphVisualize();
 }
 
 void GUI::BACK() {
