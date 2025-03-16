@@ -23,11 +23,11 @@ void TextBox::afterMove() {
     DrawLine(mouse.x - 4, mouse.y + 20, mouse.x + 4, mouse.y + 20, BLACK);
 }
 void TextBox::afterClick() {
-    bool appearLine = fmod(GetTime(), 1.0) < 0.5;
-    if (appearLine) {
-        DrawLine(posNum_x, posNum_y, posNum_x, posNum_y + box.rec.height, BLACK);
+        bool appearLine = fmod(GetTime(), 1.0) < 0.5;
+        if (appearLine) {
+            DrawLine(posNum_x, posNum_y, posNum_x, posNum_y + box.rec.height, BLACK);
+        }
     }
-}
 void TextBox::draw() {
     box.draw();
     if (box.isMove()) {
