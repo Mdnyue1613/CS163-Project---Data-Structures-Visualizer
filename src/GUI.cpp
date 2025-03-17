@@ -94,7 +94,6 @@ void GUI::drawDS2() {
 }
 
 void GUI::drawDS3() {
-    Texture2D TreeTexture = LoadTexture("./Assets/Tree.png");
     LTextBox insert;
     ActionBox action;
     AVL Tree;
@@ -103,7 +102,7 @@ void GUI::drawDS3() {
     }
     while (GUI::isOpenDS3) {
         BeginDrawing();
-        DrawTexture(TreeTexture, 0, 0, WHITE);
+        ClearBackground(WHITE);
         insert.draw();
         action.draw();
         Tree.draw();
@@ -114,7 +113,6 @@ void GUI::drawDS3() {
             break;
         }
     }
-    UnloadTexture(TreeTexture);
 }
 
 void GUI::drawDS4() {
