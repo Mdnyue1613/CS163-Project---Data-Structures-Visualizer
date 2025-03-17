@@ -1,17 +1,6 @@
 #include "../header/AVL.h"
-
-int TreeNode::getBalance() {
-    int lheight = left ? left->height : 0;
-    int rheight = right ? right->height : 0;
-    int balance = lheight - rheight;
-    return balance;
-}
-
-void TreeNode::setHeight() {
-    int lheight = left ? left->height : 0;
-    int rheight = right ? right->height : 0;
-    this->height = 1 + max(lheight, rheight);
-}
+#include <string>
+#include <cstring>
 
 TreeNode::TreeNode(int x) {
     val = x;
@@ -20,31 +9,59 @@ TreeNode::TreeNode(int x) {
     radius = 20;
 }
 
-void TreeNode::update_x(TreeNode* root, bool direction) {
+AVL::AVL() {
+    TreeRoot = nullptr;
+    allNode.resize(0);
+}
+
+int AVL::getBalance(TreeNode* root) {
+    int lheight = root->left ? root->left->height : 0;
+    int rheight = root->right ? root->right->height : 0;
+    int balance = lheight - rheight;
+    return balance;
+}
+
+void AVL::setHeight(TreeNode* &root) {
+    int lheight = root->left ? root->left->height : 0;
+    int rheight = root->right ? root->right->height : 0;
+    root->height = 1 + max(lheight, rheight);
+}
+
+void AVL::update_x(TreeNode* &root, bool direction) {
     if (root == nullptr) return;
     if (direction == 1) {
-        root->position.x += 2 * radius;
+        root->position.x += 2 * root->radius;
     }
     else {
-        root->position.x -= 2 * radius;
+        root->position.x -= 2 * root->radius;
     }
     update_x(root->left, direction);
     update_x(root->right, direction);
 }
 
-void TreeNode::update_y(TreeNode* root, bool direction) {
+void AVL::update_y(TreeNode* &root, bool direction) {
     if (root == nullptr) return;
     if (direction == 1) {
-        root->position.y += 2 * radius;
+        root->position.y += 2 * root->radius;
     }
     else {
-        root->position.y -= 2 * radius;
+        root->position.y -= 2 * root->radius;
     }
     update_y(root->left, direction);
     update_y(root->right, direction);
 }
 
-int TreeNode::findUpdateIndex(vector<bool> v, bool find) {
+void AVL::FixPosition(TreeNode* &root, int x) {
+    if (!root) return;
+    if(root->position.x == x) return;
+    float ld = root->left ? root->position.x - root->left->position.x : 0;
+    float rd = root->right ? root->right->position.x - root->position.x : 0;
+    root->position.x = x;
+    FixPosition(root->left, x - ld);
+    FixPosition(root->right, x + rd);
+}
+
+int AVL::findUpdateIndex(vector<bool> v, bool find) {
     int n = v.size() - 1;
     int res = -1;
     for (int i = n; i >= 0; i--) {
@@ -53,41 +70,44 @@ int TreeNode::findUpdateIndex(vector<bool> v, bool find) {
     return res;
 }
 
-TreeNode* TreeNode::rotateLeft(TreeNode* &root) {
+TreeNode* AVL::rotateLeft(TreeNode* &root) {
+    if (!root || !root->right) return root;
     TreeNode* tmp = root->right;
     root->right = tmp->left;
     tmp->left = root;
-    root->setHeight();
-    tmp->setHeight();
-    update_y(tmp->right, 1);
-    update_y(root->left, 0);
-    root->position.y -= 2 * radius;
-    tmp->position.y += 2 * radius;
+    setHeight(root);
+    setHeight(tmp);
+    update_y(tmp->right, 0);
+    update_y(root->left, 1);
+    root->position.y += 2 * root->radius;
+    tmp->position.y -= 2 * tmp->radius;
     return tmp;
 }
 
-TreeNode * TreeNode::rotateRight(TreeNode* &root) {
+TreeNode * AVL::rotateRight(TreeNode* &root) {
+    if (!root || !root->left) return root;
     TreeNode* tmp = root->left;
     root->left = tmp->right;
     tmp->right = root;
-    root->setHeight();
-    tmp->setHeight();
-    update_y(tmp->left, 1);
-    update_y(root->right, 0);
-    root->position.y -= 2 * radius;
-    tmp->position.y += 2 * radius;
+    setHeight(root);
+    setHeight(tmp);
+    update_y(tmp->left, 0);
+    update_y(root->right, 1);
+    root->position.y += 2 * root->radius;
+    tmp->position.y -= 2 * tmp->radius;
     return tmp;
 }
 
-TreeNode* TreeNode::insertNode(TreeNode* &root, int x) {
+TreeNode* AVL::insertNode(int x) {
     vector<TreeNode*> path;
     vector<bool> direction;
-    if (!root) {
-        root = new TreeNode(x);
-        root->position = {600, 400};
+    if (!TreeRoot) {
+        TreeRoot = new TreeNode(x);
+        TreeRoot->position = {600, 400};
+        allNode.push_back(TreeRoot);
     }
     else {
-        path.push_back(root);
+        path.push_back(TreeRoot);
         while(true) {
             TreeNode* tmp = path.back();
             TreeNode* nextNode = nullptr;
@@ -109,43 +129,58 @@ TreeNode* TreeNode::insertNode(TreeNode* &root, int x) {
             update_x(path[updateIndex], direction[0]);
             Parent->left = new TreeNode(x);
             toInsert = Parent->left;
-            toInsert->position = {Parent->position.x - radius, Parent->position.y + 2 * radius};
+            toInsert->position = {Parent->position.x - Parent->radius, Parent->position.y + 2 * Parent->radius};
+            allNode.push_back(toInsert);
         }
         else if (x > Parent->val) {
             int updateIndex = findUpdateIndex(direction, 0) + 1;
             update_x(path[updateIndex], direction[0]);
             Parent->right = new TreeNode(x);
             toInsert = Parent->right;
-            toInsert->position = {Parent->position.x + radius, Parent->position.y + 2 * radius};
+            toInsert->position = {Parent->position.x + Parent->radius, Parent->position.y + 2 * Parent->radius};
+            allNode.push_back(toInsert);
         }
-        else return root;
+        else return TreeRoot;
         while (!path.empty()) {
             TreeNode* cur = path.back();
             path.pop_back();
-            cur->setHeight();
+            setHeight(cur);
             int curDirection;
-            if (direction.empty()) curDirection = -1;
-            else {
-                curDirection = (int) direction.back();
-                direction.pop_back();
-            }
-            if(cur->getBalance() < -1) {
-                if(cur->left->getBalance() < 0) cur->left = rotateRight(cur->left);
-                if (curDirection == 1) {
-                    path.back()->right = rotateLeft(cur);
+            curDirection = (int) direction.back();
+            direction.pop_back();
+            if(getBalance(cur) > 1) { //imbalance to the left
+                if(cur->left && getBalance(cur->left) < 0) cur->left = rotateLeft(cur->left);
+                if (path.empty()) {
+                    TreeRoot = rotateRight(cur);
                 }
-                else if (curDirection == 0) path.back()->left = rotateLeft(cur);
-                else if (curDirection == -1) cur = cur->rotateLeft(cur);
-            }
-            else if (cur->getBalance() > 1) {
-                if(cur->right->getBalance() > 0) cur->right = rotateLeft(cur->right);
-                if (curDirection == 1) {
+                else if (curDirection == 1) {
                     path.back()->right = rotateRight(cur);
                 }
                 else if (curDirection == 0) path.back()->left = rotateRight(cur);
-                else if (curDirection == -1) cur = cur->rotateRight(cur);
             }
+            else if (getBalance(cur) < -1) { // imbalance to the right
+                if(cur->right && getBalance(cur->right) > 0) cur->right = rotateRight(cur->right);
+                if (path.empty()) {
+                    TreeRoot = rotateLeft(cur);
+                }
+                else if (curDirection == 1) {
+                    path.back()->right = rotateLeft(cur);
+                }
+                else if (curDirection == 0) path.back()->left = rotateLeft(cur);
+            }
+            FixPosition(TreeRoot, 600);
         }
     }
-    return root;
+    return TreeRoot;
+}
+
+void AVL::draw() {
+        // DrawCircle(TreeRoot->position.x, TreeRoot->position.y, TreeRoot->radius, BLUE);
+        // string s = to_string(TreeRoot->val);
+        // DrawText(s.c_str(), TreeRoot->position.x, TreeRoot->position.y, TreeRoot->radius,WHITE);
+        for (auto Node : allNode) {
+            DrawCircle(Node->position.x, Node->position.y, Node->radius, BLUE);
+            string s = to_string(Node->val);
+            DrawText(s.c_str(), Node->position.x, Node->position.y, Node->radius,WHITE);
+        }
 }
