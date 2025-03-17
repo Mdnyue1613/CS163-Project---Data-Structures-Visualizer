@@ -1,7 +1,6 @@
 #include "../header/GUI.h"
 #include "../header/BOX.h"
 #include "../header/LInputBox.h"
-#include "../header/AVL.h"
 #include <iostream>
 void GUI::startProgram() {
     InitWindow(1200, 800, "Hello Raylib");
