@@ -6,6 +6,9 @@ struct PBOX
     Rectangle rec;
     Color color, outlineColor;
     int outlineThickness;
+
+    PBOX(void); // initialize
+    PBOX(int x, int y, int width, int height, int outThickness, Color inColor, Color outColor); // initialize with parameters
     bool isMove();
     bool isClick();
     void setColor(Color color);

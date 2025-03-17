@@ -1,4 +1,15 @@
 #include "../header/PBOX.h"
+PBOX::PBOX(void) {
+}
+PBOX::PBOX(int x, int y, int width, int height, int outThickness, Color inColor, Color outColor) {
+    rec.x = x;
+    rec.y = y;
+    rec.width = width;
+    rec.height = height;
+    outlineThickness = outThickness;
+    color = inColor;
+    outlineColor = outColor;
+}
 bool PBOX::isMove() {
     return CheckCollisionPointRec(GetMousePosition(), rec);
 }
