@@ -1,4 +1,4 @@
-#include "../header/InputBox.h"
+#include "../header/LInputBox.h"
 
 void TextBox::setTextBox(BOX box) {
     this->box = box;
