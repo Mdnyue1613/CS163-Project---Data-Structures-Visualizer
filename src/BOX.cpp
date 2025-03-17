@@ -35,6 +35,6 @@ void BOX::setRec(Rectangle rec) {
 void BOX::draw()
 {
     DrawRectangleRec(rec, color);
-    DrawRectangleLinesEx(rec, 1.0, outlineColor);
+    DrawRectangleLinesEx(rec, 2.0, outlineColor);
 
 }

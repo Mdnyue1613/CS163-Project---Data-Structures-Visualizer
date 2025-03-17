@@ -100,9 +100,11 @@ void GUI::drawDS3() {
     for (int i = 0; i < 20; i++) {
         Tree.TreeRoot = Tree.insertNode(i);
     }
+    DS3 ds3;
     while (GUI::isOpenDS3) {
         BeginDrawing();
         ClearBackground(WHITE);
+        ds3.draw();
         insert.draw();
         action.draw();
         Tree.draw();
