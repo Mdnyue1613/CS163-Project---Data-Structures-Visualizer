@@ -66,9 +66,11 @@ void GUI::drawMenu() {
 
 
 void GUI::drawDS1() {
+    DS1 linkedListVisualizer;
     while (GUI::isOpenDS1) {
         BeginDrawing();
         ClearBackground(WHITE);
+        linkedListVisualizer.draw();
         BACK();
         EndDrawing();
         if(WindowShouldClose()) {

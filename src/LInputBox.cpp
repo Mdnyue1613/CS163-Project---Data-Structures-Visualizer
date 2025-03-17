@@ -31,7 +31,7 @@ void LTextBox::afterMove() {
     DrawLine(mouse.x - 4, mouse.y + 20, mouse.x + 4, mouse.y + 20, BLACK);
 }
 void LTextBox::afterClick() {
-        bool appearLine = fmod(GetTime(), 0.9) < 0.45;
+        bool appearLine = fmod(GetTime(), 1.0) < 0.5;
         if (appearLine) {
             DrawLine(posNum_x, posNum_y, posNum_x, posNum_y + box.rec.height, BLACK);
         }
