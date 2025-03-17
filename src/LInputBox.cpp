@@ -1,12 +1,12 @@
-#include "../header/LInputBox.h"
+#include "../header/InputBox.h"
 
-void LTextBox::setTextBox(BOX box) {
+void TextBox::setTextBox(BOX box) {
     this->box = box;
     this->posNum_x = box.rec.x + 5;
     this->posNum_y = box.rec.y;
     isClick = 0;
 }
-void LTextBox::setState() {
+void TextBox::setState() {
         Vector2 mouse = GetMousePosition();
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
             if (CheckCollisionPointRec(mouse, box.rec)) {
@@ -16,19 +16,19 @@ void LTextBox::setState() {
             }
         }
 }
-void LTextBox::afterMove() {
+void TextBox::afterMove() {
     Vector2 mouse = GetMousePosition();
     DrawLine(mouse.x, mouse.y, mouse.x, mouse.y + 20, BLACK);
     DrawLine(mouse.x - 4, mouse.y, mouse.x + 4, mouse.y, BLACK);
     DrawLine(mouse.x - 4, mouse.y + 20, mouse.x + 4, mouse.y + 20, BLACK);
 }
-void LTextBox::afterClick() {
-        bool appearLine = fmod(GetTime(), 0.9) < 0.45;
+void TextBox::afterClick() {
+        bool appearLine = fmod(GetTime(), 1.0) < 0.5;
         if (appearLine) {
             DrawLine(posNum_x, posNum_y, posNum_x, posNum_y + box.rec.height, BLACK);
         }
     }
-void LTextBox::draw() {
+void TextBox::draw() {
     box.draw();
     if (box.isMove()) {
         HideCursor();
