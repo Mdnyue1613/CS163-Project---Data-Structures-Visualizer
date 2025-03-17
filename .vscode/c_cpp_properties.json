@@ -7,7 +7,7 @@
         "${workspaceFolder}/include"
       ],
       "defines": [],
-      "compilerPath": "C:/msys64/ucrt64/bin/g++.exe",
+      "compilerPath": "C:/MinGW/bin/g++.exe",
       "cStandard": "c11",
       "cppStandard": "c++17",
       "intelliSenseMode": "windows-clang-x64"

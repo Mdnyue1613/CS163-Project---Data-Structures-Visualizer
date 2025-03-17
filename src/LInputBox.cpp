@@ -14,7 +14,7 @@ void LTextBox::setTextBox(BOX box) {
     this->posNum_y = box.rec.y;
     isClick = 0;
 }
-void TextBox::setState() {
+void LTextBox::setState() {
         Vector2 mouse = GetMousePosition();
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
             if (CheckCollisionPointRec(mouse, box.rec)) {
@@ -24,19 +24,19 @@ void TextBox::setState() {
             }
         }
 }
-void TextBox::afterMove() {
+void LTextBox::afterMove() {
     Vector2 mouse = GetMousePosition();
     DrawLine(mouse.x, mouse.y, mouse.x, mouse.y + 20, BLACK);
     DrawLine(mouse.x - 4, mouse.y, mouse.x + 4, mouse.y, BLACK);
     DrawLine(mouse.x - 4, mouse.y + 20, mouse.x + 4, mouse.y + 20, BLACK);
 }
-void TextBox::afterClick() {
+void LTextBox::afterClick() {
         bool appearLine = fmod(GetTime(), 1.0) < 0.5;
         if (appearLine) {
             DrawLine(posNum_x, posNum_y, posNum_x, posNum_y + box.rec.height, BLACK);
         }
     }
-void TextBox::draw() {
+void LTextBox::draw() {
     box.draw();
     if (box.isMove()) {
         HideCursor();
