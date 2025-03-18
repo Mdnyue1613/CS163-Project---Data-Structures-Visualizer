@@ -1,12 +1,10 @@
 #include "raylib.h"
-#include "DS1.h"
 #include "DS3.h"
 #include <vector>
 
 using namespace std;
 
 struct GUI {
-    static bool isOpenSetting;
     static bool isOpenMenu;
     static bool isOpenDS1;
     static bool isOpenDS2;
