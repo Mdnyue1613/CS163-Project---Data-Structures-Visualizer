@@ -1,10 +1,8 @@
 #include "../header/GUI.h"
 #include "../header/BOX.h"
-#include "../header/TEXTBOX.h"
-#include "../header/InputBox.h"
-#include "../header/GraphVisualize.h"
+#include "../header/LInputBox.h"
+#include "../header/AVL.h"
 #include <iostream>
-
 void GUI::startProgram() {
     InitWindow(1200, 800, "Hello Raylib");
     SetTargetFPS(60);
@@ -17,7 +15,6 @@ void GUI::startProgram() {
     }
     CloseWindow();
 }
-
 void GUI::drawMenu() {
     while(GUI::isOpenMenu == true) {
         BeginDrawing();
@@ -69,17 +66,11 @@ void GUI::drawMenu() {
 
 
 void GUI::drawDS1() {
-    Rectangle a = {100, 20, 50, 50};
-    BOX box;
-    box.setRec(a);
-    box.setColor(WHITE);
-    box.setOutline(BLACK);
-    TextBox insert;
-    insert.setTextBox(box);
+    DS1 linkedListVisualizer;
     while (GUI::isOpenDS1) {
         BeginDrawing();
-        ClearBackground(YELLOW);
-        insert.draw();
+        ClearBackground(WHITE);
+        linkedListVisualizer.draw();
         BACK();
         EndDrawing();
         if(WindowShouldClose()) {
@@ -103,9 +94,20 @@ void GUI::drawDS2() {
 }
 
 void GUI::drawDS3() {
+    LTextBox insert;
+    ActionBox action;
+    AVL Tree;
+    for (int i = 0; i < 20; i++) {
+        Tree.TreeRoot = Tree.insertNode(i);
+    }
+    DS3 ds3;
     while (GUI::isOpenDS3) {
         BeginDrawing();
-        ClearBackground(BLUE);
+        ClearBackground(WHITE);
+        ds3.draw();
+        insert.draw();
+        action.draw();
+        Tree.draw();
         BACK();
         EndDrawing();
         if(WindowShouldClose()) {
@@ -131,10 +133,19 @@ void GUI::drawDS4() {
 }
 
 void GUI::BACK() {
-    Rectangle BackButton = {(float)GetScreenWidth() - 100, 0, 50, 50};
-    DrawRectangleRec(BackButton, GRAY);
-    Vector2 mouse = GetMousePosition();
-    if (CheckCollisionPointRec(mouse, BackButton) && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)){
+    Rectangle Button = {1104, 12, 70.7, 51.7};
+    BOX BackButton;
+    BackButton.setRec(Button);
+    const Rectangle HandCursorTexture = {0, 0, 15.5, 20};
+    Rectangle HandDest = {GetMousePosition().x, GetMousePosition().y, 15.5, 20};
+    if (BackButton.isMove()) {
+        SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
+    }
+    else {
+        SetMouseCursor(MOUSE_CURSOR_DEFAULT);
+    }
+    if (BackButton.isClick()) {
+        SetMouseCursor(MOUSE_CURSOR_DEFAULT);
         isOpenMenu = 1;
         isOpenDS1 = isOpenDS2 = isOpenDS3 = isOpenDS4 = 0;
     }
