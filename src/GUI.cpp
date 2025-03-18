@@ -94,20 +94,19 @@ void GUI::drawDS2() {
 }
 
 void GUI::drawDS3() {
-    LTextBox insert;
-    ActionBox action;
-    AVL Tree;
-    for (int i = 0; i < 20; i++) {
-        Tree.TreeRoot = Tree.insertNode(i);
-    }
     DS3 ds3;
+    int i = 0;
+    // int a[] = {11, 28, 29, 13, 22, 23, 24, 17, 4, 16};
+    int a[] = {1, 4, 5, 2, 3, 6, 7, 8, 9, 10};
     while (GUI::isOpenDS3) {
         BeginDrawing();
         ClearBackground(WHITE);
+        if (i < 10) {
+            ds3.Tree.insertNode(a[i]);
+            i++;
+            WaitTime(2);
+        }
         ds3.draw();
-        insert.draw();
-        action.draw();
-        Tree.draw();
         BACK();
         EndDrawing();
         if(WindowShouldClose()) {
