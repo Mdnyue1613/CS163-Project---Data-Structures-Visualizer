@@ -4,6 +4,9 @@
 #include <cmath>
 #include <vector>
 #include <stack>
+#include <random>
+#include <chrono>
+#include <thread>
 using namespace std;
 
 struct TreeNode{
@@ -29,5 +32,8 @@ struct AVL {
     TreeNode* insertNode(int x);
     TreeNode* rotateLeft(TreeNode* &root);
     TreeNode* rotateRight(TreeNode* &root);
+    void removeAll();
+    ~AVL();
+    void random(int n);
     void draw();
 };

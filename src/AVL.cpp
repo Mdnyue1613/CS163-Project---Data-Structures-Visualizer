@@ -11,7 +11,6 @@ TreeNode::TreeNode(int x) {
 
 AVL::AVL() {
     TreeRoot = nullptr;
-    allNode.resize(0);
 }
 
 int AVL::getBalance(TreeNode* root) {
@@ -206,4 +205,30 @@ void AVL::draw() {
             string s = to_string(Node->val);
             DrawText(s.c_str(), Node->position.x, Node->position.y, Node->radius,WHITE);
         }
+}
+
+void AVL::removeAll() {
+    for (auto Node : allNode) {
+        delete Node;
+        Node = nullptr;
+    }
+    TreeRoot = nullptr;
+    allNode.clear();
+}
+
+AVL::~AVL() {
+    removeAll();
+}
+
+void AVL::random(int n) {
+    random_device rd;
+    mt19937 gen(rd());
+    uniform_int_distribution<int> dist(1, 30);
+    
+    if(TreeRoot){
+        removeAll();
+    }
+    for(int i = 0; i < n; i++) {
+        TreeRoot = insertNode(dist(gen));
+    }
 }
