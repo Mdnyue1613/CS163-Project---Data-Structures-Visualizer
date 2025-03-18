@@ -175,10 +175,33 @@ TreeNode* AVL::insertNode(int x) {
 }
 
 void AVL::draw() {
-        // DrawCircle(TreeRoot->position.x, TreeRoot->position.y, TreeRoot->radius, BLUE);
-        // string s = to_string(TreeRoot->val);
-        // DrawText(s.c_str(), TreeRoot->position.x, TreeRoot->position.y, TreeRoot->radius,WHITE);
         for (auto Node : allNode) {
+            if (Node->left) {
+                Vector2 pointNode;
+                Vector2 pointLeft;
+                float dis = (Node->position.x - Node->left->position.x) *  (Node->position.x - Node->left->position.x) + (Node->position.y - Node->left->position.y) * (Node->position.y - Node->left->position.y);
+                dis = sqrt(dis);
+                float dis_x = (Node->position.x - Node->left->position.x);
+                float dis_y = (Node->left->position.y - Node->position.y);
+                float delta_x = (dis_x / dis) * Node->radius;
+                float delta_y = (dis_y / dis) * Node->radius;
+                pointNode = {Node->position.x - delta_x, Node->position.y + delta_y};
+                pointLeft = {Node->left->position.x + delta_x, Node->left->position.y - delta_y};
+                DrawLineEx(pointNode, pointLeft, 2.0, BLACK);
+            }
+            if (Node->right) {
+                Vector2 pointNode;
+                Vector2 pointRight;
+                float dis = (Node->position.x - Node->right->position.x) *  (Node->position.x - Node->right->position.x) + (Node->position.y - Node->right->position.y) * (Node->position.y - Node->right->position.y);
+                dis = sqrt(dis);
+                float dis_x = (Node->right->position.x - Node->position.x);
+                float dis_y = (Node->right->position.y - Node->position.y);
+                float delta_x = (dis_x / dis) * Node->radius;
+                float delta_y = (dis_y / dis) * Node->radius;
+                pointNode = {Node->position.x + delta_x, Node->position.y + delta_y};
+                pointRight = {Node->right->position.x - delta_x, Node->right->position.y - delta_y};
+                DrawLineEx(pointNode, pointRight, 2.0, BLACK);
+            }
             DrawCircle(Node->position.x, Node->position.y, Node->radius, BLUE);
             string s = to_string(Node->val);
             DrawText(s.c_str(), Node->position.x, Node->position.y, Node->radius,WHITE);

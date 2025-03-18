@@ -1,6 +1,7 @@
 #pragma once
 #include <raylib.h>
 #include <algorithm>
+#include <cmath>
 #include <vector>
 #include <stack>
 using namespace std;
@@ -8,6 +9,7 @@ using namespace std;
 struct TreeNode{
     int val;
     int height;
+
     Vector2 position;
     float radius;
     TreeNode *left, *right;
