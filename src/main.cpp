@@ -1,4 +1,7 @@
 #include "../header/GUI.h"
+#include "../header/AVL.h"
+#include <iostream>
+#include <queue>
 
 bool GUI::isOpenMenu = true;
 bool GUI::isOpenDS1 = false;
