@@ -26,75 +26,42 @@ void AVL::setHeight(TreeNode* &root) {
     root->height = 1 + max(lheight, rheight);
 }
 
-void AVL::update_x(TreeNode* &root, bool direction) {
-    if (root == nullptr) return;
-    if (direction == 1) {
-        root->position.x += 2.5 * root->radius;
-    }
-    else {
-        root->position.x -= 2.5 * root->radius;
-    }
-    update_x(root->left, direction);
-    update_x(root->right, direction);
-}
-
-void AVL::update_y(TreeNode* &root, bool direction) {
-    if (root == nullptr) return;
-    if (direction == 1) {
-        root->position.y += 3 * root->radius;
-    }
-    else {
-        root->position.y -= 3 * root->radius;
-    }
-    update_y(root->left, direction);
-    update_y(root->right, direction);
-}
-
-void AVL::FixPosition(TreeNode* &root, int x) {
-    if (!root) return;
-    if(root->position.x == x) return;
-    float ld = root->left ? root->position.x - root->left->position.x : 0;
-    float rd = root->right ? root->right->position.x - root->position.x : 0;
-    root->position.x = x;
-    FixPosition(root->left, x - ld);
-    FixPosition(root->right, x + rd);
-}
-
-int AVL::findUpdateIndex(vector<bool> v, bool find) {
-    int n = v.size() - 1;
-    int res = -1;
-    for (int i = n; i >= 0; i--) {
-        if (v[i] == find) return i;
-    }
-    return res;
-}
-
 TreeNode* AVL::rotateLeft(TreeNode* &root) {
-    if (!root || !root->right) return root;
-    TreeNode* tmp = root->right;
-    root->right = tmp->left;
-    tmp->left = root;
+    TreeNode* newRoot = root->right;
+    TreeNode* newChild = newRoot->left;
+
+    newRoot->parent = root->parent;
+    root->parent = newRoot;
+    if(newChild) newChild->parent = root;
+
+    newRoot->left = root;
+    root->right = newChild;
+
+    if(newChild) newChild->isLeft = false;
+    root->isLeft = true;
+
     setHeight(root);
-    setHeight(tmp);
-    update_y(tmp->right, 0);
-    update_y(root->left, 1);
-    root->position.y += 3 * root->radius;
-    tmp->position.y -= 3 * tmp->radius;
-    return tmp;
+    setHeight(newRoot);
+    return newRoot;
 }
 
 TreeNode * AVL::rotateRight(TreeNode* &root) {
-    if (!root || !root->left) return root;
-    TreeNode* tmp = root->left;
-    root->left = tmp->right;
-    tmp->right = root;
+    TreeNode* newRoot = root->left;
+    TreeNode* newChild = newRoot->right;
+
+    newRoot->parent = root->parent;
+    root->parent = newRoot;
+    if(newChild) newChild->parent = root;
+
+    newRoot->right = root;
+    root->left = newChild;
+
+    if(newChild) newChild->isLeft = true;
+    root->isLeft = false;
+
     setHeight(root);
-    setHeight(tmp);
-    update_y(tmp->left, 0);
-    update_y(root->right, 1);
-    root->position.y += 3 * root->radius;
-    tmp->position.y -= 3 * tmp->radius;
-    return tmp;
+    setHeight(newRoot);
+    return newRoot;
 }
 
 TreeNode* AVL::insertNode(int x) {
@@ -102,8 +69,9 @@ TreeNode* AVL::insertNode(int x) {
     vector<bool> direction;
     if (!TreeRoot) {
         TreeRoot = new TreeNode(x);
+        TreeRoot->parent = nullptr;
+        TreeRoot->isLeft = false;
         TreeRoot->position = {600, 400};
-        allNode.push_back(TreeRoot);
     }
     else {
         path.push_back(TreeRoot);
@@ -124,33 +92,31 @@ TreeNode* AVL::insertNode(int x) {
         TreeNode* Parent = path.back();
         TreeNode* toInsert = nullptr;
         if (x < Parent->val) {
-            int updateIndex = findUpdateIndex(direction, 1) + 1;
-            update_x(path[updateIndex], direction[0]);
             Parent->left = new TreeNode(x);
             toInsert = Parent->left;
-            toInsert->position = {Parent->position.x - (float)1.5 * Parent->radius, Parent->position.y + 3 * Parent->radius};
-            allNode.push_back(toInsert);
+            toInsert->parent = Parent;
+            toInsert->position = {Parent->position.x - distance_x, Parent->position.y + distance_y};
+            toInsert->isLeft = true;
         }
         else if (x > Parent->val) {
-            int updateIndex = findUpdateIndex(direction, 0) + 1;
-            update_x(path[updateIndex], direction[0]);
             Parent->right = new TreeNode(x);
             toInsert = Parent->right;
-            toInsert->position = {Parent->position.x + (float)1.5 * Parent->radius, Parent->position.y + 3 * Parent->radius};
-            allNode.push_back(toInsert);
+            toInsert->parent = Parent;
+            toInsert->position = {Parent->position.x + distance_x, Parent->position.y + distance_y};
+            toInsert->isLeft = false;
         }
-        else return TreeRoot;
         while (!path.empty()) {
             TreeNode* cur = path.back();
             path.pop_back();
             setHeight(cur);
-            int curDirection;
-            curDirection = (int) direction.back();
+            bool curDirection;
+            if(!direction.empty()) curDirection = direction.back();
             direction.pop_back();
             if(getBalance(cur) > 1) { //imbalance to the left
                 if(cur->left && getBalance(cur->left) < 0) { // left right problem
                     TreeNode* tmp = rotateLeft(cur->left);
                     cur->left = tmp;
+                    tmp->parent = cur;
                 }
                 if (path.empty()) {
                     TreeRoot = rotateRight(cur);
@@ -164,6 +130,7 @@ TreeNode* AVL::insertNode(int x) {
                 if(cur->right && getBalance(cur->right) > 0) { // right left problem
                     TreeNode* tmp = rotateRight(cur->right);
                     cur->right = tmp;
+                    tmp->parent = cur;
                 }
                 if (path.empty()) {
                     TreeRoot = rotateLeft(cur);
@@ -173,9 +140,9 @@ TreeNode* AVL::insertNode(int x) {
                 }
                 else if (curDirection == 0) path.back()->left = rotateLeft(cur);
             }
-            FixPosition(TreeRoot, 600);
         }
     }
+    updateTreePosition();
     return TreeRoot;
 }
 
@@ -214,7 +181,7 @@ void AVL::draw() {
 }
 
 void AVL::removeAll() {
-    for (auto Node : allNode) {
+    for (auto& Node : allNode) {
         delete Node;
         Node = nullptr;
     }
@@ -236,5 +203,49 @@ void AVL::random(int n) {
     }
     for(int i = 0; i < n; i++) {
         TreeRoot = insertNode(dist(gen));
+    }
+}
+
+void AVL::moveTree(TreeNode *&root, bool direction) {
+    if (!root) return;
+    root->position.x += (direction ? distance_x : -distance_x);
+    moveTree(root->left, 0);
+    moveTree(root->right, 1);
+}
+
+void AVL::updateTreePosition() {
+    if (!TreeRoot) return;
+    allNode.clear();
+    queue<TreeNode*> q;
+    q.push(TreeRoot);
+    while (!q.empty()) {
+        TreeNode* tmp = q.front();
+        q.pop();
+        allNode.push_back(tmp);
+        if(tmp->left) q.push(tmp->left);
+        if(tmp->right) q.push(tmp->right);
+    }
+
+    for (auto& Node : allNode) {
+        if (Node == TreeRoot) {
+            Node->position = {600, 400};
+        }
+        else {
+            TreeNode* cur = TreeRoot;
+            while(cur) {
+                if (Node->val < cur->val) {
+                    if (cur->left && cur->left->val < Node->val) moveTree(cur->left, 0);
+                    cur = cur->left;
+                }
+                else if (Node->val > cur->val) {
+                    if (cur->right && cur->right->val > Node->val) moveTree(cur->right, 1);
+                    cur = cur->right;
+                }
+                else {
+                    Node->position = {Node->parent->position.x + (Node->isLeft ? -distance_x : distance_x), Node->parent->position.y + distance_y};
+                    break;
+                }
+            }
+        }
     }
 }
