@@ -100,8 +100,8 @@ void GUI::drawDS3() {
     while (GUI::isOpenDS3) {
         BeginDrawing();
         ClearBackground(WHITE);
-        if (i < 20) {
-            ds3.Tree.insertNode(a[i]);
+        if (i < 9) {
+            ds3.Tree.insertNode(ds3.Tree.TreeRoot, nullptr, a[i]);
             i++;
             WaitTime(2);
         }

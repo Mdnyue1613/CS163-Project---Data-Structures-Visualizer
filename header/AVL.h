@@ -26,10 +26,10 @@ struct AVL {
     const float distance_x = 60;
     const float distance_y = 60;
     AVL();
-    int getBalance(TreeNode* root);
-    void setHeight(TreeNode* &root);
-    void update_x(TreeNode* &root, bool direction);
-    TreeNode* insertNode(int x);
+    int getBalance(TreeNode *root);
+    void setHeight(TreeNode *&root);
+    void insertNode(TreeNode *&root, TreeNode *parent, int x);
+    void insertNodeNonDuplicate(TreeNode *&root, TreeNode *parent, int x);
     TreeNode* rotateLeft(TreeNode* &root);
     TreeNode* rotateRight(TreeNode* &root);
     void removeAll();
