@@ -148,7 +148,10 @@ TreeNode* AVL::insertNode(int x) {
             curDirection = (int) direction.back();
             direction.pop_back();
             if(getBalance(cur) > 1) { //imbalance to the left
-                if(cur->left && getBalance(cur->left) < 0) cur->left = rotateLeft(cur->left);
+                if(cur->left && getBalance(cur->left) < 0) { // left right problem
+                    TreeNode* tmp = rotateLeft(cur->left);
+                    cur->left = tmp;
+                }
                 if (path.empty()) {
                     TreeRoot = rotateRight(cur);
                 }
@@ -158,7 +161,10 @@ TreeNode* AVL::insertNode(int x) {
                 else if (curDirection == 0) path.back()->left = rotateRight(cur);
             }
             else if (getBalance(cur) < -1) { // imbalance to the right
-                if(cur->right && getBalance(cur->right) > 0) cur->right = rotateRight(cur->right);
+                if(cur->right && getBalance(cur->right) > 0) { // right left problem
+                    TreeNode* tmp = rotateRight(cur->right);
+                    cur->right = tmp;
+                }
                 if (path.empty()) {
                     TreeRoot = rotateLeft(cur);
                 }
