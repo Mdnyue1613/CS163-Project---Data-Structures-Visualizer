@@ -1,6 +1,7 @@
 #include "../header/GUI.h"
 #include "../header/BOX.h"
 #include "../header/LInputBox.h"
+#include "../header/AVL.h"
 #include <iostream>
 void GUI::startProgram() {
     InitWindow(1200, 800, "Hello Raylib");
@@ -93,14 +94,17 @@ void GUI::drawDS2() {
 }
 
 void GUI::drawDS3() {
-    Texture2D TreeTexture = LoadTexture("./Assets/Tree.png");
-    LTextBox insert;
-    ActionBox action;
+    DS3 ds3;
+    int i = 0;
     while (GUI::isOpenDS3) {
         BeginDrawing();
-        DrawTexture(TreeTexture, 0, 0, WHITE);
-        insert.draw();
-        action.draw();
+        ClearBackground(WHITE);
+        if (i < 20) {
+            WaitTime(2);
+            ds3.Tree.insertNode(i);
+            i++;
+        }
+        ds3.draw();
         BACK();
         EndDrawing();
         if(WindowShouldClose()) {
@@ -108,7 +112,6 @@ void GUI::drawDS3() {
             break;
         }
     }
-    UnloadTexture(TreeTexture);
 }
 
 void GUI::drawDS4() {
