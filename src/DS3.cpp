@@ -8,16 +8,15 @@ DS3::DS3() {
 
     // Function Area
     Color functionAreaBackgroundColor = {75, 189, 224, 255};
-    functionArea = PFunctionArea(0, 86, 307, 296, functionAreaBackgroundColor);
+    functionArea = LFunctionArea(0, 86, 307, 296, functionAreaBackgroundColor);
 }
 
 void DS3::draw() {
     // Draw the title of Data Structure 1
     titleBox.draw();
-
     // Draw the function area and take request from user
     vector<string> request = functionArea.draw();
-
+    inputBox.draw();
     // Operate request
     if(request[0] == "initialize" && request[1] == "random") {
         RandomInitialize();
@@ -27,5 +26,7 @@ void DS3::draw() {
     Tree.draw();
 }
 void DS3::RandomInitialize() {
-    Tree.random(10);
+    Tree.random(inputBox.data);
+    inputBox.data = 0;
+    inputBox.inputData = "";
 }

@@ -95,16 +95,9 @@ void GUI::drawDS2() {
 
 void GUI::drawDS3() {
     DS3 ds3;
-    int a[] = {80, 79, 14, 60, 32, 31, 72, 33, 59, 61, 2, 38, 71, 69, 90, 75, 4, 39, 50, 44};
-    int i = 0;
     while (GUI::isOpenDS3) {
         BeginDrawing();
         ClearBackground(WHITE);
-        if (i < 9) {
-            ds3.Tree.insertNode(ds3.Tree.TreeRoot, nullptr, a[i]);
-            i++;
-            WaitTime(2);
-        }
         ds3.draw();
         BACK();
         EndDrawing();

@@ -177,8 +177,12 @@ void AVL::random(int n) {
     if(TreeRoot){
         removeAll();
     }
-    for(int i = 0; i < n; i++) {
-        insertNode(TreeRoot, nullptr, dist(gen));
+    set<int> st;
+    while(st.size() < n) {
+        int num = dist(gen);
+        if (st.insert(num).second) {
+            insertNode(TreeRoot, nullptr, num);
+        }
     }
 }
 
