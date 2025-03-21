@@ -22,6 +22,10 @@ void DS3::draw() {
         RandomInitialize();
     }
 
+    if(request[0] == "insert" && request[1] == "Insert") {
+        Insert();
+    }
+
     // Draw Data Structure
     Tree.draw();
 }
@@ -30,3 +34,10 @@ void DS3::RandomInitialize() {
     inputBox.data = 0;
     inputBox.inputData = "";
 }
+
+void DS3::Insert() {
+    Tree.insertNode(Tree.TreeRoot, nullptr, inputBox.data);
+    inputBox.data = 0;
+    inputBox.inputData = "";
+}
+

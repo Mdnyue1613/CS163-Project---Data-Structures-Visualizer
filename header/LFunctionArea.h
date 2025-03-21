@@ -4,6 +4,7 @@
 #include<string>
 #include<cstring>
 #include "PFunctionArea.h"
+#include "LInsertMenu.h"
 using namespace std;
 
 struct LFunctionArea {

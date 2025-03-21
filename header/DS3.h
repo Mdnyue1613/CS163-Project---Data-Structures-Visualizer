@@ -14,4 +14,5 @@ struct DS3 {
     DS3();
     void draw();
     void RandomInitialize();
+    void Insert();
 };
