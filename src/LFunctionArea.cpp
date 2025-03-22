@@ -18,8 +18,10 @@ vector<string> LFunctionArea::draw(void) {
     // Current mode: Initialize
     if(ChooseAction == 0) {
         PInitializeMenu menu(background.x, background.y, background.width, background.height, 20);
-        string ret = menu.draw();
-        return vector<string>{"initialize", ret};
+        vector<string> ret = menu.draw();
+        vector<string> res = {"initialize"};
+        res.insert(res.end(), ret.begin(), ret.end());
+        return res;
     }
 
     else if(ChooseAction == 1) {
