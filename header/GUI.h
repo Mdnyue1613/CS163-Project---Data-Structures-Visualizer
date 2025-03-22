@@ -1,5 +1,8 @@
 #include "raylib.h"
 #include <vector>
+#include "DS3.h"
+#include "DS1.h"
+
 
 using namespace std;
 
