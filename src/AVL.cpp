@@ -39,6 +39,8 @@ TreeNode* AVL::rotateLeft(TreeNode* &root) {
 
     if(newChild) newChild->isLeft = false;
     root->isLeft = true;
+    if (newRoot->parent && newRoot->val < newRoot->parent->val) newRoot->isLeft = true;
+    else if (newRoot->parent && newRoot->val > newRoot->parent->val) newRoot->isLeft = false;
 
     setHeight(root);
     setHeight(newRoot);
@@ -58,7 +60,8 @@ TreeNode * AVL::rotateRight(TreeNode* &root) {
 
     if(newChild) newChild->isLeft = true;
     root->isLeft = false;
-
+    if (newRoot->parent && newRoot->val < newRoot->parent->val) newRoot->isLeft = true;
+    else if (newRoot->parent && newRoot->val > newRoot->parent->val) newRoot->isLeft = false;
     
     setHeight(root);
     setHeight(newRoot);
@@ -174,15 +177,18 @@ void AVL::random(int n) {
     if(TreeRoot){
         removeAll();
     }
-    for(int i = 0; i < n; i++) {
-        insertNode(TreeRoot, nullptr, dist(gen));
+    set<int> st;
+    while(st.size() < n) {
+        int num = dist(gen);
+        if (st.insert(num).second) {
+            insertNode(TreeRoot, nullptr, num);
+        }
     }
 }
 
 void AVL::moveTree(TreeNode *&root, bool direction) {
     if (!root) return;
     root->position.x += (direction ? distance_x : -distance_x);
-    //root->position.y = root->parent->position.y + 100;
     moveTree(root->left, direction);
     moveTree(root->right, direction);
 }

@@ -8,6 +8,7 @@
 #include <random>
 #include <chrono>
 #include <thread>
+#include <set>
 using namespace std;
 
 struct TreeNode{
@@ -23,8 +24,8 @@ struct TreeNode{
 struct AVL {
     TreeNode* TreeRoot;
     vector<TreeNode*> allNode;
-    const float distance_x = 60;
-    const float distance_y = 60;
+    const float distance_x = 40;
+    const float distance_y = 40;
     AVL();
     int getBalance(TreeNode *root);
     void setHeight(TreeNode *&root);
