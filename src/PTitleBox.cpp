@@ -9,6 +9,12 @@ PTitleBox::PTitleBox(int x, int y, int width, int height, int outThickness, Colo
     titleSize = nameSize;
 }
 
+PTitleBox::PTitleBox(Vector2 pos, Vector2 size, int outThickness, Color inColor, Color outColor, char name[50], int nameSize) :
+ PBOX::PBOX(pos, size, outThickness, inColor, outColor) {
+    strcpy(title, name);
+    titleSize = nameSize;
+}
+
 void PTitleBox::draw(void) {
     PBOX::draw();
     int textWidth = MeasureText(title, titleSize);

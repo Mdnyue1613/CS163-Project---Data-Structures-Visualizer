@@ -10,6 +10,10 @@ PBOX::PBOX(int x, int y, int width, int height, int outThickness, Color inColor,
     color = inColor;
     outlineColor = outColor;
 }
+
+PBOX::PBOX(Vector2 pos, Vector2 size, int outThickness, Color inColor, Color outColor) :
+    rec{pos.x, pos.y, size.x, size.y}, outlineThickness(outThickness), color(inColor), outlineColor(outColor) {
+}
 bool PBOX::isMove() {
     return CheckCollisionPointRec(GetMousePosition(), rec);
 }

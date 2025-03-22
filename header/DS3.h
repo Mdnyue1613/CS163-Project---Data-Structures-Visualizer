@@ -3,6 +3,7 @@
 #include "AVL.h"
 #include "PInitializeMenu.h"
 #include "PFunctionArea.h"
+#include "Constants.h"
 
 struct DS3 {
     PTitleBox titleBox;

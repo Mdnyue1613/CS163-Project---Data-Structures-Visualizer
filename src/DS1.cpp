@@ -1,14 +1,8 @@
 #include "../header/DS1.h"
 
-DS1::DS1(void) {
-    // Title Box
-    Color titleBoxColor = {248, 240, 240, 255};
-    char titleName[] = "DOUBLY LINKED LIST";
-    titleBox = PTitleBox(0, 0, 1200, 83, 6, titleBoxColor, BLACK, titleName, 30);
-
-    // Function Area
-    Color functionAreaBackgroundColor = {75, 189, 224, 255};
-    functionArea = PFunctionArea(0, 86, 307, 296, functionAreaBackgroundColor);
+DS1::DS1(void) :
+    functionArea(Constants::functionArea::pos, Constants::functionArea::size, Constants::functionArea::boxColor),
+    titleBox(Constants::titleBar::pos, Constants::titleBar::size, Constants::titleBar::outlineThickness, Constants::titleBar::boxColor, Constants::titleBar::outlineColor, "DOUBLY LINKED LIST", Constants::titleBar::textSize) {
 }
 
 void DS1::draw(void) {

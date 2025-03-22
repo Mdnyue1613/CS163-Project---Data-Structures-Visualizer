@@ -2,6 +2,7 @@
 #include <raylib.h>
 #include "PTitleBox.h"
 #include <string>
+#include <vector>
 using namespace std;
 
 struct PInitializeMenu {
@@ -15,5 +16,6 @@ struct PInitializeMenu {
 
     PInitializeMenu(void); // Empty initialize
     PInitializeMenu(int x, int y, int width, int height, int characterSize); // Initialize with size of the background
-    string draw(void);
+    PInitializeMenu(Vector2 pos, Vector2 size, int characterSize); // Initialize Vector2 version
+    vector<string> draw(void);
 };

@@ -9,6 +9,7 @@ struct PBOX
 
     PBOX(void); // initialize
     PBOX(int x, int y, int width, int height, int outThickness, Color inColor, Color outColor); // initialize with parameters
+    PBOX(Vector2 pos, Vector2 size, int outThickness, Color inColor, Color outColor); // initialize with Vecter2 parementers
     bool isMove();
     bool isClick();
     void setColor(Color color);
