@@ -88,3 +88,9 @@ string PInputBox::extract(void) {
     text.clear();
     return res;
 }
+
+void PInputBox::changeTitle(string newTitle) {
+    for(int i = 0; i < (int)newTitle.size(); i++)
+        title[i] = newTitle[i];
+    title[newTitle.size()] = '\0';
+}
