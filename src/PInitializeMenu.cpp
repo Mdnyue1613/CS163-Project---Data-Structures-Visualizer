@@ -39,7 +39,7 @@ PInitializeMenu::PInitializeMenu(Vector2 pos, Vector2 size) :
         PConstants::PFunctionArea::boxOutlineThickness, 
         PConstants::PFunctionArea::iconBoxColor,
         PConstants::PFunctionArea::outlineBoxColor,
-        "Assets/Tree.png");
+        "D:/School/CS163/Project/Group and Solo Project-Visualizer/CS163-Project---Data-Structures-Visualizer/Assets/Images/PFileIcon.png");
     GO = PTitleBox(Vector2{x + PConstants::PFunctionArea::spaceX, y + height - PConstants::PFunctionArea::spaceY - PConstants::PFunctionArea::boxHeight}, 
         Vector2{width - 2 * PConstants::PFunctionArea::spaceX, PConstants::PFunctionArea::boxHeight}, 
         PConstants::PFunctionArea::boxOutlineThickness, 

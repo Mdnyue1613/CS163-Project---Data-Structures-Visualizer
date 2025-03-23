@@ -11,12 +11,9 @@ PIconBox::~PIconBox(void) {
 
 void PIconBox::draw(void) {
     PBOX::draw();
-    Texture2D icon = LoadTexture(iconDestination.c_str());
-    if (icon.id == 0) {
-        std::cerr << "Failed to load texture!" << std::endl;
-    }
-    float scale = rec.y / icon.height;
-    DrawTextureV(icon, Vector2{rec.x, rec.y}, WHITE);
+    // float scale = rec.y / icon.height;
+    // DrawTexture(icon, 0, 0, WHITE);
+    // DrawTextureV(icon, Vector2{0, 512}, WHITE);
+    // DrawTextureEx(icon, Vector2{512, 0}, 0, 1.0f, WHITE);
     // DrawTextureEx(icon, Vector2{rec.x, rec.y}, 0.f, scale, WHITE);
-    UnloadTexture(icon);
 }

@@ -2,7 +2,10 @@
 
 DS1::DS1(void) :
     functionArea(PConstants::PFunctionArea::pos, PConstants::PFunctionArea::size),
-    titleBox(PConstants::PTitleBar::pos, PConstants::PTitleBar::size, PConstants::PTitleBar::outlineThickness, PConstants::PTitleBar::boxColor, PConstants::PTitleBar::outlineColor, "DOUBLY LINKED LIST", PConstants::PTitleBar::textSize) {
+    titleBox(PConstants::PTitleBar::pos, PConstants::PTitleBar::size, PConstants::PTitleBar::outlineThickness, PConstants::PTitleBar::boxColor, PConstants::PTitleBar::outlineColor, "DOUBLY LINKED LIST", PConstants::PTitleBar::textSize) {}
+
+DS1::~DS1(void) {
+    UnloadTexture(icon);
 }
 
 void DS1::draw(void) {
@@ -16,6 +19,8 @@ void DS1::draw(void) {
     if(request[0] == "initialize") {
         operateInitialize(request);
     }
+
+    // DrawTexture(icon, 0, 0, WHITE);
 
     // Draw Data Structure
     doublyLinkedList.draw();
@@ -82,7 +87,8 @@ vector<int> DS1::stringToVectorInt(string& s) {
             hasContent = true;
             // PConstants::PLimit::intData < lastValue * 10 + s[i] - '0' --> no valid
             if(PConstants::PLimit::intData / 10 < lastValue ||
-                PConstants::PLimit::intData % 10 < s[i] - '0')
+                (PConstants::PLimit::intData / 10 == lastValue && 
+                PConstants::PLimit::intData % 10 < s[i] - '0'))
                 valid = false;
             lastValue = lastValue * 10 + s[i] - '0';
         }
@@ -92,9 +98,15 @@ vector<int> DS1::stringToVectorInt(string& s) {
     }
     if(hasContent)
         res.push_back(lastValue);
-    return res;
+    return valid ? res : vector<int>(0);
 }
 
 void DS1::vectorIntInitialize(vector<int>& vi) {
     doublyLinkedList.build(vi);
+}
+
+void DS1::loadTextures(void) {
+    Image image = LoadImage("Assets/Images/PFileIcon.png");
+    icon = LoadTextureFromImage(image);
+    UnloadImage(image);
 }

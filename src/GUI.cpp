@@ -8,6 +8,7 @@
 void GUI::startProgram() {
     InitWindow(1200, 800, "Hello Raylib");
     SetTargetFPS(60);
+    linkedListVisualizer.loadTextures();
     while(isOpenDS1 || isOpenDS2 || isOpenDS3 || isOpenDS4 || isOpenMenu) {
         drawMenu();
         drawDS1();

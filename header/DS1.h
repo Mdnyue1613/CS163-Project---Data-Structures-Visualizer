@@ -15,11 +15,14 @@ struct DS1 {
     PFunctionArea functionArea;
     DoublyLinkedList doublyLinkedList;
     PRandom randomGenerator;
+    Texture2D icon;
 
     DS1(void); // initialize
+    ~DS1(void); // destructor
     void draw(void); // draw
     void operateInitialize(vector<string>& request);
     void randomInitialize(int x); // initialize a random data
     vector<int> stringToVectorInt(string& s);
     void vectorIntInitialize(vector<int>& vi);
+    void loadTextures(void);
 };
