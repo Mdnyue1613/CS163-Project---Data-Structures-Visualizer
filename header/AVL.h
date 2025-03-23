@@ -24,7 +24,7 @@ struct TreeNode{
 struct AVL {
     TreeNode* TreeRoot;
     vector<TreeNode*> allNode;
-    const float distance_x = 30;
+    const float distance_x = 40;
     const float distance_y = 40;
     AVL();
     int getBalance(TreeNode *root);

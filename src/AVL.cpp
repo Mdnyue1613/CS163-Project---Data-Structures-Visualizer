@@ -172,7 +172,7 @@ AVL::~AVL() {
 void AVL::random(int n) {
     random_device rd;
     mt19937 gen(rd());
-    uniform_int_distribution<int> dist(1, 99);
+    uniform_int_distribution<int> dist(1, 30);
     
     if(TreeRoot){
         removeAll();
