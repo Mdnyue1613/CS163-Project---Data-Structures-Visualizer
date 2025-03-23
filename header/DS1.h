@@ -3,7 +3,8 @@
 #include "PTitleBox.h"
 #include "PFunctionArea.h"
 #include "DoublyLinkedList.h"
-#include "Constants.h"
+#include "PConstants.h"
+#include "PRandom.h"
 #include <string>
 #include <vector>
 #include <random>
@@ -13,7 +14,9 @@ struct DS1 {
     PTitleBox titleBox;
     PFunctionArea functionArea;
     DoublyLinkedList doublyLinkedList;
+    PRandom randomGenerator;
+
     DS1(void); // initialize
     void draw(void); // draw
-    void randomInitialize(void); // initialize a random data
+    void randomInitialize(int x); // initialize a random data
 };
