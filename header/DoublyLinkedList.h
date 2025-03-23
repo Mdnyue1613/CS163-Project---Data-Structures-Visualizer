@@ -36,4 +36,5 @@ struct DoublyLinkedList {
     void random(int n); // randomize with number of nodes
     void removeAll(void); // remove all nodes
     void insert(int x); // insert a new node
+    void build(vector<int>& vi); // build a linked list with given vector<int>
 };

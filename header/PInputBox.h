@@ -34,4 +34,5 @@ struct PInputBox : public PTitleBox {
     void update(void);
     bool hasContent(void);
     string extract(void);
+    void changeTitle(string newTitle); // change the title of the box
 };
