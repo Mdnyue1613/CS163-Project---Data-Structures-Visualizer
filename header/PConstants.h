@@ -42,14 +42,38 @@ namespace PConstants {
 
     namespace PSwitchBox {
         // Size
-        const float arrowHeadWidth = 18.f;
-        const float arrowHeadHeight = 10.f;
+        const float arrowHeadWidth = 22.f;
+        const float arrowHeadHeight = 12.5f;
 
         // Space
         const float arrowHeadSpace = 10.f;
 
         // Color
         const Color arrowColor1 = BLACK;
-        const Color arrowColor2 = {71, 71, 71, 255};
+        const Color arrowColor2 = {150, 150, 150, 255};
+    };
+
+    namespace PInputBox {
+        // Color
+        const Color titleColor = {150, 150, 150, 255};
+        const Color inputColor = BLACK;
+    };
+
+    namespace PBOX {
+        // Size
+        const float emphasizeThickness = 0.5f;
+    };
+
+    namespace PCursor {
+        // Size
+        const int height = 20;
+        const int width = 8;
+        
+        // Space
+        const int leftSpace = 5;
+
+        // Time
+        const float fullTime = 0.8f;
+        const float onTime = 0.4f;
     };
 };

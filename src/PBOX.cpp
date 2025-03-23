@@ -40,5 +40,8 @@ void PBOX::setRec(Rectangle rec) {
 }
 void PBOX::draw() {
     DrawRectangleRec(rec, color);
-    DrawRectangleLinesEx(rec, outlineThickness, outlineColor);
+    if(isMove())
+        DrawRectangleLinesEx(rec, outlineThickness + PConstants::PBOX::emphasizeThickness, outlineColor);
+    else 
+        DrawRectangleLinesEx(rec, outlineThickness, outlineColor);
 }

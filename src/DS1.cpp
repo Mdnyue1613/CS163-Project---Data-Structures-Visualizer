@@ -14,13 +14,29 @@ void DS1::draw(void) {
 
     // Operate request
     if(request[0] == "initialize" && request[1] == "random") {
-        randomInitialize();
+        if(request.size() == 2) {
+            randomInitialize(randomGenerator.random(1, 20));
+        }
+        else if(request.size() == 3) {
+            bool valid(true);
+            for(char c : request[2]) {
+                if(c < '0' || '9' < c) {
+                    valid = false;
+                    break;
+                }
+            }
+            if(valid) {
+                int inputValue = stoi(request[2]);
+                if(0 < inputValue && inputValue <= 50)
+                    randomInitialize(inputValue);
+            }
+        }
     }
 
     // Draw Data Structure
     doublyLinkedList.draw();
 }
 
-void DS1::randomInitialize() {
-    doublyLinkedList.random(10);
+void DS1::randomInitialize(int x) {
+    doublyLinkedList.random(x);
 }

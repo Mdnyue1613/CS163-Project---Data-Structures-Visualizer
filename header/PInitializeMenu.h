@@ -2,6 +2,7 @@
 #include <raylib.h>
 #include "PTitleBox.h"
 #include "PSwitchBox.h"
+#include "PInputBox.h"
 #include "PConstants.h"
 #include <string>
 #include <vector>
@@ -10,6 +11,7 @@ using namespace std;
 struct PInitializeMenu {
     int x, y, width, height;
     PSwitchBox Mode;
+    PInputBox InputNumberOfNodes;
     PTitleBox GO;
 
     enum ModeID {
