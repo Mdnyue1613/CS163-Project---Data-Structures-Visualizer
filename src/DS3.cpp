@@ -36,8 +36,10 @@ void DS3::RandomInitialize() {
 }
 
 void DS3::Insert() {
-    Tree.insertNode(Tree.TreeRoot, nullptr, inputBox.data);
-    inputBox.data = 0;
-    inputBox.inputData = "";
+    if(inputBox.inputData.size() > 0) {
+        Tree.insertNode(Tree.TreeRoot, nullptr, inputBox.data);
+        inputBox.data = 0;
+        inputBox.inputData = "";
+    }
 }
 
