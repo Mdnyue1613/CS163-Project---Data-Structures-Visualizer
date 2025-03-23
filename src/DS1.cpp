@@ -1,14 +1,8 @@
 #include "../header/DS1.h"
 
-DS1::DS1(void) {
-    // Title Box
-    Color titleBoxColor = {248, 240, 240, 255};
-    char titleName[] = "DOUBLY LINKED LIST";
-    titleBox = PTitleBox(0, 0, 1200, 83, 6, titleBoxColor, BLACK, titleName, 30);
-
-    // Function Area
-    Color functionAreaBackgroundColor = {75, 189, 224, 255};
-    functionArea = PFunctionArea(0, 86, 307, 296, functionAreaBackgroundColor);
+DS1::DS1(void) :
+    functionArea(PConstants::PFunctionArea::pos, PConstants::PFunctionArea::size),
+    titleBox(PConstants::PTitleBar::pos, PConstants::PTitleBar::size, PConstants::PTitleBar::outlineThickness, PConstants::PTitleBar::boxColor, PConstants::PTitleBar::outlineColor, "DOUBLY LINKED LIST", PConstants::PTitleBar::textSize) {
 }
 
 void DS1::draw(void) {
@@ -20,13 +14,29 @@ void DS1::draw(void) {
 
     // Operate request
     if(request[0] == "initialize" && request[1] == "random") {
-        randomInitialize();
+        if(request.size() == 2) {
+            randomInitialize(randomGenerator.random(1, 20));
+        }
+        else if(request.size() == 3) {
+            bool valid(true);
+            for(char c : request[2]) {
+                if(c < '0' || '9' < c) {
+                    valid = false;
+                    break;
+                }
+            }
+            if(valid) {
+                int inputValue = stoi(request[2]);
+                if(0 < inputValue && inputValue <= 50)
+                    randomInitialize(inputValue);
+            }
+        }
     }
 
     // Draw Data Structure
     doublyLinkedList.draw();
 }
 
-void DS1::randomInitialize() {
-    doublyLinkedList.random(10);
+void DS1::randomInitialize(int x) {
+    doublyLinkedList.random(x);
 }

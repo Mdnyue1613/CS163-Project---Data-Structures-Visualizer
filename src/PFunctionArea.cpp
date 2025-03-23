@@ -3,24 +3,46 @@
 PFunctionArea::PFunctionArea(void) {
 }
 
-PFunctionArea::PFunctionArea(int x, int y, int width, int height, Color backColor) {
-    background.x = x;
-    background.y = y;
-    background.width = width;
-    background.height = height;
-    backgroundColor = backColor;
+PFunctionArea::PFunctionArea(int x, int y, int width, int height) :
+    menuInitialize(x, y, width, height) {
+    background = {1.f * x, 1.f * y, 1.f * width, 1.f * height};
     initialize = true;
+    state = PSwitchBox(Vector2{1.f * x + PConstants::PFunctionArea::spaceX, 1.f * y + PConstants::PFunctionArea::spaceY}, 
+        Vector2{1.f * width - 2 * PConstants::PFunctionArea::spaceX, PConstants::PFunctionArea::boxHeight}, 
+        PConstants::PFunctionArea::boxOutlineThickness, 
+        PConstants::PFunctionArea::boxColor, 
+        PConstants::PFunctionArea::outlineBoxColor,
+        {"Initialize", "Insert"}, PConstants::PFunctionArea::textSize);
 }
+
+PFunctionArea::PFunctionArea(Vector2 pos, Vector2 size) :
+    menuInitialize(pos, size) {
+    background = {pos.x, pos.y, size.x, size.y};
+    initialize = true;
+    state = PSwitchBox(Vector2{pos.x + PConstants::PFunctionArea::spaceX, pos.y + PConstants::PFunctionArea::spaceY}, 
+        Vector2{size.x - 2 * PConstants::PFunctionArea::spaceX, PConstants::PFunctionArea::boxHeight}, 
+        PConstants::PFunctionArea::boxOutlineThickness, 
+        PConstants::PFunctionArea::boxColor, 
+        PConstants::PFunctionArea::outlineBoxColor,
+        {"Initialize", "Insert"}, PConstants::PFunctionArea::textSize);
+};
 
 vector<string> PFunctionArea::draw(void) {
     // Draw a background
-    DrawRectangleRec(background, backgroundColor);
+    DrawRectangleRec(background, PConstants::PFunctionArea::regionColor);
+    vector<string> res;
+
+    int currentMode = state.draw();
 
     // Current mode: Initialize
-    if(initialize) {
-        PInitializeMenu menu(background.x, background.y, background.width, background.height, 20);
-        string ret = menu.draw();
-        return vector<string>{"initialize", ret};
+    if(currentMode == StateID::Initialize) {
+        vector<string> ret = menuInitialize.draw();
+        res.push_back("initialize");
+        res.insert(res.end(), ret.begin(), ret.end());
+        return res;
+    }
+    else if(currentMode == StateID::Insert) {
+
     }
 
     return vector<string>{"nothing"};
