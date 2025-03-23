@@ -8,6 +8,7 @@ bool GUI::isOpenDS1 = false;
 bool GUI::isOpenDS2 = false;
 bool GUI::isOpenDS3 = false;
 bool GUI::isOpenDS4 = false;
+DS1 GUI::linkedListVisualizer;
 
 int main() {
     GUI::startProgram();

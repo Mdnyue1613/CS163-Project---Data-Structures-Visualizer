@@ -3,40 +3,50 @@
 PInitializeMenu::PInitializeMenu(void) {
 }
 
-PInitializeMenu::PInitializeMenu(int x, int y, int width, int height, int characterSize) {
-    this->x = x;
-    this->y = y;
-    this->width = width;
-    this->height = height;
-    this->characterSize = characterSize;
-    char name[] = "Initialize";
-    char modeName[] = "Random";
-    char goName[] = "GO";
-    Name = PTitleBox(x + horizontalSpace, y + verticalSpace, width - 2 * horizontalSpace, boxHeight, boxOutlineThickness, WHITE, BLACK, name, characterSize);
-    Mode = PTitleBox(x + horizontalSpace, y + boxHeight + 2 * verticalSpace, width - 2 * horizontalSpace, boxHeight, boxOutlineThickness, WHITE, BLACK, modeName, characterSize);
-    GO = PTitleBox(x + horizontalSpace, y + height - horizontalSpace - boxHeight, width - 2 * horizontalSpace, boxHeight, boxOutlineThickness, WHITE, RED, goName, characterSize);
+PInitializeMenu::PInitializeMenu(int x, int y, int width, int height) :
+    x(x), y(y), width(width), height(height) {
+    Mode = PSwitchBox(Vector2{1.f * x + PConstants::PFunctionArea::spaceX, 1.f * y + PConstants::PFunctionArea::boxHeight + 2 * PConstants::PFunctionArea::spaceY}, 
+        Vector2{1.f * width - 2 * PConstants::PFunctionArea::spaceX, PConstants::PFunctionArea::boxHeight}, 
+        PConstants::PFunctionArea::boxOutlineThickness, 
+        PConstants::PFunctionArea::boxColor, 
+        PConstants::PFunctionArea::outlineBoxColor, 
+        {"Random", "Input"}, PConstants::PFunctionArea::textSize);
+    GO = PTitleBox(Vector2{x + PConstants::PFunctionArea::spaceX, y + height - PConstants::PFunctionArea::spaceY - PConstants::PFunctionArea::boxHeight}, 
+        Vector2{width - 2 * PConstants::PFunctionArea::spaceX, PConstants::PFunctionArea::boxHeight}, 
+        PConstants::PFunctionArea::boxOutlineThickness, 
+        PConstants::PFunctionArea::boxColor, 
+        PConstants::PFunctionArea::GOColor, 
+        "GO", 
+        PConstants::PFunctionArea::textSize);
 }
 
-PInitializeMenu::PInitializeMenu(Vector2 pos, Vector2 size, int characterSize) :
-    x(pos.x), y(pos.y), width(size.x), height(size.y), characterSize(characterSize) {
-    char name[] = "Initialize";
-    char modeName[] = "Random";
-    char goName[] = "GO";
-    Name = PTitleBox(x + horizontalSpace, y + verticalSpace, width - 2 * horizontalSpace, boxHeight, boxOutlineThickness, WHITE, BLACK, name, characterSize);
-    Mode = PTitleBox(x + horizontalSpace, y + boxHeight + 2 * verticalSpace, width - 2 * horizontalSpace, boxHeight, boxOutlineThickness, WHITE, BLACK, modeName, characterSize);
-    GO = PTitleBox(x + horizontalSpace, y + height - horizontalSpace - boxHeight, width - 2 * horizontalSpace, boxHeight, boxOutlineThickness, WHITE, RED, goName, characterSize);
+PInitializeMenu::PInitializeMenu(Vector2 pos, Vector2 size) :
+    x(pos.x), y(pos.y), width(size.x), height(size.y) {
+    Mode = PSwitchBox(Vector2{1.f * x + PConstants::PFunctionArea::spaceX, 1.f * y + PConstants::PFunctionArea::boxHeight + 2 * PConstants::PFunctionArea::spaceY}, 
+        Vector2{1.f * width - 2 * PConstants::PFunctionArea::spaceX, PConstants::PFunctionArea::boxHeight}, 
+        PConstants::PFunctionArea::boxOutlineThickness, 
+        PConstants::PFunctionArea::boxColor, 
+        PConstants::PFunctionArea::outlineBoxColor, 
+        {"Random", "Input"}, PConstants::PFunctionArea::textSize);
+    GO = PTitleBox(Vector2{x + PConstants::PFunctionArea::spaceX, y + height - PConstants::PFunctionArea::spaceY - PConstants::PFunctionArea::boxHeight}, 
+        Vector2{width - 2 * PConstants::PFunctionArea::spaceX, PConstants::PFunctionArea::boxHeight}, 
+        PConstants::PFunctionArea::boxOutlineThickness, 
+        PConstants::PFunctionArea::boxColor, 
+        PConstants::PFunctionArea::GOColor, 
+        "GO", 
+        PConstants::PFunctionArea::textSize);
 }
 
 vector<string> PInitializeMenu::draw(void) {
-    Name.draw();
-    Mode.draw();
-    // Insert.draw();
+    int currentMode = Mode.draw();
     GO.draw();
-    if(GO.isClick()) {
-        return {"random"};
+    
+    if(currentMode == ModeID::Random) {
+        if(GO.isClick())
+            return {"random"};
     }
-    // else if(Insert.userInput()) {
-    //     ...
-    // }
+    else if(currentMode == ModeID::Input) {
+
+    }
     return {"nothing"};
 }

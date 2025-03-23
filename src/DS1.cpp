@@ -1,8 +1,8 @@
 #include "../header/DS1.h"
 
 DS1::DS1(void) :
-    functionArea(Constants::functionArea::pos, Constants::functionArea::size, Constants::functionArea::boxColor),
-    titleBox(Constants::titleBar::pos, Constants::titleBar::size, Constants::titleBar::outlineThickness, Constants::titleBar::boxColor, Constants::titleBar::outlineColor, "DOUBLY LINKED LIST", Constants::titleBar::textSize) {
+    functionArea(PConstants::PFunctionArea::pos, PConstants::PFunctionArea::size),
+    titleBox(PConstants::PTitleBar::pos, PConstants::PTitleBar::size, PConstants::PTitleBar::outlineThickness, PConstants::PTitleBar::boxColor, PConstants::PTitleBar::outlineColor, "DOUBLY LINKED LIST", PConstants::PTitleBar::textSize) {
 }
 
 void DS1::draw(void) {
