@@ -8,9 +8,6 @@ struct PInputBox : public PTitleBox {
     /*
     Box allow user to type text into it.
     When press "backspace" once, text delete the last character.
-
-    When press "backspace" for a long time, multiple last characters are deleted. 
-    The more time user presses, the more characters are deleted.
     */
 
     struct BlinkingCursor {

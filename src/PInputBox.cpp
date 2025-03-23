@@ -75,10 +75,6 @@ void PInputBox::update(void) {
         inputKey = GetKeyPressed();
     }
 
-    // Press "backspace" effect
-    if(IsKeyDown(KEY_BACKSPACE) && text.size())
-        text.pop_back();
-
     // Update x position of the blinking cursor
     cursor.setX(rec.x + PConstants::PCursor::leftSpace + MeasureText(text.c_str(), titleSize));
 }
