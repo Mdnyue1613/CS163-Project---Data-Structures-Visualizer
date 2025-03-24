@@ -28,8 +28,10 @@ struct PInitializeMenu {
     };
 
     PInitializeMenu(void); // Empty initialize
+    ~PInitializeMenu(void); // Delete used memories
     PInitializeMenu(int x, int y, int width, int height); // Initialize with size of the background
     PInitializeMenu(Vector2 pos, Vector2 size); // Initialize Vector2 version
     void draw(void);
     vector<string> update(void);
+    void prepare(void);
 };

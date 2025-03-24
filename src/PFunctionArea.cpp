@@ -52,3 +52,7 @@ vector<string> PFunctionArea::draw(void) {
 
     return vector<string>{"nothing"};
 }
+
+void PFunctionArea::prepare(void) {
+    menuInitialize.prepare();
+}

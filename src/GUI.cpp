@@ -5,10 +5,11 @@
 #include "../header/TEXTBOX.h"
 #include "../header/GraphVisualize.h"
 #include <iostream>
+
 void GUI::startProgram() {
     InitWindow(1200, 800, "Hello Raylib");
     SetTargetFPS(60);
-    linkedListVisualizer.loadTextures();
+    linkedListVisualizer.prepare();
     while(isOpenDS1 || isOpenDS2 || isOpenDS3 || isOpenDS4 || isOpenMenu) {
         drawMenu();
         drawDS1();

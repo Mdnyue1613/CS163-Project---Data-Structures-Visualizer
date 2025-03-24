@@ -24,6 +24,7 @@ namespace PConstants {
         // Size
         const Vector2 size = {307, 296};
         const int boxHeight = 45;
+        const int boxWidth = 143;
         const int boxOutlineThickness = 2;
 
         // Text size
@@ -80,5 +81,10 @@ namespace PConstants {
 
     namespace PLimit {
         const int intData = (int)1e9;
+    };
+
+    namespace PIconBox {
+        const float height = 41;
+        const float width = 139;
     };
 };
