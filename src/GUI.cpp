@@ -1,4 +1,5 @@
 #include "../header/GUI.h"
+#include "../header/HGraphVisualize.h"
 #include "../header/BOX.h"
 #include "../header/LInputBox.h"
 #include "../header/AVL.h"
@@ -118,18 +119,7 @@ void GUI::drawDS3() {
 }
 
 void GUI::drawDS4() {
-    // while (isOpenDS4) {
-    //     BeginDrawing();
-    //     ClearBackground(PINK);
-    //     BACK();
-    //     EndDrawing();
-    //     if(WindowShouldClose()) {
-    //         isOpenDS4 = 0;
-    //         break;
-    //     }
-    // }
-
-    GraphVisualize();
+    GraphGUI::GraphVisualize();
 }
 
 void GUI::BACK() {
