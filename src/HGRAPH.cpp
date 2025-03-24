@@ -230,89 +230,89 @@ void Graph::UpdatePosition(float t, float damping)
 
 long long Rand(long long l, long long r)
 {
-    // mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
-    // return uniform_int_distribution<long long>(l,r)(rng);
+    mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
+    return uniform_int_distribution<long long>(l,r)(rng);
 }
 
 void Graph::RandomData()
 {
-    // stable = 0;
-    // numVertex = Rand(3, 10);
-    // realNumVertex = numVertex;
+    stable = 0;
+    numVertex = Rand(3, 10);
+    realNumVertex = numVertex;
 
-    // vertex.clear();
-    // vertex.resize(numVertex + 1);
+    vertex.clear();
+    vertex.resize(numVertex + 1);
 
-    // float angleStep = 2 * PI / realNumVertex;
-    // Vector2 center = Vector2{(workspace.x + GetScreenWidth())/2, (workspace.y + GetScreenHeight())/2};
-    // float INITIAL_RADIUS = workspace.height / 500;
+    float angleStep = 2 * PI / realNumVertex;
+    Vector2 center = Vector2{(workspace.x + GetScreenWidth())/2, (workspace.y + GetScreenHeight())/2};
+    float INITIAL_RADIUS = workspace.height / 500;
     
-    // for (int i = 1; i <= realNumVertex; i++) {
-    //     vertex[i].real = 1;
-    //     vertex[i].force = {0, 0};
-    //     vertex[i].position.x = center.x + INITIAL_RADIUS * cos(i * angleStep);
-    //     vertex[i].position.y = center.y + INITIAL_RADIUS * sin(i * angleStep);
-    // }
+    for (int i = 1; i <= realNumVertex; i++) {
+        vertex[i].real = 1;
+        vertex[i].force = {0, 0};
+        vertex[i].position.x = center.x + INITIAL_RADIUS * cos(i * angleStep);
+        vertex[i].position.y = center.y + INITIAL_RADIUS * sin(i * angleStep);
+    }
 
-    // float edgeProb;
-    // if (numVertex <= 5) edgeProb = 0.7f;
-    // else if (numVertex <= 8) edgeProb = 0.4f;
-    // else edgeProb = 0.2f;
+    float edgeProb;
+    if (numVertex <= 5) edgeProb = 0.7f;
+    else if (numVertex <= 8) edgeProb = 0.4f;
+    else edgeProb = 0.2f;
 
-    // numEdge = 0;
-    // g.clear();
-    // g.resize(numVertex + 1);
-    // for (int i = 1; i <= numVertex; i++)
-    //     for (int j = 1; j <= numVertex; j++)
-    //         if (i != j)
-    //         {
-    //             if (type == 0 && j < i) continue;
-    //             if ((Rand(1, 100)) < edgeProb * 100)
-    //             {
-    //                 numEdge++;
-    //                 int weight = Rand(1, 20);
-    //                 g[i].push_back(Edge(1, j, weight));
-    //                 g[j].push_back(Edge(0, i, weight));
-    //             }
-    //         }
+    numEdge = 0;
+    g.clear();
+    g.resize(numVertex + 1);
+    for (int i = 1; i <= numVertex; i++)
+        for (int j = 1; j <= numVertex; j++)
+            if (i != j)
+            {
+                if (type == 0 && j < i) continue;
+                if ((Rand(1, 100)) < edgeProb * 100)
+                {
+                    numEdge++;
+                    int weight = Rand(1, 20);
+                    g[i].push_back(Edge(1, j, weight));
+                    g[j].push_back(Edge(0, i, weight));
+                }
+            }
 }
 
 void Graph::LoadFromFile(const char* filePath)
 {
-    // ifstream file(filePath);
-    // if (!file.is_open()) return;
+    ifstream file(filePath);
+    if (!file.is_open()) return;
 
-    // stable = 0;
-    // realNumVertex = 0;
-    // g.clear();
-    // vertex.clear();
+    stable = 0;
+    realNumVertex = 0;
+    g.clear();
+    vertex.clear();
 
-    // file >> numVertex >> numEdge;
+    file >> numVertex >> numEdge;
 
-    // g.resize(numVertex + 1);
-    // vertex.resize(numVertex + 1);
-    // for (int i = 1; i <= numEdge; i++)
-    // {
-    //     int u, v, w;
-    //     file >> u >> v >> w;
-    //     g[u].push_back(Edge(1, v, w));
-    //     g[v].push_back(Edge(0, u, w));
+    g.resize(numVertex + 1);
+    vertex.resize(numVertex + 1);
+    for (int i = 1; i <= numEdge; i++)
+    {
+        int u, v, w;
+        file >> u >> v >> w;
+        g[u].push_back(Edge(1, v, w));
+        g[v].push_back(Edge(0, u, w));
 
-    //     realNumVertex += !(vertex[u].real) + !(vertex[v].real);
-    //     vertex[u].real = vertex[v].real = 1;
-    //     vertex[u].force = vertex[v].force = {0, 0};
-    // }
+        realNumVertex += !(vertex[u].real) + !(vertex[v].real);
+        vertex[u].real = vertex[v].real = 1;
+        vertex[u].force = vertex[v].force = {0, 0};
+    }
 
-    // float angleStep = 2 * PI / realNumVertex;
-    // Vector2 center = Vector2{(workspace.x + GetScreenWidth())/2, (workspace.y + GetScreenHeight())/2};
-    // float INITIAL_RADIUS = workspace.height / 500;
-    // int count = 0;
+    float angleStep = 2 * PI / realNumVertex;
+    Vector2 center = Vector2{(workspace.x + GetScreenWidth())/2, (workspace.y + GetScreenHeight())/2};
+    float INITIAL_RADIUS = workspace.height / 500;
+    int count = 0;
     
-    // for (int i = 1; i <= realNumVertex; i++) 
-    //     if (vertex[i].real)
-    //     {
-    //         count++;
-    //         vertex[i].position.x = center.x + INITIAL_RADIUS * cos(count * angleStep);
-    //         vertex[i].position.y = center.y + INITIAL_RADIUS * sin(count * angleStep);
-    //     }
+    for (int i = 1; i <= realNumVertex; i++) 
+        if (vertex[i].real)
+        {
+            count++;
+            vertex[i].position.x = center.x + INITIAL_RADIUS * cos(count * angleStep);
+            vertex[i].position.y = center.y + INITIAL_RADIUS * sin(count * angleStep);
+        }
 }

@@ -1,5 +1,5 @@
 #include "raylib.h"
-// #include "tinyfiledialogs.h"
+#include "tinyfiledialogs.h"
 #include "HOBJECT.h"
 #include "HGRAPH.h"
 

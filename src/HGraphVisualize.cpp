@@ -102,41 +102,41 @@ void GraphGUI::DrawBackGround()
 
 void GraphGUI::DrawFunction()
 {
-    // DrawCustomizeGraphType();
+    DrawCustomizeGraphType();
 
-    // TextBox title;
-    // DrawTitleFunction(title, listFunction[currentFunction]);
+    TextBox title;
+    DrawTitleFunction(title, listFunction[currentFunction]);
 
-    // switch (currentFunction)
-    // {
-    // case 0:
-    //     DrawInitializeFunction(title);
-    //     break;
+    switch (currentFunction)
+    {
+    case 0:
+        DrawInitializeFunction(title);
+        break;
     
-    // case 1:
-    //     DrawAddFunction();
-    //     break;
+    case 1:
+        DrawAddFunction();
+        break;
     
-    // case 2:
-    //     DrawDeleteFunction();
-    //     break;
+    case 2:
+        DrawDeleteFunction();
+        break;
     
-    // case 3:
-    //     DrawUpdateFunction();
-    //     break;
+    case 3:
+        DrawUpdateFunction();
+        break;
     
-    // case 4:
-    //     DrawUpdateFunction();
-    //     break;
+    case 4:
+        DrawUpdateFunction();
+        break;
     
-    // case 5:
-    //     DrawSearchFunction();
-    //     break;
+    case 5:
+        DrawSearchFunction();
+        break;
     
-    // case 6:
-    //     DrawShortedPathFunction();
-    //     break;
-    // }
+    case 6:
+        DrawShortedPathFunction();
+        break;
+    }
 }
 
 void GraphGUI::DrawCustomizeGraphType()
@@ -195,119 +195,119 @@ void GraphGUI::DrawCustomizeGraphType()
 
 void GraphGUI::DrawTitleFunction(TextBox &title, const char* nameFunction)
 {
-    // title.rec.width = functionBG.rec.width - margin*2;
-    // title.rec.height = functionBG.rec.height / 5;
-    // title.rec.x = functionBG.rec.x + (functionBG.rec.width - title.rec.width)/2;
-    // title.rec.y = functionBG.rec.y + 5;
-    // title.recColor = WHITE;
-    // title.thick = 2;
-    // title.outlineColor = BLACK;
-    // title.text = (char*)nameFunction;
-    // title.fontSize = title.rec.height / 10 * 6;
-    // title.textColor = BLACK;
-    // title.draw();
-    // NavigationButton(title);
+    title.rec.width = functionBG.rec.width - margin*2;
+    title.rec.height = functionBG.rec.height / 5;
+    title.rec.x = functionBG.rec.x + (functionBG.rec.width - title.rec.width)/2;
+    title.rec.y = functionBG.rec.y + 5;
+    title.recColor = WHITE;
+    title.thick = 2;
+    title.outlineColor = BLACK;
+    title.text = (char*)nameFunction;
+    title.fontSize = title.rec.height / 10 * 6;
+    title.textColor = BLACK;
+    title.draw();
+    NavigationButton(title);
 }
 
 void GraphGUI::NavigationButton(TextBox functionTitle)
 {
-    // leftButton.scale = functionTitle.rec.height / leftButton.img.height;
-    // leftButton.rec = Rectangle{functionTitle.rec.x, functionTitle.rec.y, leftButton.img.width * leftButton.scale, leftButton.img.height * leftButton.scale};
-    // leftButton.rotation = 0;
-    // leftButton.color = WHITE;
+    leftButton.scale = functionTitle.rec.height / leftButton.img.height;
+    leftButton.rec = Rectangle{functionTitle.rec.x, functionTitle.rec.y, leftButton.img.width * leftButton.scale, leftButton.img.height * leftButton.scale};
+    leftButton.rotation = 0;
+    leftButton.color = WHITE;
 
-    // rightButton.scale = functionTitle.rec.height / rightButton.img.height;
-    // rightButton.rec = Rectangle{functionTitle.rec.x + functionTitle.rec.width - rightButton.rec.width, functionTitle.rec.y, rightButton.img.width * rightButton.scale, rightButton.img.height * rightButton.scale};
-    // rightButton.rotation = 0;
-    // rightButton.color = WHITE;
+    rightButton.scale = functionTitle.rec.height / rightButton.img.height;
+    rightButton.rec = Rectangle{functionTitle.rec.x + functionTitle.rec.width - rightButton.rec.width, functionTitle.rec.y, rightButton.img.width * rightButton.scale, rightButton.img.height * rightButton.scale};
+    rightButton.rotation = 0;
+    rightButton.color = WHITE;
 
-    // leftButton.draw();
-    // rightButton.draw();
+    leftButton.draw();
+    rightButton.draw();
 
-    // Vector2 mouse = GetMousePosition();
-    // if (CheckCollisionPointRec(mouse, leftButton.rec))
-    // {
-    //     leftButton.color = LIGHTGRAY;
-    //     leftButton.draw();
-    //     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
-    //     {
-    //         currentFunction--;
-    //         if (currentFunction < 0) currentFunction += 6;
-    //     }
-    //     leftButton.color = WHITE;
-    // }
-    // else if (CheckCollisionPointRec(mouse, rightButton.rec))
-    // {
-    //     rightButton.color = LIGHTGRAY;
-    //     rightButton.draw();
-    //     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
-    //     {
-    //         currentFunction++;
-    //         if (currentFunction > 5) currentFunction = 0;
-    //     }
-    //     rightButton.color = WHITE; 
-    // }
+    Vector2 mouse = GetMousePosition();
+    if (CheckCollisionPointRec(mouse, leftButton.rec))
+    {
+        leftButton.color = LIGHTGRAY;
+        leftButton.draw();
+        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+        {
+            currentFunction--;
+            if (currentFunction < 0) currentFunction += 6;
+        }
+        leftButton.color = WHITE;
+    }
+    else if (CheckCollisionPointRec(mouse, rightButton.rec))
+    {
+        rightButton.color = LIGHTGRAY;
+        rightButton.draw();
+        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+        {
+            currentFunction++;
+            if (currentFunction > 5) currentFunction = 0;
+        }
+        rightButton.color = WHITE; 
+    }
 }
 
 void GraphGUI::DrawInitializeFunction(TextBox title)
 {
-    // Vector2 mouse = GetMousePosition();
+    Vector2 mouse = GetMousePosition();
 
-    // TextBox chooseFile;
-    // chooseFile.rec.width = (functionBG.rec.width - margin*2*3) / 2; 
-    // chooseFile.rec.height = functionBG.rec.height / 6;
-    // chooseFile.rec.x = functionBG.rec.x + margin*2;
-    // chooseFile.rec.y = title.rec.y + title.rec.height + margin*2;
-    // chooseFile.recColor = WHITE;
-    // chooseFile.thick = 2;
-    // chooseFile.outlineColor = BLACK;
-    // chooseFile.text = (char*)(const char*)"From File";
-    // chooseFile.fontSize = chooseFile.rec.height / 10 * 6;
-    // chooseFile.textColor = BLACK;
-    // chooseFile.draw();
+    TextBox chooseFile;
+    chooseFile.rec.width = (functionBG.rec.width - margin*2*3) / 2; 
+    chooseFile.rec.height = functionBG.rec.height / 6;
+    chooseFile.rec.x = functionBG.rec.x + margin*2;
+    chooseFile.rec.y = title.rec.y + title.rec.height + margin*2;
+    chooseFile.recColor = WHITE;
+    chooseFile.thick = 2;
+    chooseFile.outlineColor = BLACK;
+    chooseFile.text = (char*)(const char*)"From File";
+    chooseFile.fontSize = chooseFile.rec.height / 10 * 6;
+    chooseFile.textColor = BLACK;
+    chooseFile.draw();
 
-    // if (CheckCollisionPointRec(mouse, chooseFile.rec))
-    // {
-    //     chooseFile.recColor = LIGHTGRAY;
-    //     chooseFile.draw();
-    //     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
-    //     {
-    //         chooseFile.recColor = DARKGRAY;
-    //         chooseFile.draw();
-    //         const char *filters[] = { "*.txt", "*.inp", "*.out" };
-    //         const char *selectedFile = tinyfd_openFileDialog("Select a file", "", 3, filters, NULL, 0);
+    if (CheckCollisionPointRec(mouse, chooseFile.rec))
+    {
+        chooseFile.recColor = LIGHTGRAY;
+        chooseFile.draw();
+        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+        {
+            chooseFile.recColor = DARKGRAY;
+            chooseFile.draw();
+            const char *filters[] = { "*.txt", "*.inp", "*.out" };
+            const char *selectedFile = tinyfd_openFileDialog("Select a file", "", 3, filters, NULL, 0);
 
-    //         if (selectedFile)
-    //             G.LoadFromFile(selectedFile);
+            if (selectedFile)
+                G.LoadFromFile(selectedFile);
             
-    //     }   
-    // }
+        }   
+    }
 
-    // TextBox random;
-    // random.rec.width = (functionBG.rec.width - margin*2*3) / 2; 
-    // random.rec.height = functionBG.rec.height / 6;
-    // random.rec.x = functionBG.rec.x + random.rec.width + margin*2*2;
-    // random.rec.y = title.rec.y + title.rec.height + margin*2;
-    // random.recColor = WHITE;
-    // random.thick = 2;
-    // random.outlineColor = BLACK;
-    // random.text = (char*)(const char*)"Random";
-    // random.fontSize = random.rec.height / 10 * 6;
-    // random.textColor = BLACK;
-    // random.draw();
+    TextBox random;
+    random.rec.width = (functionBG.rec.width - margin*2*3) / 2; 
+    random.rec.height = functionBG.rec.height / 6;
+    random.rec.x = functionBG.rec.x + random.rec.width + margin*2*2;
+    random.rec.y = title.rec.y + title.rec.height + margin*2;
+    random.recColor = WHITE;
+    random.thick = 2;
+    random.outlineColor = BLACK;
+    random.text = (char*)(const char*)"Random";
+    random.fontSize = random.rec.height / 10 * 6;
+    random.textColor = BLACK;
+    random.draw();
 
-    // if (CheckCollisionPointRec(mouse, random.rec))
-    // {
-    //     random.recColor = LIGHTGRAY;
-    //     random.draw();
-    //     random.recColor = WHITE;
-    //     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
-    //     {
-    //         random.recColor = DARKGRAY;
-    //         random.draw();
-    //         G.RandomData();
-    //     }   
-    // }
+    if (CheckCollisionPointRec(mouse, random.rec))
+    {
+        random.recColor = LIGHTGRAY;
+        random.draw();
+        random.recColor = WHITE;
+        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+        {
+            random.recColor = DARKGRAY;
+            random.draw();
+            G.RandomData();
+        }   
+    }
 }
 
 void GraphGUI::DrawAddFunction()
