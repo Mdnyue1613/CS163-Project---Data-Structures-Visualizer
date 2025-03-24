@@ -18,7 +18,8 @@ vector<string> LFunctionArea::draw(void) {
     // Current mode: Initialize
     if(ChooseAction == 0) {
         PInitializeMenu menu(background.x, background.y, background.width, background.height);
-        vector<string> ret = menu.draw();
+        menu.draw();
+        vector<string> ret = menu.update();
         vector<string> res = {"initialize"};
         res.insert(res.end(), ret.begin(), ret.end());
         return res;

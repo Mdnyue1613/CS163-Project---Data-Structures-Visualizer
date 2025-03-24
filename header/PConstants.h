@@ -36,6 +36,7 @@ namespace PConstants {
         // Color
         const Color regionColor = {75, 189, 224, 255};
         const Color boxColor = WHITE;
+        const Color iconBoxColor = {238, 238, 238, 255}; // Light gray
         const Color outlineBoxColor = BLACK;
         const Color GOColor = RED;
     };
@@ -75,5 +76,9 @@ namespace PConstants {
         // Time
         const float fullTime = 0.8f;
         const float onTime = 0.4f;
+    };
+
+    namespace PLimit {
+        const int intData = (int)1e9;
     };
 };

@@ -125,3 +125,11 @@ void DoublyLinkedList::insert(int x) {
         tail->makeNodeAndLine();
     }
 }
+
+void DoublyLinkedList::build(vector<int>& vi) {
+    removeAll();
+    n = vi.size();
+    for(int i = 0; i < n; i++) {
+        insert(vi[i]);
+    }
+}
