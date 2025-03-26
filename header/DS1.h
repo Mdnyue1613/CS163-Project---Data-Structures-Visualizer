@@ -3,6 +3,8 @@
 #include "PTitleBox.h"
 #include "PFunctionArea.h"
 #include "DoublyLinkedList.h"
+#include "PConstants.h"
+#include "PRandom.h"
 #include <string>
 #include <vector>
 #include <random>
@@ -12,8 +14,15 @@ struct DS1 {
     PTitleBox titleBox;
     PFunctionArea functionArea;
     DoublyLinkedList doublyLinkedList;
+    PRandom randomGenerator;
+    Texture2D icon;
 
     DS1(void); // initialize
+    ~DS1(void); // destructor
     void draw(void); // draw
-    void randomInitialize(void); // initialize a random data
+    void operateInitialize(vector<string>& request);
+    void randomInitialize(int x); // initialize a random data
+    vector<int> stringToVectorInt(string& s);
+    void vectorIntInitialize(vector<int>& vi);
+    void loadTextures(void);
 };

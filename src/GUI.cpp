@@ -1,4 +1,5 @@
 #include "../header/GUI.h"
+#include "../header/HGraphVisualize.h"
 #include "../header/BOX.h"
 #include "../header/LInputBox.h"
 #include "../header/AVL.h"
@@ -95,15 +96,9 @@ void GUI::drawDS2() {
 
 void GUI::drawDS3() {
     DS3 ds3;
-    int i = 0;
     while (GUI::isOpenDS3) {
         BeginDrawing();
         ClearBackground(WHITE);
-        if (i < 20) {
-            WaitTime(2);
-            ds3.Tree.insertNode(i);
-            i++;
-        }
         ds3.draw();
         BACK();
         EndDrawing();
@@ -115,16 +110,7 @@ void GUI::drawDS3() {
 }
 
 void GUI::drawDS4() {
-    while (isOpenDS4) {
-        BeginDrawing();
-        ClearBackground(PINK);
-        BACK();
-        EndDrawing();
-        if(WindowShouldClose()) {
-            isOpenDS4 = 0;
-            break;
-        }
-    }
+    GraphGUI::GraphVisualize();
 }
 
 void GUI::BACK() {

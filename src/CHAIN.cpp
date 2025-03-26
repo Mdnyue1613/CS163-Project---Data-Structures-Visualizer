@@ -1,4 +1,4 @@
-#include "..\header\CHAIN.h"
+#include "../header/CHAIN.h"
 
 void CHAIN::startProgram()
 {

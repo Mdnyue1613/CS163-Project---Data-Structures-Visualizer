@@ -12,6 +12,8 @@ struct GUI {
     static bool isOpenDS2;
     static bool isOpenDS3;
     static bool isOpenDS4;
+    static DS1 linkedListVisualizer;
+
     static void startProgram();
     static void drawMenu();
     static void drawDS1();

@@ -4,31 +4,21 @@
 #include <cmath>
 #include <string>
 #include <cstring>
+using namespace std;
 
-struct LTextBox
+struct LInputBox
 {   
     int posNum_x, posNum_y;
+    const float posText_x = 11, posText_y = 212.3;
+    int data;
+    int fontText;
+    string inputData;
     BOX box;
     bool isClick;
-    LTextBox();
+    LInputBox();
     void setState();
-    void setTextBox(BOX box);
+    void setInputBox(BOX box);
     void afterMove();
-    void afterClick();
-    void draw();
-};
-
-struct LOptionBox
-{
-    BOX box;
-    char option[20];
-    void setOption(char option[]);
-    void setBox(BOX box);
-    void draw();
-};
-
-struct ActionBox {
-    LOptionBox action;
-    ActionBox();
+    void afterClick(bool appearLine);
     void draw();
 };
