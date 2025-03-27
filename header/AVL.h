@@ -21,8 +21,8 @@ struct TreeNode{
 
     TreeNode *left, *right, *parent;
     TreeNode(int x);
-    void setRadius(TreeNode*& root, float radius);
-    void setColor(TreeNode*& root, Color color);
+    void setRadius(float radius);
+    void setColor(Color color);
 };
 
 struct AVL {
