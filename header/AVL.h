@@ -1,6 +1,8 @@
 #pragma once
 #include <raylib.h>
 #include <algorithm>
+#include <string>
+#include <cstring>
 #include <cmath>
 #include <vector>
 #include <stack>
@@ -27,6 +29,7 @@ struct TreeNode{
 
 struct AVL {
     TreeNode* TreeRoot;
+    bool isInsert, isDelete, isFind, isInit;
     vector<TreeNode*> allNode;
     float distance_x;
     float distance_y;
@@ -45,4 +48,8 @@ struct AVL {
     void updateTreePosition();
     void setTreeSize(TreeNode*& root, float raidus);
     void initializeAnimation();
+    void insertAnimation();
+    void deleteAnimation();
+    void findAnimation();
+    void drawTree();
 };

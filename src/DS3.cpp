@@ -19,17 +19,37 @@ void DS3::draw() {
     inputBox.draw();
     // Operate request
     if(request[0] == "initialize" && request[1] == "random") {
+        Tree.isInit = 1;
         RandomInitialize();
+        Tree.updateTreePosition();
     }
 
-    if(request[0] == "insert" && request[1] == "Insert") {
+    else if(request[0] == "insert" && request[1] == "Insert") {
+        Tree.isInsert = 1;
         Insert();
+    }
+
+    else if(request[0] == "delete" && request[1] == "Delete") {
+        Tree.isDelete = 1;
+        // Delete();
+    }
+
+    else if(request[0] == "find" && request[1] == "Find") {
+        Tree.isFind = 1;
+        // Find();
     }
 
     // Draw Data Structure
     Tree.draw();
 }
 void DS3::RandomInitialize() {
+    if (inputBox.data == 0) {
+        random_device rd;
+        mt19937 gen(rd());
+        uniform_int_distribution<int> dist(7, 15);
+        int numNode = dist(gen);
+        inputBox.data = numNode;
+    }
     Tree.random(inputBox.data);
     inputBox.data = 0;
     inputBox.inputData = "";
