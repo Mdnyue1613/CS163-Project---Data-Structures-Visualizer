@@ -5,8 +5,10 @@
 #include "PInputBox.h"
 #include "PIconBox.h"
 #include "PConstants.h"
+#include "tinyfiledialogs.h"
 #include <string>
 #include <vector>
+#include <fstream>
 using namespace std;
 
 struct PInitializeMenu {

@@ -116,11 +116,30 @@ vector<string> PInitializeMenu::update(void) {
             (GO.isClick() || (InputBox.isChosen && IsKeyPressed(KEY_ENTER)))) {
             return {"input", InputBox.extract()};
         }
+        /*
+        When user click on the load input from file box
+            Return request: input + file + content
+        */
+        if(InputFileBox.isClick()) {
+            char const * inputTypeFilter[] = {"*.*"};
+            char* fileDestination = tinyfd_openFileDialog("Open file", NULL, 1, inputTypeFilter, NULL, 0);
+            if(fileDestination) {
+                fstream inp(fileDestination, ios::in | ios::binary | ios::ate);
+
+                ifstream::pos_type fileSize = inp.tellg();
+                inp.seekg(0, ios::beg);
+
+                vector<char> data(fileSize);
+                inp.read(data.data(), fileSize);
+                inp.close();
+                data.push_back('\0');
+                return {"input", data.data()};
+            }
+        }
     }
     return {"nothing"};
 }
 
 void PInitializeMenu::prepare(void) {
-    cout << "Called prepare" << endl;
     InputFileBox.prepare();
 }

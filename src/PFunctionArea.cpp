@@ -43,6 +43,7 @@ vector<string> PFunctionArea::draw(void) {
         vector<string> ret = menuInitialize.update();
         res.push_back("initialize");
         res.insert(res.end(), ret.begin(), ret.end());
+        // Return request: initialize + arguments ...
         return res;
     }
     // Current state: Insert

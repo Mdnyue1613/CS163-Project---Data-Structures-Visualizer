@@ -3,7 +3,8 @@
 PIconBox::PIconBox(void) {}
 
 PIconBox::PIconBox(Vector2 pos, Vector2 size, int outThickness, Color inColor, Color outColor, string iconDestination) :
-    PBOX(pos, size, outThickness, inColor, outColor), iconDestination(iconDestination) ,
+    PBOX(pos, size, outThickness, inColor, outColor), 
+    iconDestination(iconDestination) ,
     icon() {
 }
 
