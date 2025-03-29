@@ -22,4 +22,5 @@ struct PFunctionArea {
     PFunctionArea(int x, int y, int width, int height); // initialize with parameters
     PFunctionArea(Vector2 pos, Vector2 size); // initialize with parameters: using pair
     vector<string> draw(void); // return the current request from the user
+    void prepare(void);
 };
