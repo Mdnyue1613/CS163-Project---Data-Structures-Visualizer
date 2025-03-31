@@ -8,7 +8,7 @@ LFunctionArea::LFunctionArea(int x, int y, int width, int height, Color color) {
     background.width = width;
     background.height = height;
     backgroundColor = color;
-    ChooseAction = 0;
+    ChooseAction = 1;
 }
 
 vector<string> LFunctionArea::draw(void) {

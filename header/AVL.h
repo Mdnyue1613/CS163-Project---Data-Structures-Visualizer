@@ -18,6 +18,7 @@ struct TreeNode{
     int height;
     bool isLeft;
     Vector2 position;
+    Vector2 targetPosition;
     float radius;
     Color color;
 
@@ -29,10 +30,16 @@ struct TreeNode{
 
 struct AVL {
     TreeNode* TreeRoot;
+    TreeNode* rotationNode = nullptr;
+    TreeNode* NodeInsert = nullptr;
     bool isInsert, isDelete, isFind, isInit;
-    vector<TreeNode*> allNode;
+    bool isNeedToRotate;
+    vector<TreeNode*> allNode, Path;
     float distance_x;
     float distance_y;
+    float animationProgress = 0.f;
+    int animationStep = 0;
+    int hightLightNodeIndex = 0;
     AVL();
     int getBalance(TreeNode *root);
     void setHeight(TreeNode *&root);
@@ -52,4 +59,12 @@ struct AVL {
     void deleteAnimation();
     void findAnimation();
     void drawTree();
+    void setCurrentPosition();
+    void checkRotation();
+    void rotateNode(TreeNode*& root);
+    void animateRotation();
+    void appearNode();
+    void defaultTree();
+    void hightLightNode();
+    void rotateChildNode();
 };

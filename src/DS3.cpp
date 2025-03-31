@@ -21,7 +21,6 @@ void DS3::draw() {
     if(request[0] == "initialize" && request[1] == "random") {
         Tree.isInit = 1;
         RandomInitialize();
-        Tree.updateTreePosition();
     }
 
     else if(request[0] == "insert" && request[1] == "Insert") {
