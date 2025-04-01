@@ -7,10 +7,21 @@ TreeNode::TreeNode(int x) {
     left = right = nullptr;
     height = 1;
     radius = 20;
+    color = BLUE;
+}
+
+void TreeNode::setRadius(float radius) {
+    this->radius = radius;
+}
+
+void TreeNode::setColor(Color color) {
+    this->color = color;
 }
 
 AVL::AVL() {
     TreeRoot = nullptr;
+    distance_x = 25;
+    distance_y = 40;
 }
 
 int AVL::getBalance(TreeNode* root) {
@@ -123,6 +134,7 @@ void AVL::insertNodeNonDuplicate(TreeNode *&root, TreeNode *parent, int x) {
 }
 
 void AVL::draw() {
+    initializeAnimation();
         for (auto Node : allNode) {
             if (Node->left) {
                 Vector2 pointNode;
@@ -135,7 +147,7 @@ void AVL::draw() {
                 float delta_y = (dis_y / dis) * Node->radius;
                 pointNode = {Node->position.x - delta_x, Node->position.y + delta_y};
                 pointLeft = {Node->left->position.x + delta_x, Node->left->position.y - delta_y};
-                DrawLineEx(pointNode, pointLeft, 2.0, BLACK);
+                DrawLineEx(pointNode, pointLeft, 2.0, Node->left->color);
             }
             if (Node->right) {
                 Vector2 pointNode;
@@ -148,11 +160,12 @@ void AVL::draw() {
                 float delta_y = (dis_y / dis) * Node->radius;
                 pointNode = {Node->position.x + delta_x, Node->position.y + delta_y};
                 pointRight = {Node->right->position.x - delta_x, Node->right->position.y - delta_y};
-                DrawLineEx(pointNode, pointRight, 2.0, BLACK);
+                DrawLineEx(pointNode, pointRight, 2.0, Node->right->color);
             }
-            DrawCircle(Node->position.x, Node->position.y, Node->radius, BLUE);
+            DrawCircle(Node->position.x, Node->position.y, Node->radius, Node->color);
             string s = to_string(Node->val);
-            DrawText(s.c_str(), Node->position.x - 8, Node->position.y - 8, Node->radius,WHITE);
+            int textSize = MeasureText(s.c_str(), Node->radius);
+            DrawText(s.c_str(), Node->position.x - textSize / 2, Node->position.y - Node->radius / 2, Node->radius, WHITE);
         }
 }
 
@@ -184,6 +197,7 @@ void AVL::random(int n) {
             insertNode(TreeRoot, nullptr, num);
         }
     }
+    setTreeSize(TreeRoot, 0);
 }
 
 void AVL::moveTree(TreeNode *&root, bool direction) {
@@ -227,5 +241,22 @@ void AVL::updateTreePosition() {
                 }
             }
         }
+    }
+}
+
+void AVL::setTreeSize(TreeNode*& root, float radius) {
+    if(!root) return;
+    root->setRadius(radius);
+    setTreeSize(root->left, radius);
+    setTreeSize(root->right, radius);
+}
+
+void AVL::initializeAnimation() {
+    if(TreeRoot && TreeRoot->radius < 20) {
+        float newRadius = min(TreeRoot->radius + (float)0.5 * 1.f, 20 * 1.f);
+        setTreeSize(TreeRoot, newRadius);
+        distance_x = TreeRoot->radius * 1.25 * 1.f;
+        distance_y = TreeRoot->radius * 2 * 1.f;
+        updateTreePosition();
     }
 }
