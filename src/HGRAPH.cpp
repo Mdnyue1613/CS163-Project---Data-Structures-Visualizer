@@ -2,10 +2,11 @@
 
 void Graph::Initialize()
 {
-    maxNumVertex = 50;
     numVertex = 0;
     numEdge = 0;
     type = 0;
+    g.resize(0);
+    vertex.resize(0);
     vertexRadius = 20;
     fontSize = vertexRadius;
     thick = 3;
@@ -14,14 +15,29 @@ void Graph::Initialize()
 
 void Graph::DrawGraph()
 {
+    if (numVertex == 0) return;
+
     ForceDirectedGraph();
 
-    for (int i = 1; i <= numVertex; i++)
-        for (Edge &edge : g[i])
-            if (type || i < edge.to)
-                DrawEdge(vertex[i].position, vertex[edge.to].position, edge.weight);
+    int connections[numVertex + 1][numVertex + 1];
+    for (int i = 0; i <= numVertex; i++)
+        for (int j = 0; j <= numVertex; j++)
+            connections[i][j] = 0;
     
-    for (int i = 1; i <= numVertex; i++)
+    for (int i = 0; i <= numVertex; i++)
+        for (Edge &edge : g[i])
+            if (edge.real)
+            {
+                connections[i][edge.to]++;
+                connections[edge.to][i]++;
+            }
+
+    for (int i = 0; i <= numVertex; i++)
+        for (Edge &edge : g[i])
+            if (edge.real)
+                DrawEdge(vertex[i].position, vertex[edge.to].position, edge.weight, connections[i][edge.to]);
+    
+    for (int i = 0; i <= numVertex; i++)
         if (vertex[i].real) 
             DrawVertex(i);
 }
@@ -35,49 +51,65 @@ void Graph::DrawVertex(int ID)
     DrawText(text.c_str(), vertex[ID].position.x - MeasureText(text.c_str(), fontSize)/2, vertex[ID].position.y - fontSize/2, fontSize, BLACK);
 }
 
-void Graph::DrawEdge(Vector2 start, Vector2 end, int weight)
+void Graph::DrawEdge(Vector2 start, Vector2 end, int weight, int connections)
 {
-    DrawLineEx(start, end, thick, BLACK);
-
-    if (type)
-    {
-        float lenght = thick * 10;
-        float angle = atan2f(end.y - start.y, end.x - start.x);
-        Vector2 left = {
-            end.x - lenght * cos(angle - PI/6),
-            end.y - lenght * sin(angle - PI/6)
-        };
-        Vector2 right = {
-            end.x - lenght * cos(angle + PI/6),
-            end.y - lenght * sin(angle + PI/6)
-        };
-
-        DrawTriangle(end, left, right, BLACK);
-    }
-
-    string text = to_string(weight);
-    Vector2 midpoint = Vector2Scale(Vector2Add(start, end), 0.5f);
-    
     float dx = end.x - start.x;
     float dy = end.y - start.y;
     float angle = atan2f(dy, dx);
-    if (angle < 0)
-    {
-        dx = -dx;
-        dy = -dy;
-        angle = atan2f(dy, dx);
-    }
-    float lenght = sqrt(dx*dx + dy*dy);
+    float lenght = Vector2Length(Vector2Subtract(end, start));
     Vector2 perpendicular = {-dy / lenght, dx / lenght};
-    float perpenAngle = atan2f(perpendicular.y, perpendicular.x);
-    perpendicular = {cos(perpenAngle), sin(perpenAngle)};
+    float perAngle = atan2f(perpendicular.y, perpendicular.x);
+    if (connections > 1)
+    {
+        float shift = vertexRadius / 3;
+        start = Vector2Add(start, Vector2{shift * cos(perAngle), shift * sin(perAngle)});
+        end = Vector2Add(end, Vector2{shift * cos(perAngle), shift * sin(perAngle)});
+    }
 
-    Vector2 textPos = Vector2{
-        midpoint.x + perpendicular.x * max(20.0f, MeasureText(text.c_str(), fontSize*8/9) / (abs(cos(angle)) > 0.5f ? abs(cos(angle)) : 0.5f)), 
-        midpoint.y + perpendicular.y * max(20.0f, fontSize*8/9 / (abs(cos(angle)) > 0.5f ? abs(cos(angle)) : 0.5f))
-    };
+    DrawLineEx(start, end, thick, BLACK);
+    if (type == 1)
+    {
+        float triAltitude = thick * 4;
+        Vector2 top = Vector2Subtract(end, Vector2{vertexRadius * cos(angle), vertexRadius * sin(angle)});
+        Vector2 point = Vector2Subtract(top, Vector2{triAltitude * cos(angle), triAltitude * sin(angle)});
+        Vector2 left = Vector2Add(point, Vector2{triAltitude/2 * cos(perAngle), triAltitude/2 * sin(perAngle)});
+        Vector2 right = Vector2Subtract(point, Vector2{triAltitude/2 * cos(perAngle), triAltitude/2 * sin(perAngle)});
+
+        DrawTriangle(left, top, right, BLACK);
+    }
+
+    string text = to_string(weight);
+    Vector2 textPos = Vector2Scale(Vector2Add(start, end), 0.5f);
+    float wFontSize = fontSize * 8/9;
+    float diag = sqrt(wFontSize * wFontSize + MeasureText(text.c_str(), wFontSize) * MeasureText(text.c_str(), wFontSize));
+    textPos.x += cos(perAngle) * diag;
+    textPos.y += sin(perAngle) * diag;
     
-    DrawText(text.c_str(), textPos.x, textPos.y, fontSize*8/9, BLACK);
+    DrawText(text.c_str(), textPos.x, textPos.y, wFontSize, BLACK);
+}
+
+void Graph::ChangeGraphType()
+{
+    type ^= 1;
+    if (type == 0 && numVertex)
+    {
+        for (int i = 0; i <= numVertex; i++)
+        {
+            vector <int> isConnect(numVertex + 1, -1);
+            vector <Edge> tmp;
+            for (int j = 0; j < g[i].size(); j++)
+                if (isConnect[g[i][j].to] == -1)
+                {
+                    tmp.push_back(g[i][j]);
+                    isConnect[g[i][j].to] = tmp.size() - 1;
+                }
+                else
+                {
+                    tmp[isConnect[g[i][j].to]] = g[i][j];
+                }
+            g[i] = tmp;
+        }
+    }
 }
 
 void Graph::ForceDirectedGraph()
@@ -98,7 +130,7 @@ void Graph::ForceDirectedGraph()
         if (IsStable(threshold))
         {
             stable = 1;
-            for (int i = 1; i <= numVertex; i++)
+            for (int i = 0; i <= numVertex; i++)
                 if (vertex[i].real)
                     vertex[i].force = {0, 0};
             break;
@@ -116,7 +148,7 @@ void Graph::ForceDirectedGraph()
 
 void Graph::ApplyRepulsion(float k)
 {
-    for (int i = 1; i <= numVertex; i++)
+    for (int i = 0; i <= numVertex; i++)
         for (int j = i+1; j <= numVertex; j++)
             if (vertex[i].real && vertex[j].real)
             {
@@ -134,10 +166,17 @@ void Graph::ApplyRepulsion(float k)
 
 void Graph::ApplyAttraction(float k)
 {
-    for (int i = 1; i <= numVertex; i++)
+    bool isConnected[numVertex + 1][numVertex + 1];
+    for (int i = 0; i <= numVertex; i++)
+        for (int j = 0; j <= numVertex; j++)
+            isConnected[i][j] = 0;
+    
+    for (int i = 0; i <= numVertex; i++)
         for (Edge &edge : g[i])
-            if (edge.real)
+            if (!isConnected[i][edge.to])
             {
+                isConnected[i][edge.to] = isConnected[edge.to][i] = 1;
+
                 Vector2 diff = Vector2Subtract(vertex[edge.to].position, vertex[i].position);
                 float distance = Vector2Length(diff);
                 if (distance == 0) continue;
@@ -153,7 +192,7 @@ void Graph::ApplyAttraction(float k)
 void Graph::ApplyGravitation(float k)
 {
     Vector2 center = Vector2{(workspace.x + GetScreenWidth())/2, (workspace.y + GetScreenHeight())/2};
-    for (int i = 1; i <= numVertex; i++)
+    for (int i = 0; i <= numVertex; i++)
         if (vertex[i].real)
         {
             Vector2 diff = Vector2Subtract(vertex[i].position, center);
@@ -173,7 +212,7 @@ bool Graph::Zoom()
     float minDistX = center.x - workspace.x;
     float minDistY = center.y - workspace.y;
 
-    for (int i = 1; i <= numVertex; i++)
+    for (int i = 0; i <= numVertex; i++)
         if (vertex[i].real)
         {
             minDistX = min(minDistX, min(vertex[i].position.x - workspace.x, GetScreenWidth() - vertex[i].position.x));
@@ -188,7 +227,7 @@ bool Graph::Zoom()
 
     if (zoom < 1) return 0;
     
-    for (int i = 1; i <= numVertex; i++)
+    for (int i = 0; i <= numVertex; i++)
         if (vertex[i].real)
         {
             float angle = atan2f(vertex[i].position.y - center.y, vertex[i].position.x - center.x);
@@ -203,7 +242,7 @@ bool Graph::Zoom()
 bool Graph::IsStable(float threshold)
 {
     float maxForce = 0;
-    for (int i = 1; i <= numVertex; i++)
+    for (int i = 0; i <= numVertex; i++)
         if (vertex[i].real)
             maxForce = max(maxForce, Vector2Length(vertex[i].force));
 
@@ -212,7 +251,7 @@ bool Graph::IsStable(float threshold)
 
 void Graph::UpdatePosition(float t, float damping)
 {
-    for (int i = 1; i <= numVertex; i++)
+    for (int i = 0; i <= numVertex; i++)
         if (vertex[i].real && Vector2Length(vertex[i].force) > 0)
         {
             if (Vector2Length(vertex[i].force) > t)
@@ -288,31 +327,100 @@ void Graph::LoadFromFile(const char* filePath)
     vertex.clear();
 
     file >> numVertex >> numEdge;
-
     g.resize(numVertex + 1);
     vertex.resize(numVertex + 1);
+
+    typedef pair <int, int> ii;
+    typedef pair <pair<int, int>, int> iii;
+    vector <iii> edges;
     for (int i = 1; i <= numEdge; i++)
     {
         int u, v, w;
         file >> u >> v >> w;
-        g[u].push_back(Edge(1, v, w));
-        g[v].push_back(Edge(0, u, w));
-
-        realNumVertex += !(vertex[u].real) + !(vertex[v].real);
-        vertex[u].real = vertex[v].real = 1;
-        vertex[u].force = vertex[v].force = {0, 0};
+        edges.push_back(iii(ii(u, v), w));
     }
+    sort(edges.begin(), edges.end());
+
+    int duplicate = 0;
+    for (int i = 0; i < edges.size(); i++)
+    {
+        int u = edges[i].first.first;
+        int v = edges[i].first.second;
+        int w = edges[i].second;
+        if (i > 0 && edges[i].first == edges[i-1].first)
+        {
+            g[u].back().weight = w;
+            g[v].back().weight = w;
+            duplicate++;
+        }
+        else if (type == 0 && i > 0 && edges[i].first == ii(edges[i-1].first.second, edges[i-1].first.first))
+        {
+            g[u].back().weight = w;
+            g[v].back().weight = w;
+            g[u].back().real = 1;
+            g[v].back().real = 0;
+            duplicate++;
+        }
+        else 
+        {
+            g[u].push_back(Edge(1, v, w));
+            g[v].push_back(Edge(0, u, w));
+            realNumVertex += !(vertex[u].real) + !(vertex[v].real);
+            vertex[u].real = vertex[v].real = 1;
+            vertex[u].force = vertex[v].force = {0, 0};
+        }
+    }
+    numEdge -= duplicate;
 
     float angleStep = 2 * PI / realNumVertex;
     Vector2 center = Vector2{(workspace.x + GetScreenWidth())/2, (workspace.y + GetScreenHeight())/2};
     float INITIAL_RADIUS = workspace.height / 500;
     int count = 0;
     
-    for (int i = 1; i <= realNumVertex; i++) 
+    for (int i = 0; i <= realNumVertex; i++) 
         if (vertex[i].real)
         {
             count++;
             vertex[i].position.x = center.x + INITIAL_RADIUS * cos(count * angleStep);
             vertex[i].position.y = center.y + INITIAL_RADIUS * sin(count * angleStep);
         }
+    
+    file.close();
 }
+
+// bool getNumFromStr(string &s, int &pos, int &num)
+// {
+//     num = -1;
+
+//     while (pos < s.size() && !isnumber(s[pos]))
+//         pos++;
+    
+//     while (pos < s.size() && isnumber(s[pos]))
+//     {
+//         if (num == -1) num = 0;
+//         num = num * 10 + s[pos] - '0';
+//         pos++;
+//     }
+
+//     if (num != -1) return 1;
+//     else
+//     {
+//         num = 0;
+//         return 0;
+//     }
+// }
+
+// void Graph::LoadFromInputBox(vector <string> &userInput)
+// {
+//     bool success = 1;
+//     int cursor = 0;
+//     int tmp = 0;
+
+//     g.clear();
+//     vertex.clear();
+//     stable = 0;
+
+//     success = getNumFromStr(userInput[0], cursor, numVertex);
+    
+// }
+
