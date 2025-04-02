@@ -8,7 +8,7 @@ LFunctionArea::LFunctionArea(int x, int y, int width, int height, Color color) {
     background.width = width;
     background.height = height;
     backgroundColor = color;
-    ChooseAction = 1;
+    ChooseAction = 0;
 }
 
 vector<string> LFunctionArea::draw(void) {
@@ -17,12 +17,10 @@ vector<string> LFunctionArea::draw(void) {
 
     // Current mode: Initialize
     if(ChooseAction == 0) {
-        PInitializeMenu menu(background.x, background.y, background.width, background.height);
+        LInitializeMenu menu(background.x, background.y, background.width, background.height, 20);
         menu.draw();
-        vector<string> ret = menu.update();
-        vector<string> res = {"initialize"};
-        res.insert(res.end(), ret.begin(), ret.end());
-        return res;
+        string ret = menu.draw();
+        return vector<string> {"initialize", ret};
     }
 
     else if(ChooseAction == 1) {

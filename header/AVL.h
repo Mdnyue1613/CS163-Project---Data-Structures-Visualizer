@@ -17,15 +17,19 @@ struct TreeNode{
     bool isLeft;
     Vector2 position;
     float radius;
+    Color color;
+
     TreeNode *left, *right, *parent;
     TreeNode(int x);
+    void setRadius(float radius);
+    void setColor(Color color);
 };
 
 struct AVL {
     TreeNode* TreeRoot;
     vector<TreeNode*> allNode;
-    const float distance_x = 40;
-    const float distance_y = 40;
+    float distance_x;
+    float distance_y;
     AVL();
     int getBalance(TreeNode *root);
     void setHeight(TreeNode *&root);
@@ -39,4 +43,6 @@ struct AVL {
     void draw();
     void moveTree(TreeNode *&root, bool distance);
     void updateTreePosition();
+    void setTreeSize(TreeNode*& root, float raidus);
+    void initializeAnimation();
 };

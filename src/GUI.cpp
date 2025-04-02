@@ -3,11 +3,10 @@
 #include "../header/BOX.h"
 #include "../header/LInputBox.h"
 #include "../header/AVL.h"
-#include "../header/DS2.h"
-
 #include <iostream>
 void GUI::startProgram() {
-    InitWindow(1200, 800, "VISUALIZER");
+    InitWindow(1200, 800, "Hello Raylib");
+    linkedListVisualizer.prepare();
     SetTargetFPS(60);
     while(isOpenDS1 || isOpenDS2 || isOpenDS3 || isOpenDS4 || isOpenMenu) {
         drawMenu();
@@ -69,7 +68,6 @@ void GUI::drawMenu() {
 
 
 void GUI::drawDS1() {
-    DS1 linkedListVisualizer;
     while (GUI::isOpenDS1) {
         BeginDrawing();
         ClearBackground(WHITE);
@@ -84,11 +82,9 @@ void GUI::drawDS1() {
 }
 
 void GUI::drawDS2() {
-    DS2 Hashtable;
-    while (GUI::isOpenDS2) {
+    while(GUI::isOpenDS2) {
         BeginDrawing();
-        ClearBackground(WHITE);
-        Hashtable.draw();
+        ClearBackground(RED);
         BACK();
         EndDrawing();
         if(WindowShouldClose()) {

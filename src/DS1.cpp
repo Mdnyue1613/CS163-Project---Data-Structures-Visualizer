@@ -2,11 +2,11 @@
 
 DS1::DS1(void) :
     functionArea(PConstants::PFunctionArea::pos, PConstants::PFunctionArea::size),
-    titleBox(PConstants::PTitleBar::pos, PConstants::PTitleBar::size, PConstants::PTitleBar::outlineThickness, PConstants::PTitleBar::boxColor, PConstants::PTitleBar::outlineColor, "DOUBLY LINKED LIST", PConstants::PTitleBar::textSize) {}
+    titleBox(PConstants::PTitleBar::pos, PConstants::PTitleBar::size, PConstants::PTitleBar::outlineThickness, PConstants::PTitleBar::boxColor, PConstants::PTitleBar::outlineColor, "DOUBLY LINKED LIST", PConstants::PTitleBar::textSize),
+    doublyLinkedList(),
+    randomGenerator() {}
 
-DS1::~DS1(void) {
-    UnloadTexture(icon);
-}
+DS1::~DS1(void) {}
 
 void DS1::draw(void) {
     // Draw the title of Data Structure 1
@@ -16,11 +16,10 @@ void DS1::draw(void) {
     vector<string> request = functionArea.draw();
 
     // Initialize request
+    
     if(request[0] == "initialize") {
         operateInitialize(request);
     }
-
-    // DrawTexture(icon, 0, 0, WHITE);
 
     // Draw Data Structure
     doublyLinkedList.draw();
@@ -105,8 +104,6 @@ void DS1::vectorIntInitialize(vector<int>& vi) {
     doublyLinkedList.build(vi);
 }
 
-void DS1::loadTextures(void) {
-    Image image = LoadImage("Assets/Images/PFileIcon.png");
-    icon = LoadTextureFromImage(image);
-    UnloadImage(image);
+void DS1::prepare(void) {
+    functionArea.prepare();
 }

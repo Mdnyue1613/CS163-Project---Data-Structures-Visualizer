@@ -3,7 +3,7 @@
 #include<vector>
 #include<string>
 #include<cstring>
-#include "PFunctionArea.h"
+#include"LInitialize.h"
 #include "LInsertMenu.h"
 using namespace std;
 
