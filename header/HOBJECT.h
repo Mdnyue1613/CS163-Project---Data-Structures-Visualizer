@@ -1,6 +1,9 @@
+#pragma once
 #include "raylib.h"
 #include <vector>
 #include <string>
+#include <cmath>
+#include <cctype>
 
 using namespace std;
 
