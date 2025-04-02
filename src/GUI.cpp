@@ -6,6 +6,7 @@
 #include <iostream>
 void GUI::startProgram() {
     InitWindow(1200, 800, "Hello Raylib");
+    linkedListVisualizer.prepare();
     SetTargetFPS(60);
     while(isOpenDS1 || isOpenDS2 || isOpenDS3 || isOpenDS4 || isOpenMenu) {
         drawMenu();
@@ -67,7 +68,6 @@ void GUI::drawMenu() {
 
 
 void GUI::drawDS1() {
-    DS1 linkedListVisualizer;
     while (GUI::isOpenDS1) {
         BeginDrawing();
         ClearBackground(WHITE);

@@ -1,7 +1,8 @@
 #include "../header/PInitializeMenu.h"
 
-PInitializeMenu::PInitializeMenu(void) {
-}
+PInitializeMenu::PInitializeMenu(void) {}
+
+PInitializeMenu::~PInitializeMenu(void) {}
 
 PInitializeMenu::PInitializeMenu(int x, int y, int width, int height) :
     x(x), y(y), width(width), height(height) {
@@ -11,6 +12,18 @@ PInitializeMenu::PInitializeMenu(int x, int y, int width, int height) :
         PConstants::PFunctionArea::boxColor, 
         PConstants::PFunctionArea::outlineBoxColor, 
         {"Random", "Input"}, PConstants::PFunctionArea::textSize);
+    InputBox = PInputBox(Vector2{1.f * x + PConstants::PFunctionArea::spaceX, 1.f * y + 2 * PConstants::PFunctionArea::boxHeight + 3 * PConstants::PFunctionArea::spaceY},
+        Vector2{1.f * width - 2 * PConstants::PFunctionArea::spaceX, PConstants::PFunctionArea::boxHeight},
+        PConstants::PFunctionArea::boxOutlineThickness, 
+        PConstants::PFunctionArea::boxColor,
+        PConstants::PFunctionArea::outlineBoxColor,
+        "Number of nodes", PConstants::PFunctionArea::textSize);
+    InputFileBox = PIconBox(Vector2{1.f * x + PConstants::PFunctionArea::spaceX, 1.f * y + 3 * PConstants::PFunctionArea::boxHeight + 4 * PConstants::PFunctionArea::spaceY},
+        Vector2{1.f * width - 2 * PConstants::PFunctionArea::spaceX, PConstants::PFunctionArea::boxHeight},
+        PConstants::PFunctionArea::boxOutlineThickness, 
+        PConstants::PFunctionArea::iconBoxColor,
+        PConstants::PFunctionArea::outlineBoxColor,
+        "Assets/Images/PFileIcon.png");
     GO = PTitleBox(Vector2{x + PConstants::PFunctionArea::spaceX, y + height - PConstants::PFunctionArea::spaceY - PConstants::PFunctionArea::boxHeight}, 
         Vector2{width - 2 * PConstants::PFunctionArea::spaceX, PConstants::PFunctionArea::boxHeight}, 
         PConstants::PFunctionArea::boxOutlineThickness, 
@@ -39,7 +52,7 @@ PInitializeMenu::PInitializeMenu(Vector2 pos, Vector2 size) :
         PConstants::PFunctionArea::boxOutlineThickness, 
         PConstants::PFunctionArea::iconBoxColor,
         PConstants::PFunctionArea::outlineBoxColor,
-        "D:/School/CS163/Project/Group and Solo Project-Visualizer/CS163-Project---Data-Structures-Visualizer/Assets/Images/PFileIcon.png");
+        "Assets/Images/PFileIcon.png");
     GO = PTitleBox(Vector2{x + PConstants::PFunctionArea::spaceX, y + height - PConstants::PFunctionArea::spaceY - PConstants::PFunctionArea::boxHeight}, 
         Vector2{width - 2 * PConstants::PFunctionArea::spaceX, PConstants::PFunctionArea::boxHeight}, 
         PConstants::PFunctionArea::boxOutlineThickness, 
@@ -103,6 +116,30 @@ vector<string> PInitializeMenu::update(void) {
             (GO.isClick() || (InputBox.isChosen && IsKeyPressed(KEY_ENTER)))) {
             return {"input", InputBox.extract()};
         }
+        /*
+        When user click on the load input from file box
+            Return request: input + file + content
+        */
+        if(InputFileBox.isClick()) {
+            char const * inputTypeFilter[] = {"*.*"};
+            char* fileDestination = tinyfd_openFileDialog("Open file", NULL, 1, inputTypeFilter, NULL, 0);
+            if(fileDestination) {
+                fstream inp(fileDestination, ios::in | ios::binary | ios::ate);
+
+                ifstream::pos_type fileSize = inp.tellg();
+                inp.seekg(0, ios::beg);
+
+                vector<char> data(fileSize);
+                inp.read(data.data(), fileSize);
+                inp.close();
+                data.push_back('\0');
+                return {"input", data.data()};
+            }
+        }
     }
     return {"nothing"};
+}
+
+void PInitializeMenu::prepare(void) {
+    InputFileBox.prepare();
 }
