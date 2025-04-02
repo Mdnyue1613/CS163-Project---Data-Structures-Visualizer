@@ -99,16 +99,26 @@ void AVL::insertAnimation() {
         checkRotation();
         drawTree();
         break;
+    
     case 3:
+        if (Path.empty() || isNeedToRotate) {
+            WaitTime(0.5);
+        }
+        animationProgress = 0.0f;
+        animationStep = 4;
+        drawTree();
+        break;
+    
+    case 4:
         if(isNeedToRotate == false) {
-            animationStep = 5;
+            animationStep = 6;
             animationProgress = 0.f;
         }
         else {
             checkRotateChildNode();
             if (isNeedToRotateChild == false) {
-                animationStep = 4;
-                animationProgress = 0.f;
+                animationStep = 5;
+                animationProgress = 0.0f;
             }
             else if (childRotateNode != nullptr && isNeedToRotate == true) {
                 rotateChildNode();
@@ -119,9 +129,9 @@ void AVL::insertAnimation() {
         }
         drawTree();
         break;
-    case 4:
+    case 5:
         if(isNeedToRotate == false) {
-            animationStep = 5;
+            animationStep = 6;
             animationProgress = 0.f;
         }
         else {
