@@ -4,6 +4,7 @@
 #include<cstring>
 #include<algorithm>
 #include"PTitleBox.h"
+#include"PSwitchBox.h"
 
 struct LInitializeMenu{
     const int boxHeight = 45;
@@ -12,7 +13,9 @@ struct LInitializeMenu{
     const int boxOutlineThickness = 2;
 
     int x, y, width, height, characterSize;
-    PTitleBox Name, Mode, GO;
+    PTitleBox GO;
+    PSwitchBox Mode;
+
     LInitializeMenu();
     LInitializeMenu(int x, int y, int width, int height, int characterSize);
     string draw();

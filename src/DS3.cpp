@@ -1,14 +1,11 @@
 #include "../header/DS3.h"
 
-DS3::DS3() {
+DS3::DS3() : 
+    functionArea(0, 86, 307, 296, {75, 189, 224, 255}) {
     // Title Box
     Color titleBoxColor = {248, 240, 240, 255};
     char titleName[] = "AVL TREE";
     titleBox = PTitleBox(0, 0, 1200, 83, 6, titleBoxColor, BLACK, titleName, 30);
-
-    // Function Area
-    Color functionAreaBackgroundColor = {75, 189, 224, 255};
-    functionArea = LFunctionArea(0, 86, 307, 296, functionAreaBackgroundColor);
 }
 
 void DS3::draw() {
