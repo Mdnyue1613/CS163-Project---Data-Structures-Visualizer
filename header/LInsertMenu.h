@@ -12,7 +12,7 @@ struct LInsertMenu{
     const int boxOutlineThickness = 2;
 
     int x, y, width, height, characterSize;
-    PTitleBox Name, Mode, GO;
+    PTitleBox Mode, GO;
     LInsertMenu();
     LInsertMenu(int x, int y, int width, int height, int characterSize);
     string draw();

@@ -2,30 +2,32 @@
 
 LFunctionArea::LFunctionArea() {}
 
-LFunctionArea::LFunctionArea(int x, int y, int width, int height, Color color) {
+LFunctionArea::LFunctionArea(int x, int y, int width, int height, Color color) :
+    initializeMenu(x, y, width, height, 20),
+    insertMenu(x, y, width, height, 20) {
     background.x = x;
     background.y = y;
     background.width = width;
     background.height = height;
     backgroundColor = color;
-    ChooseAction = 0;
+    ChooseAction = 1;
+    Mode = PSwitchBox(Vector2{1.f * x + horizontalSpace, 1.f * y + verticalSpace}, Vector2{1.f * width - 2 * horizontalSpace, 1.f * boxHeight}, boxOutlineThickness, WHITE, BLACK, {"Initialize", "Insert", "Delete", "Find"}, 20);
 }
 
 vector<string> LFunctionArea::draw(void) {
     // Draw a background
     DrawRectangleRec(background, backgroundColor);
 
+    ChooseAction = Mode.draw();
+
     // Current mode: Initialize
     if(ChooseAction == 0) {
-        LInitializeMenu menu(background.x, background.y, background.width, background.height, 20);
-        menu.draw();
-        string ret = menu.draw();
+        string ret = initializeMenu.draw();
         return vector<string> {"initialize", ret};
     }
 
     else if(ChooseAction == 1) {
-        LInsertMenu menu(background.x, background.y, background.width, background.height, 20);
-        string ret = menu.draw();
+        string ret = insertMenu.draw();
         return vector<string> {"insert", ret};
     }
 

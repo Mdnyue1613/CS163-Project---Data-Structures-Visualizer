@@ -1,6 +1,4 @@
 #include "../header/AVL.h"
-#include <string>
-#include <cstring>
 
 TreeNode::TreeNode(int x) {
     val = x;
@@ -22,6 +20,7 @@ AVL::AVL() {
     TreeRoot = nullptr;
     distance_x = 25;
     distance_y = 40;
+    isInsert = isInit = isDelete = isFind = 0;
 }
 
 int AVL::getBalance(TreeNode* root) {
@@ -85,88 +84,39 @@ void AVL::insertNode(TreeNode *&root, TreeNode *parent, int x) {
             return;
         }
     }
+    Path.clear();
     insertNodeNonDuplicate(root, NULL, x);
     updateTreePosition();
 }
 
 void AVL::insertNodeNonDuplicate(TreeNode *&root, TreeNode *parent, int x) {
-    if(!root) {
+    if (!root) {
         root = new TreeNode(x);
         allNode.push_back(root);
         root->parent = parent;
         if (parent == nullptr) {
             root->position = {600, 400};
-        }
-        else {
+            root->targetPosition = {600, 400};
+        } else {
             if (x < parent->val) {
-                root->position.x = parent->position.x - distance_x;
-                root->position.y = parent->position.y + distance_y;
+                root->position = {parent->targetPosition.x - distance_x, parent->targetPosition.y + distance_y};
                 root->isLeft = 1;
-            }
-            else {
-                root->position.x = parent->position.x + distance_x;
-                root->position.y = parent->position.y + distance_y;
+            } else {
+                root->position = {parent->targetPosition.x + distance_x, parent->targetPosition.y + distance_y};
                 root->isLeft = 0;
             }
         }
+        root->setRadius(0);
+        root->setColor(GREEN);
+        NodeInsert = root;
+        animationStep = 0;
         return;
     }
+    Path.push_back(root);
     if (x < root->val) insertNodeNonDuplicate(root->left, root, x);
     else if (x > root->val) insertNodeNonDuplicate(root->right, root, x);
 
     setHeight(root);
-    if (getBalance(root) > 1) {
-    // imbalance to the left
-        if (root->left && getBalance(root->left) < 0) {
-            // left-right problem
-            root->left = rotateLeft(root->left);
-        }
-        root = rotateRight(root);
-    }
-    else if (getBalance(root) < -1) {
-        // imbalance to the right
-        if (root->right && getBalance(root->right) > 0) {
-            // right-left problem
-            root->right = rotateRight(root->right);
-        }
-        root = rotateLeft(root);
-    }
-}
-
-void AVL::draw() {
-    initializeAnimation();
-        for (auto Node : allNode) {
-            if (Node->left) {
-                Vector2 pointNode;
-                Vector2 pointLeft;
-                float dis = (Node->position.x - Node->left->position.x) *  (Node->position.x - Node->left->position.x) + (Node->position.y - Node->left->position.y) * (Node->position.y - Node->left->position.y);
-                dis = sqrt(dis);
-                float dis_x = (Node->position.x - Node->left->position.x);
-                float dis_y = (Node->left->position.y - Node->position.y);
-                float delta_x = (dis_x / dis) * Node->radius;
-                float delta_y = (dis_y / dis) * Node->radius;
-                pointNode = {Node->position.x - delta_x, Node->position.y + delta_y};
-                pointLeft = {Node->left->position.x + delta_x, Node->left->position.y - delta_y};
-                DrawLineEx(pointNode, pointLeft, 2.0, Node->left->color);
-            }
-            if (Node->right) {
-                Vector2 pointNode;
-                Vector2 pointRight;
-                float dis = (Node->position.x - Node->right->position.x) *  (Node->position.x - Node->right->position.x) + (Node->position.y - Node->right->position.y) * (Node->position.y - Node->right->position.y);
-                dis = sqrt(dis);
-                float dis_x = (Node->right->position.x - Node->position.x);
-                float dis_y = (Node->right->position.y - Node->position.y);
-                float delta_x = (dis_x / dis) * Node->radius;
-                float delta_y = (dis_y / dis) * Node->radius;
-                pointNode = {Node->position.x + delta_x, Node->position.y + delta_y};
-                pointRight = {Node->right->position.x - delta_x, Node->right->position.y - delta_y};
-                DrawLineEx(pointNode, pointRight, 2.0, Node->right->color);
-            }
-            DrawCircle(Node->position.x, Node->position.y, Node->radius, Node->color);
-            string s = to_string(Node->val);
-            int textSize = MeasureText(s.c_str(), Node->radius);
-            DrawText(s.c_str(), Node->position.x - textSize / 2, Node->position.y - Node->radius / 2, Node->radius, WHITE);
-        }
 }
 
 void AVL::removeAll() {
@@ -185,7 +135,7 @@ AVL::~AVL() {
 void AVL::random(int n) {
     random_device rd;
     mt19937 gen(rd());
-    uniform_int_distribution<int> dist(1, 30);
+    uniform_int_distribution<int> dist(1, 99);
     
     if(TreeRoot){
         removeAll();
@@ -202,7 +152,7 @@ void AVL::random(int n) {
 
 void AVL::moveTree(TreeNode *&root, bool direction) {
     if (!root) return;
-    root->position.x += (direction ? distance_x : -distance_x);
+    root->targetPosition.x += (direction ? distance_x : -distance_x);
     moveTree(root->left, direction);
     moveTree(root->right, direction);
 }
@@ -222,7 +172,7 @@ void AVL::updateTreePosition() {
 
     for (auto& Node : allNode) {
         if (Node == TreeRoot) {
-            Node->position = {600, 400};
+            Node->targetPosition = {600, 400};
         }
         else {
             TreeNode* cur = TreeRoot;
@@ -236,7 +186,7 @@ void AVL::updateTreePosition() {
                     cur = cur->right;
                 }
                 else {
-                    Node->position = {Node->parent->position.x + (Node->isLeft ? -distance_x : distance_x), Node->parent->position.y + distance_y};
+                    Node->targetPosition = {Node->parent->targetPosition.x + (Node->isLeft ? -distance_x : distance_x), Node->parent->targetPosition.y + distance_y};
                     break;
                 }
             }
@@ -251,12 +201,84 @@ void AVL::setTreeSize(TreeNode*& root, float radius) {
     setTreeSize(root->right, radius);
 }
 
-void AVL::initializeAnimation() {
-    if(TreeRoot && TreeRoot->radius < 20) {
-        float newRadius = min(TreeRoot->radius + (float)0.5 * 1.f, 20 * 1.f);
-        setTreeSize(TreeRoot, newRadius);
-        distance_x = TreeRoot->radius * 1.25 * 1.f;
-        distance_y = TreeRoot->radius * 2 * 1.f;
-        updateTreePosition();
+void AVL::setCurrentPosition() {
+    for (auto& Node : allNode) {
+        Node->position.x = Node->position.x + (Node->targetPosition.x - Node->position.x) * animationProgress;
+        Node->position.y = Node->position.y + (Node->targetPosition.y - Node->position.y) * animationProgress;
     }
+}
+
+
+
+void AVL::rotateNode(TreeNode*& root) {
+    if(!root) return;
+    TreeNode* p = root->parent;
+    if (getBalance(root) > 1) {
+        // imbalance to the left
+            if (root->left && getBalance(root->left) < 0) {
+                // left-right problem
+                root->left = rotateLeft(root->left);
+            }
+            if(!p) {
+                root = rotateRight(root);
+                TreeRoot = root;
+            }
+            else {
+                if (root->isLeft) {
+                    p->left = rotateRight(root);
+                }
+                else {
+                    p->right = rotateRight(root);
+                }
+            }
+        }
+        else if (getBalance(root) < -1) {
+            // imbalance to the right
+            if (root->right && getBalance(root->right) > 0) {
+                // right-left problem
+                root->right = rotateRight(root->right);
+            }
+            if (!p) {
+                root = rotateLeft(root);
+                TreeRoot = root;
+            }
+            else {
+                if (root->isLeft) {
+                    p->left = rotateLeft(root);
+                }
+                else {
+                    p->right = rotateLeft(root);
+                }
+            }
+        }
+}
+
+void AVL::checkRotateChildNode() {
+    if(rotationNode) {
+        if(getBalance(rotationNode) > 1 && getBalance(rotationNode->left) < 0) {
+            childRotateNode = rotationNode->left;
+            isNeedToRotateChild = true;
+        }
+        else if (getBalance(rotationNode) < -1 && getBalance(rotationNode->right) > 0) {
+            childRotateNode = rotationNode->right;
+            isNeedToRotateChild = true;
+        }
+    }
+}
+
+void AVL::rotateChildNode() {
+    if(childRotateNode) {
+        if (getBalance(childRotateNode) < 0) {
+            rotationNode->left = rotateLeft(childRotateNode);
+        }
+        else if (getBalance(childRotateNode) > 0) {
+            rotationNode->right = rotateRight(childRotateNode);
+        }
+        updateTreePosition();
+        childRotateNode = nullptr;
+    }
+}
+
+void AVL::rotateImbalanceNode() {
+    
 }
