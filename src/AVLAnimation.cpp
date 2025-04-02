@@ -72,7 +72,7 @@ void AVL::initializeAnimation() {
 
 
 void AVL::insertAnimation() {
-    animationProgress += 0.05f; // animation speed
+    animationProgress += 0.02f; // animation speed
     if (animationProgress >= 1.0f) {
         animationProgress = 0.0f;
         animationStep++;
@@ -100,6 +100,41 @@ void AVL::insertAnimation() {
         drawTree();
         break;
     case 3:
+        if(isNeedToRotate == false) {
+            animationStep = 5;
+            animationProgress = 0.f;
+        }
+        else {
+            checkRotateChildNode();
+            if (isNeedToRotateChild == false) {
+                animationStep = 4;
+                animationProgress = 0.f;
+            }
+            else if (childRotateNode != nullptr && isNeedToRotate == true) {
+                rotateChildNode();
+            }
+        }
+        if(isNeedToRotateChild) {
+            setCurrentPosition();
+        }
+        drawTree();
+        break;
+    case 4:
+        if(isNeedToRotate == false) {
+            animationStep = 5;
+            animationProgress = 0.f;
+        }
+        else {
+            if(isNeedToRotate && rotationNode) {
+                rotateNode(rotationNode);
+                rotationNode = nullptr;
+                updateTreePosition();
+            }
+        }
+        if (isNeedToRotate) {
+            setCurrentPosition();
+        }
+        drawTree();
         break;
 
     default: // Hoàn tất
@@ -157,6 +192,7 @@ void AVL::hightLightNode() {
 void AVL::checkRotation() {
     if (hightLightNodeIndex >= Path.size()) hightLightNodeIndex = Path.size() - 1;
     if (isNeedToRotate == 1) {
+        WaitTime(0.5);
         animationProgress = 0.f;
         animationStep++;
         return;
@@ -169,14 +205,15 @@ void AVL::checkRotation() {
             rotationNode = Path[hightLightNodeIndex];
             Path[hightLightNodeIndex]->setColor(RED);
             drawTree();
-            animationStep++;
             WaitTime(0.5);
+            animationStep++;
         }
         else {
             Path[hightLightNodeIndex]->setColor(BLUE);
             Path.pop_back();
             drawTree();
             if (hightLightNodeIndex <= 0) {
+                WaitTime(0.5);
                 animationStep++;
             }
             else {
@@ -188,6 +225,3 @@ void AVL::checkRotation() {
 
 }
 
-void AVL::rotateChildNode() {
-    
-}

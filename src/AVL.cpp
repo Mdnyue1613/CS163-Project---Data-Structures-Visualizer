@@ -212,13 +212,25 @@ void AVL::setCurrentPosition() {
 
 void AVL::rotateNode(TreeNode*& root) {
     if(!root) return;
+    TreeNode* p = root->parent;
     if (getBalance(root) > 1) {
         // imbalance to the left
             if (root->left && getBalance(root->left) < 0) {
                 // left-right problem
                 root->left = rotateLeft(root->left);
             }
-            root = rotateRight(root);
+            if(!p) {
+                root = rotateRight(root);
+                TreeRoot = root;
+            }
+            else {
+                if (root->isLeft) {
+                    p->left = rotateRight(root);
+                }
+                else {
+                    p->right = rotateRight(root);
+                }
+            }
         }
         else if (getBalance(root) < -1) {
             // imbalance to the right
@@ -226,7 +238,47 @@ void AVL::rotateNode(TreeNode*& root) {
                 // right-left problem
                 root->right = rotateRight(root->right);
             }
-            root = rotateLeft(root);
+            if (!p) {
+                root = rotateLeft(root);
+                TreeRoot = root;
+            }
+            else {
+                if (root->isLeft) {
+                    p->left = rotateLeft(root);
+                }
+                else {
+                    p->right = rotateLeft(root);
+                }
+            }
         }
 }
 
+void AVL::checkRotateChildNode() {
+    if(rotationNode) {
+        if(getBalance(rotationNode) > 1 && getBalance(rotationNode->left) < 0) {
+            childRotateNode = rotationNode->left;
+            isNeedToRotateChild = true;
+        }
+        else if (getBalance(rotationNode) < -1 && getBalance(rotationNode->right) > 0) {
+            childRotateNode = rotationNode->right;
+            isNeedToRotateChild = true;
+        }
+    }
+}
+
+void AVL::rotateChildNode() {
+    if(childRotateNode) {
+        if (getBalance(childRotateNode) < 0) {
+            rotationNode->left = rotateLeft(childRotateNode);
+        }
+        else if (getBalance(childRotateNode) > 0) {
+            rotationNode->right = rotateRight(childRotateNode);
+        }
+        updateTreePosition();
+        childRotateNode = nullptr;
+    }
+}
+
+void AVL::rotateImbalanceNode() {
+    
+}

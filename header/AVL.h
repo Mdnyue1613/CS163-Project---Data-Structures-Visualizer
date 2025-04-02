@@ -32,8 +32,9 @@ struct AVL {
     TreeNode* TreeRoot;
     TreeNode* rotationNode = nullptr;
     TreeNode* NodeInsert = nullptr;
+    TreeNode* childRotateNode = nullptr;
     bool isInsert, isDelete, isFind, isInit;
-    bool isNeedToRotate;
+    bool isNeedToRotate = false, isNeedToRotateChild = false;
     vector<TreeNode*> allNode, Path;
     float distance_x;
     float distance_y;
@@ -67,4 +68,6 @@ struct AVL {
     void defaultTree();
     void hightLightNode();
     void rotateChildNode();
+    void checkRotateChildNode();
+    void rotateImbalanceNode();
 };
