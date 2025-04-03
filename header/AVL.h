@@ -70,4 +70,6 @@ struct AVL {
     void rotateChildNode();
     void checkRotateChildNode();
     void rotateImbalanceNode();
+    void setPositionImmediately();
+    void insertNodeWithNoAnimation(TreeNode *&root, TreeNode *parent, int x);
 };

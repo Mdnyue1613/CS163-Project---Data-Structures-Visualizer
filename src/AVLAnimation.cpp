@@ -65,6 +65,7 @@ void AVL::initializeAnimation() {
         distance_x = TreeRoot->radius * 1.25 * 1.f;
         distance_y = TreeRoot->radius * 2 * 1.f;
         updateTreePosition();
+        setPositionImmediately();
     }
     else isInit = 0;
     drawTree();
@@ -215,7 +216,6 @@ void AVL::checkRotation() {
             rotationNode = Path[hightLightNodeIndex];
             Path[hightLightNodeIndex]->setColor(RED);
             drawTree();
-            WaitTime(0.5);
             animationStep++;
         }
         else {
@@ -223,15 +223,19 @@ void AVL::checkRotation() {
             Path.pop_back();
             drawTree();
             if (hightLightNodeIndex <= 0) {
-                WaitTime(0.5);
                 animationStep++;
             }
             else {
                 hightLightNodeIndex--;
             }
-            WaitTime(0.5);
         }
+        WaitTime(0.5);
     }
 
 }
 
+void AVL::setPositionImmediately() {
+    for(auto Node : allNode) {
+        Node->position = Node->targetPosition;
+    }
+}
