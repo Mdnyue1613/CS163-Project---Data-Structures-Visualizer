@@ -144,7 +144,7 @@ void AVL::random(int n) {
     while(st.size() < n) {
         int num = dist(gen);
         if (st.insert(num).second) {
-            insertNode(TreeRoot, nullptr, num);
+            insertNodeWithNoAnimation(TreeRoot, nullptr, num);
         }
     }
     setTreeSize(TreeRoot, 0);
@@ -276,6 +276,52 @@ void AVL::rotateChildNode() {
         }
         updateTreePosition();
         childRotateNode = nullptr;
+    }
+}
+
+void AVL::insertNodeWithNoAnimation(TreeNode *&root, TreeNode *parent, int x) {
+    if (!root) {
+        root = new TreeNode(x);
+        allNode.push_back(root);
+        root->parent = parent;
+        if (parent == nullptr) {
+            root->position = {600, 400};
+            root->targetPosition = {600, 400};
+        } else {
+            if (x < parent->val) {
+                root->position = {parent->targetPosition.x - distance_x, parent->targetPosition.y + distance_y};
+                root->isLeft = 1;
+            } else {
+                root->position = {parent->targetPosition.x + distance_x, parent->targetPosition.y + distance_y};
+                root->isLeft = 0;
+            }
+        }
+        return;
+    }
+    if (x < root->val) insertNodeWithNoAnimation(root->left, root, x);
+    else if (x > root->val) insertNodeWithNoAnimation(root->right, root, x);
+
+    setHeight(root);
+
+    if(getBalance(root) > 1) {
+        if(root->left && getBalance(root->left) < 0) root->left = rotateLeft(root->left);
+        if(parent == nullptr) {
+            TreeRoot = rotateRight(root);
+        }
+        else {
+            if(root->isLeft) parent->left = rotateRight(root);
+            else parent->right = rotateRight(root);
+        }
+    }
+    else if (getBalance(root) < -1) {
+        if(root->right && getBalance(root->right) > 0) root->right = rotateRight(root->right);
+        if(parent == nullptr) {
+            TreeRoot = rotateLeft(root);
+        }
+        else {
+            if(root->isLeft) parent->left = rotateLeft(root);
+            else parent->right = rotateLeft(root);
+        }
     }
 }
 
