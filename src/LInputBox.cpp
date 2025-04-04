@@ -53,16 +53,18 @@ void LInputBox::afterClick(bool appearLine) {
             DrawLine(posNum_x, posNum_y , posNum_x, posNum_y + box.rec.height, BLACK);
         }
     }
-void LInputBox::draw() {
+void LInputBox::draw(bool active) {
     box.draw();
-    if (box.isMove()) {
-        HideCursor();
-        afterMove();
-    } else {
-        ShowCursor();
+    if(active) {
+        if (box.isMove()) {
+            HideCursor();
+            afterMove();
+        } else {
+            ShowCursor();
+        }
+        setState();
+        bool appearLine = fmod(GetTime(), 0.8) < 0.4;
+        if (isClick) afterClick(appearLine);
+        if (inputData.size() > 0) DrawText(inputData.c_str(), posText_x, posText_y, fontText, BLACK);
     }
-    setState();
-    bool appearLine = fmod(GetTime(), 0.8) < 0.4;
-    if (isClick) afterClick(appearLine);
-    if (inputData.size() > 0) DrawText(inputData.c_str(), posText_x, posText_y, fontText, BLACK);
 }

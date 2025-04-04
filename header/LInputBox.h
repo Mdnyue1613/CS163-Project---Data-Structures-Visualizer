@@ -20,5 +20,5 @@ struct LInputBox
     void setInputBox(BOX box);
     void afterMove();
     void afterClick(bool appearLine);
-    void draw();
+    void draw(bool active);
 };

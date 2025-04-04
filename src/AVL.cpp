@@ -192,6 +192,7 @@ void AVL::updateTreePosition() {
             }
         }
     }
+    if(NodeDelete && NodeDelete->left == nullptr && NodeDelete->right == nullptr && NodeDelete->parent == nullptr) allNode.push_back(NodeDelete);
 }
 
 void AVL::setTreeSize(TreeNode*& root, float radius) {
@@ -325,6 +326,93 @@ void AVL::insertNodeWithNoAnimation(TreeNode *&root, TreeNode *parent, int x) {
     }
 }
 
+void AVL::FindDeleteNode(TreeNode*& root, TreeNode* parent, int x) {
+    if(!root) {
+        return;
+    }
+    Path.push_back(root);
+    if (root->val == x) {
+            NodeDelete = root;
+            if(root->left && root->right) {
+                FindNewDeleteNode(root->left);
+            }
+            isDelete = 1;
+            return;
+    }
+    if(root->val < x) {
+        FindDeleteNode(root->right, root, x);
+    }
+    else if(root->val > x) {
+        FindDeleteNode(root->left, root, x);
+    }
+}
+
+void AVL::FindNewDeleteNode(TreeNode*& root) {
+    if(!root) return;
+    Path.push_back(root);
+    FindNewDeleteNode(root->right);
+}
+
+void AVL::prePareTreeForDelete() {
+    if(NodeDelete) {
+        TreeNode* parent = NodeDelete->parent;
+        bool newChildState = NodeDelete->isLeft;
+        if (NodeDelete->left) {
+            TreeNode* newChild = NodeDelete->left;
+            if(parent == nullptr) {
+                TreeRoot = NodeDelete->left;
+                TreeRoot->parent = nullptr;
+            }
+            else {
+                if(NodeDelete->isLeft) parent->left = newChild;
+                else parent->right = newChild;
+                newChild->parent = parent;
+            }
+            newChild->isLeft = newChildState;
+            // NodeDelete->targetPosition = newChild->position;
+        }
+        else if (NodeDelete->right) {
+            TreeNode* newChild = NodeDelete->right;
+            if(parent == nullptr) {
+                TreeRoot = NodeDelete->right;
+                TreeRoot->parent = nullptr;
+            }
+            else {
+                if(NodeDelete->isLeft) parent->left = newChild;
+                else parent->right = newChild;
+                newChild->parent = parent;
+            }
+            newChild->isLeft = newChildState;
+            // NodeDelete->targetPosition = newChild->position;
+        }
+        else {
+            if(NodeDelete->isLeft) parent->left = nullptr;
+            else parent->right = nullptr;
+        }
+        NodeDelete->parent = nullptr;
+        NodeDelete->left = nullptr;
+        NodeDelete->right = nullptr;
+    }
+    auto it = std::find(allNode.begin(), allNode.end(), NodeDelete);
+    if (it != allNode.end()) allNode.erase(it);
+}
+
+void AVL::deleteNode(TreeNode*& root, TreeNode* parent, int x) {
+
+}
+
+void AVL::deleteWithNoAnimation(TreeNode*& root, TreeNode* parent, int x) {
+
+}
+
 void AVL::rotateImbalanceNode() {
     
 }
+
+void AVL::updatePathAfterDelete() {
+    Path.clear();
+    for (auto Node : allNode) {
+        if(Node->isHighlight) Path.push_back(Node);
+    }
+}
+
