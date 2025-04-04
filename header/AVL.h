@@ -77,11 +77,12 @@ struct AVL {
     void rotateImbalanceNode();
     void setPositionImmediately();
     void insertNodeWithNoAnimation(TreeNode *&root, TreeNode *parent, int x);
-    void deleteNode(TreeNode*& root, TreeNode* parent, int x);
+    void deleteNodeRunAtOnce(TreeNode*& root, TreeNode* parent, int x);
     void deleteWithNoAnimation(TreeNode*& root, TreeNode* parent, int x);
     void FindDeleteNode(TreeNode*& root, TreeNode* parent, int x);
     void FindNewDeleteNode(TreeNode*& root);
     void prePareTreeForDelete();
     void updatePathAfterDelete();
     void updateHeightInPath();
+    void insertNodeRunAtOnce(TreeNode *&root, TreeNode *parent, int x);
 };
