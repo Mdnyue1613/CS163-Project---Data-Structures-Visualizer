@@ -397,13 +397,68 @@ void AVL::prePareTreeForDelete() {
     if (it != allNode.end()) allNode.erase(it);
 }
 
-void AVL::deleteNode(TreeNode*& root, TreeNode* parent, int x) {
+void AVL::deleteNodeRunAtOnce(TreeNode*& root, TreeNode* parent, int x) {
+    deleteWithNoAnimation(root, parent, x);
+    updateTreePosition();
+    setPositionImmediately();
+}
 
+void AVL::insertNodeRunAtOnce(TreeNode*& root, TreeNode* parent, int x) {
+    insertNodeWithNoAnimation(root, parent, x);
+    updateTreePosition();
+    setPositionImmediately();
 }
 
 void AVL::deleteWithNoAnimation(TreeNode*& root, TreeNode* parent, int x) {
+    if (!root) return;
 
+    if (x < root->val) {
+        deleteWithNoAnimation(root->left, root, x);
+    } else if (x > root->val) {
+        deleteWithNoAnimation(root->right, root, x);
+    } else {
+        // Tìm thấy node cần xóa
+        if (root->left && root->right) {
+            // Tìm node lớn nhất bên trái (tiền nhiệm)
+            TreeNode* tmp = root->left;
+            while (tmp->right) tmp = tmp->right;
+            root->val = tmp->val; // copy giá trị
+            deleteWithNoAnimation(root->left, root, tmp->val); // xóa node thay thế
+        } else {
+            // Một con hoặc không có con
+            TreeNode* child = root->left ? root->left : root->right;
+            bool stateChild = root->isLeft;
+            delete root;
+            root = child;
+            if (root) {
+                root->parent = parent;
+                root->isLeft = stateChild;
+            }
+            return;
+        }
+    }
+
+    // Cập nhật chiều cao & cân bằng lại
+    setHeight(root);
+    int balance = getBalance(root);
+
+    if (balance > 1) {
+        if (getBalance(root->left) < 0) root->left = rotateLeft(root->left);
+        root = rotateRight(root);
+    } else if (balance < -1) {
+        if (getBalance(root->right) > 0) root->right = rotateRight(root->right);
+        root = rotateLeft(root);
+    }
+
+    // Gán lại cho cha nếu cần
+    if (parent == nullptr) {
+        TreeRoot = root;
+    } else {
+        if (root->isLeft) parent->left = root;
+        else parent->right = root;
+    }
 }
+
 
 void AVL::rotateImbalanceNode() {
     
