@@ -4,6 +4,7 @@
 #include <cmath>
 #include <string>
 #include <cstring>
+#include <iostream>
 using namespace std;
 
 struct LInputBox

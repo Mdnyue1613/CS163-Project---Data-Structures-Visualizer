@@ -33,7 +33,7 @@ void AVL::drawTree() {
         DrawCircle(Node->position.x, Node->position.y, Node->radius, Node->color);
         string s = to_string(Node->val);
         int textSize = MeasureText(s.c_str(), Node->radius);
-        DrawText(s.c_str(), Node->position.x - textSize / 2, Node->position.y - Node->radius / 2, Node->radius, WHITE);
+        if (Node->radius > 0) DrawText(s.c_str(), Node->position.x - textSize / 2, Node->position.y - Node->radius / 2, Node->radius, WHITE);
     }
 }
 

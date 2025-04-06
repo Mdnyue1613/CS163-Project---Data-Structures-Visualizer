@@ -67,4 +67,7 @@ void LInputBox::draw(bool active) {
         if (isClick) afterClick(appearLine);
         if (inputData.size() > 0) DrawText(inputData.c_str(), posText_x, posText_y, fontText, BLACK);
     }
+    else {
+        ShowCursor();
+    }
 }

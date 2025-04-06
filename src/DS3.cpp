@@ -58,13 +58,13 @@ void DS3::RandomInitialize() {
 }
 
 void DS3::Insert() {
-    if(inputBox.inputData != "") Tree.insertNodeRunAtOnce(Tree.TreeRoot, nullptr, inputBox.data);
+    if(inputBox.inputData != "") Tree.insertNode(Tree.TreeRoot, nullptr, inputBox.data);
     inputBox.data = 0;
     inputBox.inputData = "";
 }
 
 void DS3::Delete() {
-    if(inputBox.inputData != "") Tree.deleteNodeRunAtOnce(Tree.TreeRoot, nullptr, inputBox.data);
+    if(inputBox.inputData != "") Tree.FindDeleteNode(Tree.TreeRoot, nullptr, inputBox.data);
     inputBox.data = 0;
     inputBox.inputData = "";
 }
