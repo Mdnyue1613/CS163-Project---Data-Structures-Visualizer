@@ -3,7 +3,8 @@
 #include "raylib.h"
 #include <vector>
 #include <string>
-#include <math.h>
+#include <cmath>
+#include <cctype>
 
 using namespace std;
 

@@ -7,7 +7,7 @@
 #include <fstream>
 #include <chrono>
 #include <random>
-#include <cctype>
+#include <algorithm>
 #include "HOBJECT.h"
 
 using namespace std;
@@ -60,7 +60,6 @@ struct Graph
     float thick;
     bool stable;
     Rectangle workspace;
-
     void Initialize();
     void DrawGraph();
     void DrawVertex(int ID);
@@ -75,7 +74,7 @@ struct Graph
     bool IsStable(float threshold);
     void UpdatePosition(float t, float damping);
     void SetInitialPosition();
-    
+
     void RandomData();
     void LoadFromFile(const char* filePath);
     void LoadFromKeyBoard(vector <string> &userInput);
@@ -84,11 +83,10 @@ struct Graph
     void LoadAdjacencyMatrix(vector <string> &userInput);
     void LoadEdgeList(vector <ii_i> &edges);
     void Add(vector <string> &userInput);
-    void AddVertext(int u);
+    void AddVertex(int u);
     void AddEdge(int u, int v, int w);
     void Delete(vector <string> &userInput);
     void DeleteVertex(int u);
     void DeleteEdge(int u, int v, int w);
-
-    void SynchronizeData(InputBox &box);
+    void SynchronizeData(InputBox &box);  
 };

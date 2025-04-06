@@ -12,8 +12,10 @@ struct DS3 {
     LInputBox inputBox;
     LFunctionArea functionArea;
     AVL Tree;
+    bool isAnimation;
     DS3();
     void draw();
     void RandomInitialize();
     void Insert();
+    void Delete();
 };

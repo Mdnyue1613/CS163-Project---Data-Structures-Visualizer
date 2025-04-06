@@ -587,7 +587,7 @@ void Graph::Add(vector <string> &userInput)
 
         if (success1 && !success2) 
         {
-            AddVertext(u);
+            AddVertex(u);
             stable = 0;
         }
         else if (success1 && success2 && success3)
@@ -603,7 +603,7 @@ void Graph::Add(vector <string> &userInput)
     }
 }
 
-void Graph::AddVertext(int u)
+void Graph::AddVertex(int u)
 {
     for (int i = numVertex + 1; i <= u; i++)
     {
@@ -624,8 +624,8 @@ void Graph::AddVertext(int u)
 
 void Graph::AddEdge(int u, int v, int w)
 {
-    AddVertext(u);
-    AddVertext(v);
+    AddVertex(u);
+    AddVertex(v);
 
     int pos = FindEdge(g[u], v, 1);
     if (pos == -1)

@@ -378,7 +378,6 @@ void GraphGUI::DrawInitializeFunction()
 
     if (inputBox.box.rec.x != G.workspace.x && inputBox.box.rec.y != G.workspace.y)
     {
-
         GoButton.rec.x = round(functionBG.rec.x + margin*2);
         GoButton.rec.y = round(inputBox.box.rec.y + inputBox.box.rec.height + margin*2);
         GoButton.rec.width = round((functionBG.rec.width - margin*2*2)); 
@@ -402,14 +401,7 @@ void GraphGUI::DrawInitializeFunction()
             
             if (!freeze)
             {
-                if (inputBox.box.rec.x != G.workspace.x && inputBox.box.rec.y != G.workspace.y)
-                {
-                    inputBox.box.rec = G.workspace;
-                    inputBox.displayedLines = (inputBox.box.rec.height - inputBox.lineSpacing) / (inputBox.fontSize + inputBox.lineSpacing);
-                    inputBox.maxLenPerLine = inputBox.box.rec.width - inputBox.lineSpacing*2;
-                    inputBox.box.outlineColor = WHITE;
-                }
-                else
+                if (inputBox.box.rec.x == G.workspace.x && inputBox.box.rec.y == G.workspace.y)
                 {
                     inputBox.displayedLines = 3;
                     inputBox.box.rec = inputBox.defaultPos;
@@ -454,14 +446,7 @@ void GraphGUI::DrawAddFunction()
             if (!freeze) 
             {
                 addBox.clear();
-                if (addBox.box.rec.x != G.workspace.x && addBox.box.rec.y != G.workspace.y)
-                {
-                    addBox.box.rec = G.workspace;
-                    addBox.displayedLines = (addBox.box.rec.height - addBox.lineSpacing) / (addBox.fontSize + addBox.lineSpacing);
-                    addBox.maxLenPerLine = addBox.box.rec.width - addBox.lineSpacing*2;
-                    addBox.box.outlineColor = WHITE;
-                }
-                else
+                if (addBox.box.rec.x == G.workspace.x && addBox.box.rec.y == G.workspace.y)
                 {
                     addBox.displayedLines = 3;
                     addBox.box.rec = addBox.defaultPos;
@@ -506,14 +491,7 @@ void GraphGUI::DrawDeleteFunction()
             if (!freeze) 
             {
                 deleteBox.clear();
-                if (deleteBox.box.rec.x != G.workspace.x && deleteBox.box.rec.y != G.workspace.y)
-                {
-                    deleteBox.box.rec = G.workspace;
-                    deleteBox.displayedLines = (deleteBox.box.rec.height - deleteBox.lineSpacing) / (deleteBox.fontSize + deleteBox.lineSpacing);
-                    deleteBox.maxLenPerLine = deleteBox.box.rec.width - deleteBox.lineSpacing*2;
-                    deleteBox.box.outlineColor = WHITE;
-                }
-                else
+                if (deleteBox.box.rec.x == G.workspace.x && deleteBox.box.rec.y == G.workspace.y)
                 {
                     deleteBox.displayedLines = 3;
                     deleteBox.box.rec = deleteBox.defaultPos;
@@ -650,5 +628,4 @@ void GraphGUI::DrawZoomInputAreaButton(Rectangle &zoomButton, InputBox &inputAre
         DrawLineEx(Vector2{zoomButton.x + zoomButton.width - length, zoomButton.y + zoomButton.height - length}, Vector2{zoomButton.x + zoomButton.width, zoomButton.y + zoomButton.height - length}, inputArea.box.thick, color);
         DrawLineEx(Vector2{zoomButton.x + zoomButton.width - length, zoomButton.y + zoomButton.height - length}, Vector2{zoomButton.x + zoomButton.width - length, zoomButton.y + zoomButton.height}, inputArea.box.thick, color);
     }
-
 }
