@@ -7,8 +7,10 @@ TextBox GraphGUI::functionBG;
 TextBox GraphGUI::guideBG;
 TextBox GraphGUI::explainBG;
 int GraphGUI::margin = 5;
+bool GraphGUI::freeze = 0;
+TextBox GraphGUI::notification;
 int GraphGUI::currentFunction = 0;
-vector <const char*> GraphGUI::listFunction = {"Initialize", "Add", "Delete", "Update", "Search", "Shorted Path"};
+vector <const char*> GraphGUI::listFunction = {"Initialize", "Add", "Delete", "Shorted Path"};
 TextBox GraphGUI::undirectedButton;
 TextBox GraphGUI::directedButton;
 NavigateButton GraphGUI::leftNavigationButton;
@@ -17,6 +19,8 @@ TextBox GraphGUI::functionTitle;
 TextBox GraphGUI::chooseFileButton;
 TextBox GraphGUI::randomButton;
 InputBox GraphGUI::inputBox;
+InputBox GraphGUI::addBox;
+InputBox GraphGUI::deleteBox;
 TextBox GraphGUI::GoButton;
 Graph GraphGUI::G;
 
@@ -28,12 +32,13 @@ void GraphGUI::GraphVisualize()
     {
         BeginDrawing();
         DrawBackGround();
-        DrawFunction();
         G.DrawGraph();
+        DrawFunction();
 
         GUI::BACK();
         EndDrawing();
-        if(WindowShouldClose()) {
+        if(WindowShouldClose()) 
+        {
             GUI::isOpenDS4 = 0;
             break;
         }
@@ -159,20 +164,58 @@ void GraphGUI::InitializeObject()
     randomButton.textColor = BLACK;
 
     inputBox.displayedLines = 3;
-    inputBox.box.rec.width = round((functionBG.rec.width - margin*2*2)); 
-    inputBox.box.rec.height = round(functionBG.rec.height/8 * inputBox.displayedLines);
-    inputBox.box.rec.x = round(functionBG.rec.x + margin*2);
-    inputBox.box.rec.y = round(functionTitle.rec.y + functionTitle.rec.height + randomButton.rec.height + margin*2*2);
+    inputBox.defaultPos.width = round((functionBG.rec.width - margin*2*2)); 
+    inputBox.defaultPos.height = round(functionBG.rec.height/8 * inputBox.displayedLines);
+    inputBox.defaultPos.x = round(functionBG.rec.x + margin*2);
+    inputBox.defaultPos.y = round(functionTitle.rec.y + functionTitle.rec.height + randomButton.rec.height + margin*2*2);
+    inputBox.box.rec = inputBox.defaultPos;
     inputBox.box.recColor = WHITE;
     inputBox.box.thick = 2;
     inputBox.box.outlineColor = BLACK;
-    inputBox.box.text = (char*)(const char*)"Enter your graph";
+    inputBox.box.text = (char*)(const char*)"Enter your data";
     inputBox.box.fontSize = inputBox.box.rec.height/3 * 3/5;
     inputBox.box.textColor = GRAY;
     inputBox.userInput.resize(1);
     inputBox.fontSize = inputBox.box.fontSize;
-    inputBox.maxLenPerLine = inputBox.box.rec.width - MeasureText(to_string(0).c_str(), inputBox.fontSize)*2;
+    inputBox.lineSpacing = (inputBox.box.rec.height - inputBox.fontSize * inputBox.displayedLines) / (inputBox.displayedLines + 1);
+    inputBox.maxLenPerLine = inputBox.box.rec.width - inputBox.lineSpacing*2;
     inputBox.inputColor = BLACK;
+
+    addBox.displayedLines = 3;
+    addBox.defaultPos.width = round((functionBG.rec.width - margin*2*2)); 
+    addBox.defaultPos.height = round(functionBG.rec.height/8 * addBox.displayedLines);
+    addBox.defaultPos.x = round(functionBG.rec.x + margin*2);
+    addBox.defaultPos.y = round(functionTitle.rec.y + functionTitle.rec.height + margin*2);
+    addBox.box.rec = addBox.defaultPos;
+    addBox.box.recColor = WHITE;
+    addBox.box.thick = 2;
+    addBox.box.outlineColor = BLACK;
+    addBox.box.text = (char*)(const char*)"Enter your data";
+    addBox.box.fontSize = addBox.box.rec.height/3 * 3/5;
+    addBox.box.textColor = GRAY;
+    addBox.userInput.resize(1);
+    addBox.fontSize = addBox.box.fontSize;
+    addBox.lineSpacing = (addBox.box.rec.height - addBox.fontSize * addBox.displayedLines) / (addBox.displayedLines + 1);
+    addBox.maxLenPerLine = addBox.box.rec.width - addBox.lineSpacing*2;
+    addBox.inputColor = BLACK;
+
+    deleteBox.displayedLines = 3;
+    deleteBox.defaultPos.width = round((functionBG.rec.width - margin*2*2)); 
+    deleteBox.defaultPos.height = round(functionBG.rec.height/8 * deleteBox.displayedLines);
+    deleteBox.defaultPos.x = round(functionBG.rec.x + margin*2);
+    deleteBox.defaultPos.y = round(functionTitle.rec.y + functionTitle.rec.height + margin*2);
+    deleteBox.box.rec = deleteBox.defaultPos;
+    deleteBox.box.recColor = WHITE;
+    deleteBox.box.thick = 2;
+    deleteBox.box.outlineColor = BLACK;
+    deleteBox.box.text = (char*)(const char*)"Enter your data";
+    deleteBox.box.fontSize = deleteBox.box.rec.height/3 * 3/5;
+    deleteBox.box.textColor = GRAY;
+    deleteBox.userInput.resize(1);
+    deleteBox.fontSize = deleteBox.box.fontSize;
+    deleteBox.lineSpacing = (deleteBox.box.rec.height - deleteBox.fontSize * deleteBox.displayedLines) / (deleteBox.displayedLines + 1);
+    deleteBox.maxLenPerLine = deleteBox.box.rec.width - deleteBox.lineSpacing*2;
+    deleteBox.inputColor = BLACK;
 
     GoButton.recColor = WHITE;
     GoButton.thick = 2;
@@ -219,18 +262,6 @@ void GraphGUI::DrawFunction()
         break;
     
     case 3:
-        DrawUpdateFunction();
-        break;
-    
-    case 4:
-        DrawUpdateFunction();
-        break;
-    
-    case 5:
-        DrawSearchFunction();
-        break;
-    
-    case 6:
         DrawShortedPathFunction();
         break;
     }
@@ -242,7 +273,7 @@ void GraphGUI::DrawCustomizeGraphType()
     directedButton.draw();
 
     Vector2 mouse = GetMousePosition();
-    if (CheckCollisionPointRec(mouse, undirectedButton.rec) && G.type == 1)
+    if (!freeze && CheckCollisionPointRec(mouse, undirectedButton.rec) && G.type == 1)
     {
         undirectedButton.recColor = LIGHTGRAY;
         undirectedButton.draw();
@@ -254,7 +285,7 @@ void GraphGUI::DrawCustomizeGraphType()
         }
         else undirectedButton.recColor = WHITE;
     }
-    else if (CheckCollisionPointRec(mouse, directedButton.rec) && G.type == 0)
+    else if (!freeze && CheckCollisionPointRec(mouse, directedButton.rec) && G.type == 0)
     {
         directedButton.recColor = LIGHTGRAY;
         directedButton.draw();
@@ -281,25 +312,25 @@ void GraphGUI::DrawNavigationButton()
     rightNavigationButton.draw();
 
     Vector2 mouse = GetMousePosition();
-    if (CheckCollisionPointRec(mouse, leftNavigationButton.rec))
+    if (!freeze && CheckCollisionPointRec(mouse, leftNavigationButton.rec))
     {
         leftNavigationButton.color = LIGHTGRAY;
         leftNavigationButton.draw();
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
         {
             currentFunction--;
-            if (currentFunction < 0) currentFunction += 6;
+            if (currentFunction < 0) currentFunction += listFunction.size();
         }
         leftNavigationButton.color = WHITE;
     }
-    else if (CheckCollisionPointRec(mouse, rightNavigationButton.rec))
+    else if (!freeze && CheckCollisionPointRec(mouse, rightNavigationButton.rec))
     {
         rightNavigationButton.color = LIGHTGRAY;
         rightNavigationButton.draw();
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
         {
             currentFunction++;
-            if (currentFunction > 5) currentFunction = 0;
+            if (currentFunction == listFunction.size()) currentFunction = 0;
         }
         rightNavigationButton.color = WHITE; 
     }
@@ -310,7 +341,7 @@ void GraphGUI::DrawInitializeFunction()
     Vector2 mouse = GetMousePosition();
 
     chooseFileButton.draw();
-    if (CheckCollisionPointRec(mouse, chooseFileButton.rec))
+    if (!freeze && CheckCollisionPointRec(mouse, chooseFileButton.rec))
     {
         chooseFileButton.recColor = LIGHTGRAY;
         chooseFileButton.draw();
@@ -322,13 +353,16 @@ void GraphGUI::DrawInitializeFunction()
             const char *selectedFile = tinyfd_openFileDialog("Select a file", "", 3, filters, NULL, 0);
 
             if (selectedFile)
+            {
                 G.LoadFromFile(selectedFile);
+                G.SynchronizeData(inputBox);
+            }
         }   
         chooseFileButton.recColor = WHITE;
     }
 
     randomButton.draw();
-    if (CheckCollisionPointRec(mouse, randomButton.rec))
+    if (!freeze && CheckCollisionPointRec(mouse, randomButton.rec))
     {
         randomButton.recColor = LIGHTGRAY;
         randomButton.draw();
@@ -337,20 +371,26 @@ void GraphGUI::DrawInitializeFunction()
             randomButton.recColor = DARKGRAY;
             randomButton.draw();
             G.RandomData();
+            G.SynchronizeData(inputBox);
         }
         randomButton.recColor = WHITE;
     }
 
-    GoButton.rec.x = round(functionBG.rec.x + margin*2);
-    GoButton.rec.y = round(inputBox.box.rec.y + inputBox.box.rec.height + margin*2);
-    GoButton.rec.width = round((functionBG.rec.width - margin*2*2)); 
-    GoButton.rec.height = round(functionBG.rec.height / 8);
-    GoButton.fontSize = GoButton.rec.height * 3/5;
+    if (inputBox.box.rec.x != G.workspace.x && inputBox.box.rec.y != G.workspace.y)
+    {
 
+        GoButton.rec.x = round(functionBG.rec.x + margin*2);
+        GoButton.rec.y = round(inputBox.box.rec.y + inputBox.box.rec.height + margin*2);
+        GoButton.rec.width = round((functionBG.rec.width - margin*2*2)); 
+        GoButton.rec.height = round(functionBG.rec.height / 8);
+        GoButton.fontSize = GoButton.rec.height * 3/5;
+    }
+        
     inputBox.draw();
-    inputBox.activate();
+    ZoomInputArea(inputBox);
+    if (!freeze) inputBox.activate();
     GoButton.draw();
-    if (CheckCollisionPointRec(mouse, GoButton.rec))
+    if (!freeze && CheckCollisionPointRec(mouse, GoButton.rec))
     {
         GoButton.recColor = LIGHTGRAY;
         GoButton.draw();
@@ -358,33 +398,257 @@ void GraphGUI::DrawInitializeFunction()
         {
             GoButton.recColor = DARKGRAY;
             GoButton.draw();
-            // G.RandomData();
+            G.LoadFromKeyBoard(inputBox.userInput);
+            
+            if (!freeze)
+            {
+                if (inputBox.box.rec.x != G.workspace.x && inputBox.box.rec.y != G.workspace.y)
+                {
+                    inputBox.box.rec = G.workspace;
+                    inputBox.displayedLines = (inputBox.box.rec.height - inputBox.lineSpacing) / (inputBox.fontSize + inputBox.lineSpacing);
+                    inputBox.maxLenPerLine = inputBox.box.rec.width - inputBox.lineSpacing*2;
+                    inputBox.box.outlineColor = WHITE;
+                }
+                else
+                {
+                    inputBox.displayedLines = 3;
+                    inputBox.box.rec = inputBox.defaultPos;
+                    inputBox.maxLenPerLine = inputBox.box.rec.width - inputBox.lineSpacing*2;
+                    inputBox.box.outlineColor = BLACK;
+                }
+            }
         }
         GoButton.recColor = WHITE;
     }
+
+    if (freeze) Notify((char *)(const char*)"");
 }
 
 void GraphGUI::DrawAddFunction()
 {
-    
+    Vector2 mouse = GetMousePosition();
+
+    if (addBox.box.rec.x != G.workspace.x && addBox.box.rec.y != G.workspace.y)
+    {
+        GoButton.rec.x = round(functionBG.rec.x + margin*2);
+        GoButton.rec.y = round(addBox.box.rec.y + addBox.box.rec.height + margin*2);
+        GoButton.rec.width = round((functionBG.rec.width - margin*2*2)); 
+        GoButton.rec.height = round(functionBG.rec.height / 8);
+        GoButton.fontSize = GoButton.rec.height * 3/5;
+    }
+
+    addBox.draw();
+    ZoomInputArea(addBox);
+    if (!freeze) addBox.activate();
+    GoButton.draw();
+    if (!freeze && CheckCollisionPointRec(mouse, GoButton.rec))
+    {
+        GoButton.recColor = LIGHTGRAY;
+        GoButton.draw();
+        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+        {
+            GoButton.recColor = DARKGRAY;
+            GoButton.draw();
+            G.Add(addBox.userInput);
+            G.SynchronizeData(inputBox);
+            if (!freeze) 
+            {
+                addBox.clear();
+                if (addBox.box.rec.x != G.workspace.x && addBox.box.rec.y != G.workspace.y)
+                {
+                    addBox.box.rec = G.workspace;
+                    addBox.displayedLines = (addBox.box.rec.height - addBox.lineSpacing) / (addBox.fontSize + addBox.lineSpacing);
+                    addBox.maxLenPerLine = addBox.box.rec.width - addBox.lineSpacing*2;
+                    addBox.box.outlineColor = WHITE;
+                }
+                else
+                {
+                    addBox.displayedLines = 3;
+                    addBox.box.rec = addBox.defaultPos;
+                    addBox.maxLenPerLine = addBox.box.rec.width - addBox.lineSpacing*2;
+                    addBox.box.outlineColor = BLACK;
+                }
+            }
+        }
+        GoButton.recColor = WHITE;
+    }
+
+    if (freeze) Notify((char *)(const char*)"");
 }
 
 void GraphGUI::DrawDeleteFunction()
 {
-    
-}
+    Vector2 mouse = GetMousePosition();
 
-void GraphGUI::DrawUpdateFunction()
-{
-    
-}
+    if (deleteBox.box.rec.x != G.workspace.x && deleteBox.box.rec.y != G.workspace.y)
+    {
+        GoButton.rec.x = round(functionBG.rec.x + margin*2);
+        GoButton.rec.y = round(deleteBox.box.rec.y + deleteBox.box.rec.height + margin*2);
+        GoButton.rec.width = round((functionBG.rec.width - margin*2*2)); 
+        GoButton.rec.height = round(functionBG.rec.height / 8);
+        GoButton.fontSize = GoButton.rec.height * 3/5;
+    }
 
-void GraphGUI::DrawSearchFunction()
-{
-    
+    deleteBox.draw();
+    ZoomInputArea(deleteBox);
+    if (!freeze) deleteBox.activate();
+    GoButton.draw();
+    if (!freeze && CheckCollisionPointRec(mouse, GoButton.rec))
+    {
+        GoButton.recColor = LIGHTGRAY;
+        GoButton.draw();
+        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+        {
+            GoButton.recColor = DARKGRAY;
+            GoButton.draw();
+            G.Delete(deleteBox.userInput);
+            G.SynchronizeData(inputBox);
+            if (!freeze) 
+            {
+                deleteBox.clear();
+                if (deleteBox.box.rec.x != G.workspace.x && deleteBox.box.rec.y != G.workspace.y)
+                {
+                    deleteBox.box.rec = G.workspace;
+                    deleteBox.displayedLines = (deleteBox.box.rec.height - deleteBox.lineSpacing) / (deleteBox.fontSize + deleteBox.lineSpacing);
+                    deleteBox.maxLenPerLine = deleteBox.box.rec.width - deleteBox.lineSpacing*2;
+                    deleteBox.box.outlineColor = WHITE;
+                }
+                else
+                {
+                    deleteBox.displayedLines = 3;
+                    deleteBox.box.rec = deleteBox.defaultPos;
+                    deleteBox.maxLenPerLine = deleteBox.box.rec.width - deleteBox.lineSpacing*2;
+                    deleteBox.box.outlineColor = BLACK;
+                }
+            }
+        }
+        GoButton.recColor = WHITE;
+    }
+
+    if (freeze) Notify((char *)(const char*)"");
 }
 
 void GraphGUI::DrawShortedPathFunction()
 {
     
+}
+
+void GraphGUI::Notify(char *message)
+{
+    freeze = 1;
+
+    notification.rec.height = round(GetScreenHeight() / 10);
+    notification.fontSize = notification.rec.height / 4;
+    if (strlen(message) > 0)
+        notification.text = message;
+    notification.rec.width = MeasureText(notification.text, notification.fontSize) + notification.fontSize * 2;
+    notification.rec.x = round(G.workspace.x + (G.workspace.width - notification.rec.width) / 2);
+    notification.rec.y = round(G.workspace.y + (G.workspace.height - notification.rec.height) / 2);
+    notification.recColor = WHITE;
+    notification.thick = 2;
+    notification.outlineColor = BLACK;
+    notification.textColor = RED;
+
+    TextBox confirmButton;
+    confirmButton.rec.width = round(notification.rec.width / 4);
+    confirmButton.rec.height = round(notification.rec.height / 3);
+    confirmButton.rec.x = round(notification.rec.x + (notification.rec.width - confirmButton.rec.width)/2);
+    confirmButton.rec.y = round(notification.rec.y + notification.rec.height + confirmButton.rec.height);
+    confirmButton.recColor = WHITE;
+    confirmButton.thick = 2;
+    confirmButton.outlineColor = BLACK;
+    confirmButton.text = (char*)(const char*)"OK";
+    confirmButton.fontSize = confirmButton.rec.height * 3/5;
+    confirmButton.textColor = BLACK;
+
+    notification.draw();
+    confirmButton.draw();
+
+    Vector2 mouse = GetMousePosition();
+    if (CheckCollisionPointRec(mouse, confirmButton.rec))
+    {
+        confirmButton.recColor = LIGHTGRAY;
+        confirmButton.draw();
+        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+        {
+            confirmButton.recColor = DARKGRAY;
+            confirmButton.draw();
+            freeze = 0;
+        }
+        confirmButton.recColor = WHITE;
+    }
+}
+
+void GraphGUI::ZoomInputArea(InputBox &inputArea)
+{
+    Rectangle zoomButton = Rectangle{
+        round(inputArea.box.rec.x + inputArea.box.rec.width - inputArea.box.rec.width/20 - inputArea.lineSpacing),
+        round(inputArea.box.rec.y + inputArea.box.rec.height - inputArea.box.rec.width/20 - inputArea.lineSpacing),
+        round(inputArea.box.rec.width / 20),
+        round(inputArea.box.rec.width / 20)
+    };
+
+    DrawZoomInputAreaButton(zoomButton, inputArea, BLACK);
+   
+    Vector2 mouse = GetMousePosition();
+    if (CheckCollisionPointRec(mouse, zoomButton))
+    {
+        DrawZoomInputAreaButton(zoomButton, inputArea, LIGHTGRAY);
+
+        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+        {
+            DrawZoomInputAreaButton(zoomButton, inputArea, DARKGRAY);
+
+            if (inputArea.box.rec.x != G.workspace.x && inputArea.box.rec.y != G.workspace.y)
+            {
+                inputArea.box.rec = G.workspace;
+                inputArea.displayedLines = (inputArea.box.rec.height - inputArea.lineSpacing) / (inputArea.fontSize + inputArea.lineSpacing);
+                inputArea.maxLenPerLine = inputArea.box.rec.width - inputArea.lineSpacing*2;
+                inputArea.box.outlineColor = WHITE;
+            }
+            else
+            {
+                inputArea.displayedLines = 3;
+                inputArea.box.rec = inputArea.defaultPos;
+                inputArea.maxLenPerLine = inputArea.box.rec.width - inputArea.lineSpacing*2;
+                inputArea.box.outlineColor = BLACK;
+            }
+        }
+    }
+}
+
+void GraphGUI::DrawZoomInputAreaButton(Rectangle &zoomButton, InputBox &inputArea, Color color)
+{
+    float length = round(zoomButton.width / 3);
+    DrawRectangle(zoomButton.x, zoomButton.y, zoomButton.width, zoomButton.height, WHITE);
+
+    if (inputArea.box.rec.x != G.workspace.x && inputArea.box.rec.y != G.workspace.y)
+    {
+        DrawLineEx(Vector2{zoomButton.x, zoomButton.y}, Vector2{zoomButton.x, zoomButton.y + length}, inputArea.box.thick, color);
+        DrawLineEx(Vector2{zoomButton.x, zoomButton.y}, Vector2{zoomButton.x + length, zoomButton.y}, inputArea.box.thick, color);
+        
+        DrawLineEx(Vector2{zoomButton.x + zoomButton.width, zoomButton.y}, Vector2{zoomButton.x + zoomButton.width, zoomButton.y + length}, inputArea.box.thick, color);
+        DrawLineEx(Vector2{zoomButton.x + zoomButton.width, zoomButton.y}, Vector2{zoomButton.x + zoomButton.width - length, zoomButton.y}, inputArea.box.thick, color);
+        
+        DrawLineEx(Vector2{zoomButton.x, zoomButton.y + zoomButton.height}, Vector2{zoomButton.x + length, zoomButton.y + zoomButton.height}, inputArea.box.thick, color);
+        DrawLineEx(Vector2{zoomButton.x, zoomButton.y + zoomButton.height}, Vector2{zoomButton.x, zoomButton.y + zoomButton.height - length}, inputArea.box.thick, color);
+        
+        DrawLineEx(Vector2{zoomButton.x + zoomButton.width, zoomButton.y + zoomButton.height}, Vector2{zoomButton.x + zoomButton.width - length, zoomButton.y + zoomButton.height}, inputArea.box.thick, color);
+        DrawLineEx(Vector2{zoomButton.x + zoomButton.width, zoomButton.y + zoomButton.height}, Vector2{zoomButton.x + zoomButton.width, zoomButton.y + zoomButton.height - length}, inputArea.box.thick, color);
+    }
+    else
+    {
+        DrawLineEx(Vector2{zoomButton.x + length, zoomButton.y}, Vector2{zoomButton.x + length, zoomButton.y + length}, inputArea.box.thick, color);
+        DrawLineEx(Vector2{zoomButton.x + length, zoomButton.y + length}, Vector2{zoomButton.x, zoomButton.y + length}, inputArea.box.thick, color);
+
+        DrawLineEx(Vector2{zoomButton.x + zoomButton.width - length, zoomButton.y + length}, Vector2{zoomButton.x + zoomButton.width - length, zoomButton.y}, inputArea.box.thick, color);
+        DrawLineEx(Vector2{zoomButton.x + zoomButton.width - length, zoomButton.y + length}, Vector2{zoomButton.x + zoomButton.width, zoomButton.y + length}, inputArea.box.thick, color);
+
+        DrawLineEx(Vector2{zoomButton.x + length, zoomButton.y + zoomButton.height - length}, Vector2{zoomButton.x, zoomButton.y + zoomButton.height - length}, inputArea.box.thick, color);
+        DrawLineEx(Vector2{zoomButton.x + length, zoomButton.y + zoomButton.height - length}, Vector2{zoomButton.x + length, zoomButton.y + zoomButton.height}, inputArea.box.thick, color);
+
+        DrawLineEx(Vector2{zoomButton.x + zoomButton.width - length, zoomButton.y + zoomButton.height - length}, Vector2{zoomButton.x + zoomButton.width, zoomButton.y + zoomButton.height - length}, inputArea.box.thick, color);
+        DrawLineEx(Vector2{zoomButton.x + zoomButton.width - length, zoomButton.y + zoomButton.height - length}, Vector2{zoomButton.x + zoomButton.width - length, zoomButton.y + zoomButton.height}, inputArea.box.thick, color);
+    }
+
 }

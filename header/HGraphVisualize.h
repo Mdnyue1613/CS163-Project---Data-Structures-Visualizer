@@ -1,3 +1,5 @@
+#pragma once
+
 #include "raylib.h"
 #include "tinyfiledialogs.h"
 #include "HOBJECT.h"
@@ -13,6 +15,8 @@ struct GraphGUI
     static TextBox guideBG;
     static TextBox explainBG;
     static int margin;
+    static bool freeze;
+    static TextBox notification;
     static int currentFunction;
     static vector <const char*> listFunction;
     static TextBox undirectedButton;
@@ -23,6 +27,8 @@ struct GraphGUI
     static TextBox chooseFileButton;
     static TextBox randomButton;
     static InputBox inputBox;
+    static InputBox addBox;
+    static InputBox deleteBox;
     static TextBox GoButton;
 
     static Graph G;
@@ -38,10 +44,11 @@ struct GraphGUI
     static void DrawInitializeFunction();
     static void DrawAddFunction();
     static void DrawDeleteFunction();
-    static void DrawUpdateFunction();
-    static void DrawSearchFunction();
     static void DrawShortedPathFunction();
 
+    static void Notify(char *message);
+    static void ZoomInputArea(InputBox &inputArea);
+    static void DrawZoomInputAreaButton(Rectangle &zoomButton, InputBox &inputArea, Color color);
 };
 
 
