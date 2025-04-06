@@ -5,6 +5,7 @@
 #include <fstream>
 #include <chrono>
 #include <random>
+#include <algorithm>
 
 using namespace std;
 

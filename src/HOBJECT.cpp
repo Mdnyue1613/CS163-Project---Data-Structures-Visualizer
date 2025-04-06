@@ -69,7 +69,7 @@ void InputBox::activate()
         int key = GetCharPressed();
         while (key > 0) 
         {
-            if (isnumber(key) || (char)key == ' ') 
+            if (isdigit(key) || (char)key == ' ') 
             {
                 userInput[cursorPos.first].insert(cursorPos.second, 1, (char)key);
                 cursorPos.second++;
