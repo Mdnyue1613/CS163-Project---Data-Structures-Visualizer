@@ -1,4 +1,6 @@
 #include "../header/HOBJECT.h"
+#include "../header/HGRAPH.h"
+#include "../header/HGraphVisualize.h"
 
 void TextBox::draw()
 {
@@ -23,9 +25,7 @@ void InputBox::draw()
     }
     else
     {
-        float lineSpacing = (box.rec.height - fontSize * displayedLines) / (displayedLines + 1);
-        float indentation = MeasureText(to_string(0).c_str(), fontSize);
-        Vector2 textPos = Vector2{box.rec.x + indentation, box.rec.y + lineSpacing};
+        Vector2 textPos = Vector2{box.rec.x + lineSpacing, box.rec.y + lineSpacing};
         
         for (int i = firstLine; i <= firstLine + displayedLines - 1; i++)
             if (i < userInput.size() && !userInput[i].empty() && firstChar < userInput[i].size())
@@ -37,9 +37,7 @@ void InputBox::draw()
     
     if (isActive && fmod(GetTime(), 0.8f) < 0.4f)
     {
-        float lineSpacing = (box.rec.height - fontSize * displayedLines) / (displayedLines + 1);
-        float indentation = MeasureText(to_string(0).c_str(), fontSize);
-        Vector2 textPos = Vector2{box.rec.x + indentation, box.rec.y + lineSpacing};
+        Vector2 textPos = Vector2{box.rec.x + lineSpacing, box.rec.y + lineSpacing};
 
         Vector2 start;
         start.x = textPos.x + (cursorPos.second == 0 ? 0 : MeasureText(userInput[cursorPos.first].substr(firstChar, cursorPos.second - firstChar).c_str(), fontSize));
@@ -147,6 +145,9 @@ void InputBox::BACKSPACE()
             userInput.pop_back();
             cursorPos.first--;
             cursorPos.second = userInput[cursorPos.first].size();
+            
+            if (firstLine > 0)
+                firstLine--;
         }
         if (cursorPos.second > 0)
         {
@@ -155,8 +156,8 @@ void InputBox::BACKSPACE()
         }
 
         firstChar = findFirstChar(userInput[cursorPos.first], cursorPos.second - 1);
-        if (firstLine > 0)
-            firstLine--;  
+        if (cursorPos.first < firstLine)
+            firstLine--;
         
         startPress = GetTime();
     }   
@@ -239,4 +240,13 @@ void InputBox::NAVIGATION()
         
         startPress = GetTime();
     }
+}
+
+void InputBox::clear()
+{
+    userInput.clear();
+    userInput.push_back("");
+    firstLine = 0;
+    firstChar = 0;
+    cursorPos = {0, 0};
 }
