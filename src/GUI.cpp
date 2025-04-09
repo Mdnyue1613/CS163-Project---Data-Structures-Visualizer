@@ -7,6 +7,7 @@
 
 #include <iostream>
 void GUI::startProgram() {
+    SetConfigFlags(FLAG_MSAA_4X_HINT);
     InitWindow(1200, 800, "Hello Raylib");
     linkedListVisualizer.prepare();
     SetTargetFPS(60);

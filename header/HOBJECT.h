@@ -1,4 +1,5 @@
 #pragma once
+
 #include "raylib.h"
 #include <vector>
 #include <string>
@@ -31,6 +32,7 @@ struct NavigateButton
 
 struct InputBox
 {
+    Rectangle defaultPos;
     TextBox box;
     vector <string> userInput;
     bool isActive = 0;
@@ -42,6 +44,7 @@ struct InputBox
     float startPress = 0;
     float periodHold = 0.16;
     int fontSize;
+    float lineSpacing;
     Color inputColor;
     void draw();
     void activate();
@@ -50,4 +53,5 @@ struct InputBox
     void BACKSPACE();
     void ENTER();
     void NAVIGATION();
+    void clear();
 };

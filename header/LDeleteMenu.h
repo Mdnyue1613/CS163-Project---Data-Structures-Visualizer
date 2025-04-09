@@ -6,7 +6,7 @@
 #include"PTitleBox.h"
 #include"PSwitchBox.h"
 
-struct LInitializeMenu{
+struct LDeleteMenu{
     const int boxHeight = 45;
     const int verticalSpace = 5;
     const int horizontalSpace = 5;
@@ -16,7 +16,7 @@ struct LInitializeMenu{
     PTitleBox GO;
     PSwitchBox Mode;
 
-    LInitializeMenu();
-    LInitializeMenu(int x, int y, int width, int height, int characterSize);
+    LDeleteMenu();
+    LDeleteMenu(int x, int y, int width, int height, int characterSize);
     string draw(bool active);
 };

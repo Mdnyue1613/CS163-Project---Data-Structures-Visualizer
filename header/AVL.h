@@ -17,6 +17,7 @@ struct TreeNode{
     int val;
     int height;
     bool isLeft;
+    bool isHighlight = 0;
     Vector2 position;
     Vector2 targetPosition;
     float radius;
@@ -33,6 +34,9 @@ struct AVL {
     TreeNode* rotationNode = nullptr;
     TreeNode* NodeInsert = nullptr;
     TreeNode* childRotateNode = nullptr;
+    TreeNode* NodeDelete = nullptr;
+    TreeNode* newDeleteNode = nullptr;
+    int indexOfDeleteNodeInPath = 0;
     bool isInsert, isDelete, isFind, isInit;
     bool isNeedToRotate = false, isNeedToRotateChild = false;
     vector<TreeNode*> allNode, Path;
@@ -65,9 +69,20 @@ struct AVL {
     void rotateNode(TreeNode*& root);
     void animateRotation();
     void appearNode();
+    void disapearnode();
     void defaultTree();
     void hightLightNode();
     void rotateChildNode();
     void checkRotateChildNode();
     void rotateImbalanceNode();
+    void setPositionImmediately();
+    void insertNodeWithNoAnimation(TreeNode *&root, TreeNode *parent, int x);
+    void deleteNodeRunAtOnce(TreeNode*& root, TreeNode* parent, int x);
+    void deleteWithNoAnimation(TreeNode*& root, TreeNode* parent, int x);
+    void FindDeleteNode(TreeNode*& root, TreeNode* parent, int x);
+    void FindNewDeleteNode(TreeNode*& root);
+    void prePareTreeForDelete();
+    void updatePathAfterDelete();
+    void updateHeightInPath();
+    void insertNodeRunAtOnce(TreeNode *&root, TreeNode *parent, int x);
 };

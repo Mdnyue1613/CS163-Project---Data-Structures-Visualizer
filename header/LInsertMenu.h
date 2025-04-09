@@ -15,5 +15,5 @@ struct LInsertMenu{
     PTitleBox Mode, GO;
     LInsertMenu();
     LInsertMenu(int x, int y, int width, int height, int characterSize);
-    string draw();
+    string draw(bool active);
 };
