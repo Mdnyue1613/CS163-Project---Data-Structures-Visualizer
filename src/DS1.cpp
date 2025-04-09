@@ -8,6 +8,10 @@ DS1::DS1(void) :
 
 DS1::~DS1(void) {}
 
+void DS1::update(void) {
+    doublyLinkedList.update();
+}
+
 void DS1::draw(void) {
     // Draw the title of Data Structure 1
     titleBox.draw();
@@ -19,6 +23,9 @@ void DS1::draw(void) {
     
     if(request[0] == "initialize") {
         operateInitialize(request);
+    }
+    else if(request[0] == "insert") {
+        operateInsert(request);
     }
 
     // Draw Data Structure
@@ -102,6 +109,22 @@ vector<int> DS1::stringToVectorInt(string& s) {
 
 void DS1::vectorIntInitialize(vector<int>& vi) {
     doublyLinkedList.build(vi);
+}
+
+void DS1::operateInsert(vector<string>& request) {
+    if(request[1] == "head") {
+        int value = stoi(request[2]);
+        doublyLinkedList.insertHead(value);
+    }
+    else if(request[1] == "tail") {
+        int value = stoi(request[2]);
+        doublyLinkedList.insertTail(value);
+    }
+    else if(request[1] == "specified") {
+        int position = stoi(request[2]);
+        int value = stoi(request[3]);
+        doublyLinkedList.insert(position, value); 
+    }
 }
 
 void DS1::prepare(void) {
