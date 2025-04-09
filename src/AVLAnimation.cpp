@@ -147,6 +147,8 @@ void AVL::insertAnimation() {
 
     case 6:
         updateHeightInPath();
+        hightLightNodeIndex--;
+        Path.pop_back();
         break;
 
     default:
@@ -300,8 +302,20 @@ void AVL::deleteAnimation() {
         break;
 
     case 10:
-        updateHeightInPath();
-        break;
+        if(hightLightNodeIndex >= 0 && !Path.empty() && hightLightNodeIndex < Path.size()) {
+            updateHeightInPath();
+            if(getBalance(Path[hightLightNodeIndex]) > 1 || getBalance(Path[hightLightNodeIndex]) < -1) {
+                isNeedToRotate = 1;
+                rotationNode = Path[hightLightNodeIndex];
+                Path[hightLightNodeIndex]->isHighlight = false;
+                Path[hightLightNodeIndex]->setColor(RED);
+                animationProgress = 0.0f;
+                animationStep =  7;
+            }
+            hightLightNodeIndex--;
+            Path.pop_back();
+            break;
+        }
 
     default:
         for (auto Node : allNode) {
@@ -317,6 +331,7 @@ void AVL::deleteAnimation() {
         drawTree();
         break;
     }
+    cout << animationStep << "\n";
     drawTree();
 }
 
@@ -409,7 +424,5 @@ void AVL::updateHeightInPath() {
         setHeight(Path[hightLightNodeIndex]);
         Path[hightLightNodeIndex]->setColor(BLUE);
         WaitTime(0.5);
-        hightLightNodeIndex--;
-        Path.pop_back();
     }
 }
