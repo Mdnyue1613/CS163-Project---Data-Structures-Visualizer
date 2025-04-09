@@ -1,14 +1,16 @@
 #include "../header/GUI.h"
+#include "../header/HGraphVisualize.h"
 #include "../header/BOX.h"
 #include "../header/LInputBox.h"
 #include "../header/AVL.h"
-#include "../header/TEXTBOX.h"
-#include "../header/GraphVisualize.h"
+#include "../header/DS2.h"
+
 #include <iostream>
 void GUI::startProgram() {
+    SetConfigFlags(FLAG_MSAA_4X_HINT);
     InitWindow(1200, 800, "Hello Raylib");
+    linkedListVisualizer.prepare();
     SetTargetFPS(60);
-    linkedListVisualizer.loadTextures();
     while(isOpenDS1 || isOpenDS2 || isOpenDS3 || isOpenDS4 || isOpenMenu) {
         drawMenu();
         drawDS1();
@@ -83,9 +85,11 @@ void GUI::drawDS1() {
 }
 
 void GUI::drawDS2() {
-    while(GUI::isOpenDS2) {
+    DS2 Hashtable;
+    while (GUI::isOpenDS2) {
         BeginDrawing();
-        ClearBackground(RED);
+        ClearBackground(WHITE);
+        Hashtable.draw();
         BACK();
         EndDrawing();
         if(WindowShouldClose()) {
@@ -111,18 +115,7 @@ void GUI::drawDS3() {
 }
 
 void GUI::drawDS4() {
-    // while (isOpenDS4) {
-    //     BeginDrawing();
-    //     ClearBackground(PINK);
-    //     BACK();
-    //     EndDrawing();
-    //     if(WindowShouldClose()) {
-    //         isOpenDS4 = 0;
-    //         break;
-    //     }
-    // }
-
-    GraphVisualize();
+    GraphGUI::GraphVisualize();
 }
 
 void GUI::BACK() {

@@ -2,7 +2,7 @@
 #include "raylib.h"
 #include "PTitleBox.h"
 #include "PFunctionArea.h"
-#include "DoublyLinkedList.h"
+#include "Hashtable.h"
 #include "PConstants.h"
 #include "PRandom.h"
 #include <string>
@@ -10,18 +10,19 @@
 #include <random>
 using namespace std;
 
-struct DS1 {
+struct DS2 {
     PTitleBox titleBox;
     PFunctionArea functionArea;
-    DoublyLinkedList doublyLinkedList;
+    Hashtable hashtable;
     PRandom randomGenerator;
+    Texture2D icon;
 
-    DS1(void); // initialize
-    ~DS1(void); // destructor
+    DS2(void); // initialize
+    ~DS2(void); // destructor
     void draw(void); // draw
     void operateInitialize(vector<string>& request);
     void randomInitialize(int x); // initialize a random data
     vector<int> stringToVectorInt(string& s);
     void vectorIntInitialize(vector<int>& vi);
-    void prepare(void);
+    void loadTextures(void);
 };

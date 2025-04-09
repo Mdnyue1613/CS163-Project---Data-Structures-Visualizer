@@ -1,31 +1,33 @@
-#include "../header/DS1.h"
+#include "../header/DS2.h"
 
-DS1::DS1(void) :
+DS2::DS2(void) :
     functionArea(PConstants::PFunctionArea::pos, PConstants::PFunctionArea::size),
-    titleBox(PConstants::PTitleBar::pos, PConstants::PTitleBar::size, PConstants::PTitleBar::outlineThickness, PConstants::PTitleBar::boxColor, PConstants::PTitleBar::outlineColor, "DOUBLY LINKED LIST", PConstants::PTitleBar::textSize),
-    doublyLinkedList(),
-    randomGenerator() {}
+    titleBox(PConstants::PTitleBar::pos, PConstants::PTitleBar::size, PConstants::PTitleBar::outlineThickness, PConstants::PTitleBar::boxColor, PConstants::PTitleBar::outlineColor, "HASH TABLE CHAINING", PConstants::PTitleBar::textSize),
+    hashtable() {}
 
-DS1::~DS1(void) {}
+DS2::~DS2(void) {
+    UnloadTexture(icon);
+}
 
-void DS1::draw(void) {
-    // Draw the title of Data Structure 1
+void DS2::draw(void) {
+    // Draw the title of Data Structure 2
     titleBox.draw();
 
     // Draw the function area and take request from user
     vector<string> request = functionArea.draw();
 
     // Initialize request
-    
     if(request[0] == "initialize") {
         operateInitialize(request);
     }
 
+    // DrawTexture(icon, 0, 0, WHITE);
+
     // Draw Data Structure
-    doublyLinkedList.draw();
+    hashtable.draw();
 }
 
-void DS1::operateInitialize(vector<string>& request) {
+void DS2::operateInitialize(vector<string>& request) {
     // Random initializer
     if(request[1] == "random") {
         // No input
@@ -63,11 +65,11 @@ void DS1::operateInitialize(vector<string>& request) {
     }
 }
 
-void DS1::randomInitialize(int x) {
-    doublyLinkedList.random(x);
+void DS2::randomInitialize(int x) {
+    hashtable.random(x);
 }
 
-vector<int> DS1::stringToVectorInt(string& s) {
+vector<int> DS2::stringToVectorInt(string& s) {
     // Store result
     vector<int> res(0);
 
@@ -100,10 +102,12 @@ vector<int> DS1::stringToVectorInt(string& s) {
     return valid ? res : vector<int>(0);
 }
 
-void DS1::vectorIntInitialize(vector<int>& vi) {
-    doublyLinkedList.build(vi);
+void DS2::vectorIntInitialize(vector<int>& vi) {
+    hashtable.build(vi);
 }
 
-void DS1::prepare(void) {
-    functionArea.prepare();
+void DS2::loadTextures(void) {
+    Image image = LoadImage("Assets/Images/PFileIcon.png");
+    icon = LoadTextureFromImage(image);
+    UnloadImage(image);
 }

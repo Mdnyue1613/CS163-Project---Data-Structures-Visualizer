@@ -2,7 +2,7 @@
 #include <vector>
 #include "DS3.h"
 #include "DS1.h"
-
+#include "LActionBox.h"
 
 using namespace std;
 
@@ -13,7 +13,6 @@ struct GUI {
     static bool isOpenDS3;
     static bool isOpenDS4;
     static DS1 linkedListVisualizer;
-
     static void startProgram();
     static void drawMenu();
     static void drawDS1();

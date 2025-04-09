@@ -4,16 +4,19 @@
 #include<cstring>
 #include<algorithm>
 #include"PTitleBox.h"
+#include"PSwitchBox.h"
 
-struct LInsertMenu{
+struct LDeleteMenu{
     const int boxHeight = 45;
     const int verticalSpace = 5;
     const int horizontalSpace = 5;
     const int boxOutlineThickness = 2;
 
     int x, y, width, height, characterSize;
-    PTitleBox Mode, GO;
-    LInsertMenu();
-    LInsertMenu(int x, int y, int width, int height, int characterSize);
+    PTitleBox GO;
+    PSwitchBox Mode;
+
+    LDeleteMenu();
+    LDeleteMenu(int x, int y, int width, int height, int characterSize);
     string draw(bool active);
 };
