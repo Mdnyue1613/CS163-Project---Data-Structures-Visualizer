@@ -331,7 +331,6 @@ void AVL::deleteAnimation() {
         drawTree();
         break;
     }
-    cout << animationStep << "\n";
     drawTree();
 }
 
@@ -420,7 +419,7 @@ void AVL::disapearnode() {
 }
 
 void AVL::updateHeightInPath() {
-    if(!Path.empty()) {
+    if(!Path.empty() && hightLightNodeIndex >= 0 && hightLightNodeIndex < Path.size()) {
         setHeight(Path[hightLightNodeIndex]);
         Path[hightLightNodeIndex]->setColor(BLUE);
         WaitTime(0.5);
