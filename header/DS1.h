@@ -19,9 +19,16 @@ struct DS1 {
     DS1(void); // initialize
     ~DS1(void); // destructor
     void draw(void); // draw
-    void operateInitialize(vector<string>& request);
+    void update(void);
+
+    // Initialize mode functions
+    void operateInitialize(vector<string>& request); // Operate initializing request
     void randomInitialize(int x); // initialize a random data
     vector<int> stringToVectorInt(string& s);
     void vectorIntInitialize(vector<int>& vi);
+
+    // Insert mode functions
+    void operateInsert(vector<string>& request); // Operate inserting request
+
     void prepare(void);
 };

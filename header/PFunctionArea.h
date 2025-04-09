@@ -3,14 +3,15 @@
 #include "PTitleBox.h"
 #include "PInitializeMenu.h"
 #include "PConstants.h"
+#include "PInsertMenu.h"
 #include <string>
 #include <vector>
 using namespace std;
 
 struct PFunctionArea {
     Rectangle background;
-    bool initialize;
     PInitializeMenu menuInitialize;
+    PInsertMenu menuInsert;
     PSwitchBox state;
 
     enum StateID {

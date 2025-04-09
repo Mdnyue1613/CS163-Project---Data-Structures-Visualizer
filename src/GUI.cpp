@@ -74,6 +74,7 @@ void GUI::drawDS1() {
     while (GUI::isOpenDS1) {
         BeginDrawing();
         ClearBackground(WHITE);
+        linkedListVisualizer.update();
         linkedListVisualizer.draw();
         BACK();
         EndDrawing();
