@@ -70,6 +70,8 @@ void PInitializeMenu::draw(void) {
     InputBox.changeTitle(inputBoxTitle[currentMode]);
     // Draw input box
     InputBox.draw();
+    
+    // Draw input from file box
     if(currentMode == ModeID::Input) {
         InputFileBox.draw();
     }
@@ -79,31 +81,19 @@ void PInitializeMenu::draw(void) {
 }
 
 vector<string> PInitializeMenu::update(void) {
-    // Store request from the user
-    vector<string> result;
-
     // Current mode: Random
     if(currentMode == ModeID::Random) {
         /* 
-        When user click "GO" button:
-            a. Return request: random (no content in the input box)
-            b. Return request: random + content (has content)
+        When the input box has content and user press enter or click GO button
+            Return request: input + content
         */
-        if(GO.isClick()) {
-            result.push_back("random");
-            if(InputBox.hasContent())
-                result.push_back(InputBox.extract());
-            return result;
+        if(InputBox.hasContent() && 
+            (GO.isClick() || (InputBox.isChosen && IsKeyPressed(KEY_ENTER)))) {
+            return {"random", InputBox.extract()};
         }
-        /*
-        When user pressed "Enter" and the input box has content:
-            Return request: random + content
-        */
-        if(InputBox.isChosen && 
-            InputBox.hasContent() &&
-            IsKeyPressed(KEY_ENTER)) {
-            result = {"random", InputBox.extract()};
-            return result;
+        // Else no input + click go = return random
+        else if(GO.isClick()) {
+            return {"random"};
         }
     }
     // Current mode: Input

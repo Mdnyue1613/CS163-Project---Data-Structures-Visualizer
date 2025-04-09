@@ -25,6 +25,7 @@ namespace PConstants {
         const Vector2 size = {307, 296};
         const int boxHeight = 45;
         const int boxWidth = 143;
+        const float boxHalfWidth = 146;
         const int boxOutlineThickness = 2;
 
         // Text size
@@ -87,4 +88,19 @@ namespace PConstants {
         const float height = 41;
         const float width = 139;
     };
+
+    namespace DS1 {
+        const float speed = 400.f;
+    };
+
+    namespace PNode {
+        const float innerRadius = 20.f; // Radius of content region
+        const float outerRadius = 23.f; // Radius of the whole node
+        const float characterSize = 20.f; // Font size of content
+        const float lineThickness = 3.f; // Thickness of the line connecting nodes
+        const float lineLength = 100.f; // Length of the line connecting nodes
+
+        const float arrowWidth = 12.f;
+        const float arrowHeight = 8.f;
+    }
 };
