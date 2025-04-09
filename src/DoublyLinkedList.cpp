@@ -1,72 +1,142 @@
 #include "../header/DoublyLinkedList.h"
 
-DoublyLinkedList::Node::Node(void) {
-    pNext = pPrev = nullptr;
+DoublyLinkedList::Node::Node(void) :
+    data(-1), pNext(nullptr), pPrev(nullptr) {
+    makeLabel();
+    makePosition();
 }
 
-void DoublyLinkedList::Node::draw(void) {
-    DrawRing(center, innerRadius, outerRadius, 0, 360, 64, BLACK);
-    DrawText(label, center.x - MeasureText(label, characterSize) / 2, 
-        center.y - characterSize / 2, characterSize, BLACK);
-    if(pPrev) {
-        DrawLineEx(arrowStart, arrowEnd, lineThickness, BLACK);
-        DrawTriangle(arrowHeadStart1, arrowHeadStart2, arrowHeadStart3, BLACK);
-        DrawTriangle(arrowHeadEnd1, arrowHeadEnd2, arrowHeadEnd3, BLACK);
-    }
+DoublyLinkedList::Node::Node(int data, Node *pPrev, Node *pNext) :
+    data(data), pNext(pNext), pPrev(pPrev) {
+    makeLabel();
+    makePosition();
 }
 
 void DoublyLinkedList::Node::makeLabel(void) {
-    labelLength = 0;
-    int x = data;
-    do {
-        label[labelLength++] = char(x % 10 + '0');
-        x /= 10;
-    } while(x > 0);
-    for(int i = 0; i < labelLength / 2; i++)
-        swap(label[i], label[labelLength - 1 - i]);
-    label[labelLength] = '\0';
+    string convertedData = to_string(data);
+    if(convertedData.size() < 5)
+        strcpy(label, convertedData.c_str());
 }
 
-void DoublyLinkedList::Node::makeNodeAndLine(void) {
-    // Direction: Rightward
-    if(pPrev->direction == 1 && pPrev->center.x + 100 + outerRadius < GetScreenWidth()) {
+void DoublyLinkedList::Node::makePosition(void) {
+    PRandom randomGenerator;
+    centerFrom = Vector2{1.f * randomGenerator.random(400, 1200), 1.f * randomGenerator.random(200, 800)};
+    // Case: The first node
+    if(pPrev == nullptr) {
+        center = {400.f, 200.f};
         direction = 1;
-        center = {pPrev->center.x + 100, pPrev->center.y};
-        arrowStart = {pPrev->center.x + pPrev->outerRadius, pPrev->center.y};
-        arrowEnd = {center.x - outerRadius, center.y};
-        arrowHeadStart1 = arrowStart;
-        arrowHeadStart2 = {arrowStart.x + arrowWidth, arrowStart.y + arrowHeight};
-        arrowHeadStart3 = {arrowStart.x + arrowWidth, arrowStart.y - arrowHeight};
-        arrowHeadEnd1 = arrowEnd;
-        arrowHeadEnd2 = {arrowEnd.x - arrowWidth, arrowEnd.y - arrowHeight};
-        arrowHeadEnd3 = {arrowEnd.x - arrowWidth, arrowEnd.y + arrowHeight}; 
     }
-    // Direction: Leftward
-    else if(pPrev->direction == -1 && pPrev->center.x - 100 - outerRadius > 310) {
-        direction = -1;
-        center = {pPrev->center.x - 100, pPrev->center.y};
-        arrowStart = {pPrev->center.x - pPrev->outerRadius, pPrev->center.y};
-        arrowEnd = {center.x + outerRadius, center.y};
-        arrowHeadStart1 = arrowStart;
-        arrowHeadStart2 = {arrowStart.x - arrowWidth, arrowStart.y - arrowHeight};
-        arrowHeadStart3 = {arrowStart.x - arrowWidth, arrowStart.y + arrowHeight};
-        arrowHeadEnd1 = arrowEnd;
-        arrowHeadEnd2 = {arrowEnd.x + arrowWidth, arrowEnd.y + arrowHeight};
-        arrowHeadEnd3 = {arrowEnd.x + arrowWidth, arrowEnd.y - arrowHeight};
-    }
-    // Direction: Downward
+    // There are some previous nodes
     else {
-        direction = -pPrev->direction;
-        center = {pPrev->center.x, pPrev->center.y + 100};
-        arrowStart = {pPrev->center.x, pPrev->center.y + pPrev->outerRadius};
-        arrowEnd = {center.x, center.y - outerRadius};
-        arrowHeadStart1 = arrowStart;
-        arrowHeadStart2 = {arrowStart.x - arrowHeight, arrowStart.y + arrowWidth};
-        arrowHeadStart3 = {arrowStart.x + arrowHeight, arrowStart.y + arrowWidth};
-        arrowHeadEnd1 = arrowEnd;
-        arrowHeadEnd2 = {arrowEnd.x + arrowHeight, arrowEnd.y - arrowWidth};
-        arrowHeadEnd3 = {arrowEnd.x - arrowHeight, arrowEnd.y - arrowWidth}; 
+        float radius = PConstants::PNode::outerRadius;
+        float lineLength = PConstants::PNode::lineLength;
+        int preDirection = pPrev->direction;
+        Vector2 preCenter = pPrev->center;
+        float dist1 = 3.f * radius + lineLength; // Distance from the center of a node to the farest point of the next node;
+        float dist2 = 2.f * radius + lineLength; // Distance between centers of two consecutive nodes
+        
+        if(preDirection == 1 && preCenter.x + dist1 < 1200.f) { // Rightward
+            direction = 1;
+            center = {preCenter.x + dist2, preCenter.y};
+        }
+        else if(preDirection == -1 && preCenter.x - dist1 > 312.f) { // Leftward
+            direction = -1;
+            center = {preCenter.x - dist2, preCenter.y};
+        }
+        else { // Downward
+            direction = -preDirection;
+            center = {preCenter.x, preCenter.y + dist2};
+        }
     }
+}
+
+void DoublyLinkedList::Node::update(void) {
+    updatePosition();
+    updateLine();
+}
+
+void DoublyLinkedList::Node::updatePosition(void) { 
+    if(centerFrom.x != center.x || centerFrom.y != center.y) {
+        // Distance
+        float distanceX = center.x - centerFrom.x;
+        float distanceY = center.y - centerFrom.y;
+        float distance = sqrt(distanceX * distanceX + distanceY * distanceY);
+
+        // Distance in one move
+        float toMove = PConstants::DS1::speed * GetFrameTime();
+        float toMoveX = toMove * distanceX / distance;
+        float toMoveY = toMove * distanceY / distance;
+
+        // Has not reached the target point
+        if( (centerFrom.x <= centerFrom.x + toMoveX && centerFrom.x + toMoveX < center.x) || 
+            (centerFrom.x >= centerFrom.x + toMoveX && centerFrom.x + toMoveX > center.x) || 
+            (centerFrom.y <= centerFrom.y + toMoveY && centerFrom.y + toMoveY < center.y) || 
+            (centerFrom.y >= centerFrom.y + toMoveY && centerFrom.y + toMoveY > center.y) ) {
+            centerFrom.x += toMoveX;
+            centerFrom.y += toMoveY;
+        }
+        // Reached
+        else
+            centerFrom = center;
+    }
+}
+
+void DoublyLinkedList::Node::updateLine(void) {
+    if(pPrev == nullptr)
+        return;
+
+    Vector2 start = pPrev->centerFrom;
+    Vector2 end = centerFrom;
+    float dx = end.x - start.x;
+    float dy = end.y - start.y;
+    float length = Vector2Length(Vector2Subtract(end, start));
+    float angle = atan2f(dy, dx);
+    float perAngle = atan2f(-dx, dy);
+    float radius = PConstants::PNode::innerRadius;
+    float arrowWidth = PConstants::PNode::arrowWidth;
+
+    // Update line: arrowHeadStart1 (top), arrowHeadEnd1 (top)
+    arrowHeadStart1 = Vector2Add(start, {radius * cos(angle), radius * sin(angle)});
+    arrowHeadEnd1 = Vector2Subtract(end, {radius * cos(angle), radius * sin(angle)});
+
+    // Update arrow heads: 
+        // Head 1:  arrowHeadStart2 (left), arrowHeadStart3 (right)
+    Vector2 head1 = Vector2Add(arrowHeadStart1, {arrowWidth * cos(angle), arrowWidth * sin(angle)});
+    arrowHeadStart2 = Vector2Subtract(head1, {arrowWidth / 2.f * cos(perAngle), arrowWidth / 2.f * sin(perAngle)});
+    arrowHeadStart3 = Vector2Add(head1, {arrowWidth / 2.f * cos(perAngle), arrowWidth / 2.f * sin(perAngle)});
+
+        // Head 2:  arrowHeadEnd2 (left), arrowHeadEnd3 (right)
+    Vector2 head2 = Vector2Subtract(arrowHeadEnd1, {arrowWidth * cos(angle), arrowWidth * sin(angle)});
+    arrowHeadEnd2 = Vector2Add(head2, {arrowWidth / 2.f * cos(perAngle), arrowWidth / 2.f * sin(perAngle)});
+    arrowHeadEnd3 = Vector2Subtract(head2, {arrowWidth / 2.f * cos(perAngle), arrowWidth / 2.f * sin(perAngle)});
+}
+
+void DoublyLinkedList::Node::drawLine(void) {
+    const float lineThickness = PConstants::PNode::lineThickness;
+
+    if(pPrev) {
+        DrawLineEx(pPrev->centerFrom, centerFrom, lineThickness, BLACK);
+        DrawTriangle(arrowHeadStart3, arrowHeadStart1, arrowHeadStart2, BLACK);
+        DrawTriangle(arrowHeadEnd3, arrowHeadEnd1, arrowHeadEnd2, BLACK);
+    }
+}
+
+void DoublyLinkedList::Node::drawNode(void) {
+    const float innerRadius = PConstants::PNode::innerRadius;
+    const float outerRadius = PConstants::PNode::outerRadius;
+    const float characterSize = PConstants::PNode::characterSize;
+
+    // Draw node
+    DrawCircleV(centerFrom, innerRadius, WHITE);
+    DrawRing(centerFrom, innerRadius, outerRadius, 0, 360, 30, BLACK);
+
+    // Draw content
+    DrawText(label, centerFrom.x - MeasureText(label, characterSize) / 2, centerFrom.y - characterSize / 2, characterSize, BLACK);
+}
+
+void DoublyLinkedList::Node::setPosition(Vector2 pos) {
+    centerFrom = center;
+    center = pos;
 }
 
 DoublyLinkedList::DoublyLinkedList(void) {
@@ -77,29 +147,40 @@ DoublyLinkedList::~DoublyLinkedList(void) {
     removeAll();
 }
 
-void DoublyLinkedList::draw(void) {
+void DoublyLinkedList::update(void) {
     Node* tmp = head;
-    while(tmp) {
-        tmp->draw();
+    while(tmp != nullptr) {
+        tmp->update();
         tmp = tmp->pNext;
     }
 }
+
+void DoublyLinkedList::draw(void) {
+    Node* tmp = head;
+    while(tmp) {
+        tmp->drawLine();
+        tmp = tmp->pNext;
+    }
+    tmp = head;
+    while(tmp) {
+        tmp->drawNode();
+        tmp = tmp->pNext;
+    }
+}
+
 void DoublyLinkedList::random(int n) {
-    random_device rd;
-    mt19937 gen(rd());
-    uniform_int_distribution<int> dist(1, 30);
+    PRandom dist;
     
     if(head)
         removeAll();
 
-    this->n = n;
     for(int i = 0; i < n; i++) {
-        insert(dist(gen));
+        insertTail(dist.random(1, 30));
     }
 }
 
 void DoublyLinkedList::removeAll(void) {
-    while(head) {
+    while(head != nullptr) {
         Node* tmp = head;
         head = head->pNext;
         delete tmp;
@@ -107,29 +188,28 @@ void DoublyLinkedList::removeAll(void) {
     head = tail = nullptr;
 }
 
-void DoublyLinkedList::insert(int x) {
+void DoublyLinkedList::insertHead(int x) {
+
+}
+
+void DoublyLinkedList::insertTail(int x) {
     if(head == nullptr) {
-        head = new Node;
-        head->data = x;
+        head = new Node(x, nullptr, nullptr);
         tail = head;
-        head->direction = 1;
-        head->center = {400, 200};
-        head->makeLabel();
     }
     else {
-        tail->pNext = new Node;
-        tail->pNext->pPrev = tail;
+        tail->pNext = new Node(x, tail, nullptr);
         tail = tail->pNext;
-        tail->data = x;
-        tail->makeLabel();
-        tail->makeNodeAndLine();
     }
+}
+
+void DoublyLinkedList::insert(int p, int x) {
+
 }
 
 void DoublyLinkedList::build(vector<int>& vi) {
     removeAll();
-    n = vi.size();
-    for(int i = 0; i < n; i++) {
-        insert(vi[i]);
+    for(int i = 0; i < (int)vi.size(); i++) {
+        insertTail(vi[i]);
     }
 }

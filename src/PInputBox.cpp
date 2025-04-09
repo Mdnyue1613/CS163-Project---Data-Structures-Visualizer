@@ -60,6 +60,10 @@ void PInputBox::update(void) {
     if(isClick())
         isChosen = true;
 
+    // Return if is not chosen
+    if(isChosen == false)
+        return;
+
     // Get input character
     int inputKey = GetCharPressed();
     while(inputKey > 0) {
