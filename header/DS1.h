@@ -5,6 +5,7 @@
 #include "DoublyLinkedList.h"
 #include "PConstants.h"
 #include "PRandom.h"
+#include "PStepByStepMenu.h"
 #include <string>
 #include <vector>
 #include <random>
@@ -13,11 +14,15 @@ using namespace std;
 struct DS1 {
     PTitleBox titleBox;
     PFunctionArea functionArea;
+    PStepByStepMenu stepByStepMenu;
     DoublyLinkedList doublyLinkedList;
     PRandom randomGenerator;
 
     DS1(void); // initialize
     ~DS1(void); // destructor
+
+    void prepare(void); // prepare the areas
+
     void draw(void); // draw
     void update(void);
 
@@ -29,6 +34,4 @@ struct DS1 {
 
     // Insert mode functions
     void operateInsert(vector<string>& request); // Operate inserting request
-
-    void prepare(void);
 };

@@ -1,6 +1,6 @@
 #include "../header/PIconBox.h"
 
-PIconBox::PIconBox(void) {}
+PIconBox::PIconBox(void) : icon() {}
 
 PIconBox::PIconBox(Vector2 pos, Vector2 size, int outThickness, Color inColor, Color outColor, string iconDestination) :
     PBOX(pos, size, outThickness, inColor, outColor), 

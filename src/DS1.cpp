@@ -2,11 +2,17 @@
 
 DS1::DS1(void) :
     functionArea(PConstants::PFunctionArea::pos, PConstants::PFunctionArea::size),
+    stepByStepMenu(PConstants::PStepByStepMenu::pos, PConstants::PStepByStepMenu::size),
     titleBox(PConstants::PTitleBar::pos, PConstants::PTitleBar::size, PConstants::PTitleBar::outlineThickness, PConstants::PTitleBar::boxColor, PConstants::PTitleBar::outlineColor, "DOUBLY LINKED LIST", PConstants::PTitleBar::textSize),
     doublyLinkedList(),
     randomGenerator() {}
 
 DS1::~DS1(void) {}
+
+void DS1::prepare(void) {
+    functionArea.prepare();
+    stepByStepMenu.prepare();
+}
 
 void DS1::update(void) {
     doublyLinkedList.update();
@@ -18,6 +24,9 @@ void DS1::draw(void) {
 
     // Draw the function area and take request from user
     vector<string> request = functionArea.draw();
+
+    // Draw buttons for step-by-step function
+    stepByStepMenu.draw();
 
     // Initialize request
     
@@ -120,13 +129,9 @@ void DS1::operateInsert(vector<string>& request) {
         int value = stoi(request[2]);
         doublyLinkedList.insertTail(value);
     }
-    else if(request[1] == "specified") {
+    else if(request[1] == "after") {
         int position = stoi(request[2]);
         int value = stoi(request[3]);
-        doublyLinkedList.insert(position, value); 
+        doublyLinkedList.insertAfter(position, value); 
     }
-}
-
-void DS1::prepare(void) {
-    functionArea.prepare();
 }

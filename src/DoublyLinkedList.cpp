@@ -3,13 +3,13 @@
 DoublyLinkedList::Node::Node(void) :
     data(-1), pNext(nullptr), pPrev(nullptr) {
     makeLabel();
-    makePosition();
+    makePosition(true);
 }
 
 DoublyLinkedList::Node::Node(int data, Node *pPrev, Node *pNext) :
     data(data), pNext(pNext), pPrev(pPrev) {
     makeLabel();
-    makePosition();
+    makePosition(true);
 }
 
 void DoublyLinkedList::Node::makeLabel(void) {
@@ -18,9 +18,11 @@ void DoublyLinkedList::Node::makeLabel(void) {
         strcpy(label, convertedData.c_str());
 }
 
-void DoublyLinkedList::Node::makePosition(void) {
-    PRandom randomGenerator;
-    centerFrom = Vector2{1.f * randomGenerator.random(400, 1200), 1.f * randomGenerator.random(200, 800)};
+void DoublyLinkedList::Node::makePosition(bool isNew) {
+    if(isNew) {
+        PRandom randomGenerator;
+        centerFrom = Vector2{1.f * randomGenerator.random(400, 1200), 1.f * randomGenerator.random(200, 800)};
+    }
     // Case: The first node
     if(pPrev == nullptr) {
         center = {400.f, 200.f};
@@ -140,6 +142,7 @@ void DoublyLinkedList::Node::setPosition(Vector2 pos) {
 }
 
 DoublyLinkedList::DoublyLinkedList(void) {
+    n = 0;
     head = tail = nullptr;
 }
 
@@ -180,6 +183,7 @@ void DoublyLinkedList::random(int n) {
 }
 
 void DoublyLinkedList::removeAll(void) {
+    n = 0;
     while(head != nullptr) {
         Node* tmp = head;
         head = head->pNext;
@@ -189,10 +193,25 @@ void DoublyLinkedList::removeAll(void) {
 }
 
 void DoublyLinkedList::insertHead(int x) {
-
+    n++;
+    if(head == nullptr) {
+        head = new Node(x, nullptr, nullptr);
+        tail = head;
+    }
+    else {
+        head->pPrev = new Node(x, nullptr, head);
+        head = head->pPrev;
+    }
+    // Shift positions
+    Node* tmp = head;
+    while(tmp != nullptr) {
+        tmp->makePosition(false);
+        tmp = tmp->pNext;
+    }
 }
 
 void DoublyLinkedList::insertTail(int x) {
+    n++;
     if(head == nullptr) {
         head = new Node(x, nullptr, nullptr);
         tail = head;
@@ -203,8 +222,35 @@ void DoublyLinkedList::insertTail(int x) {
     }
 }
 
-void DoublyLinkedList::insert(int p, int x) {
+void DoublyLinkedList::insertAfter(int p, int x) {
+    // Unvalid format: List is empty
+    if(head == nullptr) {
+        return;
+    }
+    
+    // Unvalid format: p exceeds number of nodes
+    if(p >= n) {
+        return;
+    }
 
+    n++;
+
+    Node* pre = head;
+    for(int i = 0; i < p; i++)
+        pre = pre->pNext;
+
+    Node* nxt = pre->pNext;
+    Node* add = new Node(x, pre, nxt);
+    pre->pNext = add;
+    if(nxt != nullptr)
+        nxt->pPrev = add;
+
+    // Shift positions
+    Node* tmp = head;
+    while(tmp != nullptr) {
+        tmp->makePosition(false);
+        tmp = tmp->pNext;
+    }
 }
 
 void DoublyLinkedList::build(vector<int>& vi) {

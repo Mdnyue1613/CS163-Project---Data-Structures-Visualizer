@@ -39,7 +39,7 @@ struct DoublyLinkedList {
         Node(void);
         Node(int data, Node *pPrev, Node* pNext);
         void makeLabel(void); // initialize the label of the node
-        void makePosition(void); // initialize the position of the node
+        void makePosition(bool isNew); // initialize the position of the node or shift after insertion
 
         // Update
         void update(void); // update node's attributes
@@ -65,6 +65,6 @@ struct DoublyLinkedList {
     void removeAll(void); // remove all nodes
     void insertHead(int x); // insert a new node at the head
     void insertTail(int x); // insert a new node at the tail
-    void insert(int p, int x); // insert a new node at a specified position
+    void insertAfter(int p, int x); // insert a new node after node with index p (0-indexed)
     void build(vector<int>& vi); // build a linked list with given vector<int>
 };

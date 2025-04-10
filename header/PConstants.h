@@ -43,6 +43,24 @@ namespace PConstants {
         const Color GOColor = RED;
     };
 
+    namespace PStepByStepMenu {
+        // Position
+        const Vector2 pos = {0, 387};
+        const Vector2 skipBackwardCenter = {73, 34};
+        const Vector2 undoCenter = {113, 34};
+        const Vector2 playCenter = {153, 34};
+        const Vector2 redoCenter = {193, 34};
+        const Vector2 skipForwardCenter = {233, 34};
+
+        // Size
+        const Vector2 size = {307, 69};
+        const float iconHeight = 25.f;
+        const float iconWidth = 25.f;
+
+        // Color
+        const Color regionColor = {120, 209, 210, 255};
+    };
+
     namespace PSwitchBox {
         // Size
         const float arrowHeadWidth = 22.f;
