@@ -14,17 +14,27 @@ LDeleteMenu::LDeleteMenu(int x, int y, int width, int height, int characterSize)
                     Vector2{1.f * width - 2 * horizontalSpace, 1.f * boxHeight}, boxOutlineThickness, WHITE, BLACK, {"Delete a node", "Clear"}, characterSize);
     
     GO = PTitleBox(x + horizontalSpace, y + height - horizontalSpace - boxHeight, width - 2 * horizontalSpace, boxHeight, boxOutlineThickness, WHITE, RED, goName, characterSize);
+    inputBox = PInputBox(Vector2{1.f * x + PConstants::PFunctionArea::spaceX, 1.f * y + 2 * PConstants::PFunctionArea::boxHeight + 3 * PConstants::PFunctionArea::spaceY},
+        Vector2{1.f * width - 2 * PConstants::PFunctionArea::spaceX, PConstants::PFunctionArea::boxHeight},
+        PConstants::PFunctionArea::boxOutlineThickness, 
+        PConstants::PFunctionArea::boxColor,
+        PConstants::PFunctionArea::outlineBoxColor,
+        "input data", PConstants::PFunctionArea::textSize);
 }
-string LDeleteMenu::draw(bool active) {
+vector<string> LDeleteMenu::draw(bool active) {
     int chooseAction = Mode.draw();
+    if(active) {
+        inputBox.update();
+    }
+    inputBox.draw();
     GO.draw();
-    if(GO.isClick() || IsKeyPressed(KEY_ENTER) && active) {
-        if(chooseAction == 0) {
-            return "delete";
+    if((GO.isClick() || IsKeyPressed(KEY_ENTER)) && active) {
+        if(chooseAction == 0 && inputBox.hasContent()) {
+            return {"delete", inputBox.extract()};
         }
         else if(chooseAction == 1) {
-            return "clear";
+            return {"clear"};
         }
     }
-    return "nothing";
+    return {"nothing"};
 }

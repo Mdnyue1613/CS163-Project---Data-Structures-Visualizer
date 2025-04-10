@@ -61,15 +61,26 @@ void AVL::draw() {
 
 
 void AVL::initializeAnimation() {
-    if(TreeRoot && TreeRoot->radius < 20) {
-        float newRadius = min(TreeRoot->radius + (float)0.5 * 1.f, 20 * 1.f);
-        setTreeSize(TreeRoot, newRadius);
-        distance_x = TreeRoot->radius * 1.25 * 1.f;
-        distance_y = TreeRoot->radius * 2 * 1.f;
-        updateTreePosition();
-        setPositionImmediately();
+    for(auto Node : allNode) {
+        if(Node->position.x < Node->targetPosition.x) {
+            Node->position.x = min(Node->position.x + 3.f, Node->targetPosition.x);
+        }
+        else {
+            Node->position.x = max(Node->position.x - 3.f, Node->targetPosition.x);
+        }
+        if(Node->position.y < Node->targetPosition.y) {
+            Node->position.y = min(Node->targetPosition.y, Node->position.y + 3.f);
+        }
+        else {
+            Node->position.y = max(Node->targetPosition.y, Node->position.y - 3.f);
+        }
     }
-    else isInit = 0;
+    int count = 0;
+    for (auto Node : allNode) {
+        if (Node->position.x != Node->targetPosition.x || Node->position.y != Node->targetPosition.y) break;
+        else count++;
+    }
+    isInit = (count != allNode.size());
     drawTree();
 }
 

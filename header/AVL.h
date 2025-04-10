@@ -41,6 +41,7 @@ struct AVL {
     bool isInsert, isDelete, isFind, isInit;
     bool isNeedToRotate = false, isNeedToRotateChild = false;
     vector<TreeNode*> allNode, Path;
+    Vector2 rootPosition = {750, 200};
     float distance_x;
     float distance_y;
     float animationProgress = 0.f;

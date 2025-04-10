@@ -9,13 +9,13 @@
 
 struct DS3 {
     PTitleBox titleBox;
-    LInputBox inputBox;
     LFunctionArea functionArea;
     AVL Tree;
     bool isAnimation;
     DS3();
     void draw();
-    void RandomInitialize();
-    void Insert();
-    void Delete();
+    void RandomInitialize(string num);
+    void Insert(string num);
+    void Delete(string num);
+    void prepare();
 };

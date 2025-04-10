@@ -16,12 +16,60 @@ LInitializeMenu::LInitializeMenu(int x, int y, int width, int height, int charac
                     Vector2{1.f * width - 2 * horizontalSpace, 1.f * boxHeight}, boxOutlineThickness, WHITE, BLACK, {"Random", "Input"}, characterSize);
     
     GO = PTitleBox(x + horizontalSpace, y + height - horizontalSpace - boxHeight, width - 2 * horizontalSpace, boxHeight, boxOutlineThickness, WHITE, RED, goName, characterSize);
+    inputBox = PInputBox(Vector2{1.f * x + PConstants::PFunctionArea::spaceX, 1.f * y + 2 * PConstants::PFunctionArea::boxHeight + 3 * PConstants::PFunctionArea::spaceY},
+        Vector2{1.f * width - 2 * PConstants::PFunctionArea::spaceX, PConstants::PFunctionArea::boxHeight},
+        PConstants::PFunctionArea::boxOutlineThickness, 
+        PConstants::PFunctionArea::boxColor,
+        PConstants::PFunctionArea::outlineBoxColor,
+        "Number of nodes", PConstants::PFunctionArea::textSize);
+    inputFile = PIconBox(Vector2{1.f * x + PConstants::PFunctionArea::spaceX, 1.f * y + 3 * PConstants::PFunctionArea::boxHeight + 4 * PConstants::PFunctionArea::spaceY},
+        Vector2{1.f * width - 2 * PConstants::PFunctionArea::spaceX, PConstants::PFunctionArea::boxHeight},
+        PConstants::PFunctionArea::boxOutlineThickness, 
+        PConstants::PFunctionArea::iconBoxColor,
+        PConstants::PFunctionArea::outlineBoxColor,
+        "Assets/Images/PFileIcon.png");
+    
 }
-string LInitializeMenu::draw(bool active) {
+
+void LInitializeMenu::prepare() {
+    inputFile.prepare();
+}
+
+vector<string> LInitializeMenu::draw(bool active) {
+    // Draw
     int chooseAction = Mode.draw();
-    GO.draw();
-    if(GO.isClick() || IsKeyPressed(KEY_ENTER) && active) {
-        return "random";
+    if(chooseAction == 0) {
+        inputBox.changeTitle("Number of nodes");
+        inputBox.draw();
     }
-    else return "nothing";
+    else if(chooseAction == 1) {
+        inputBox.changeTitle("Input a list");
+        inputBox.draw();
+        inputFile.draw();
+    }
+    GO.draw();
+
+    // Update
+    if(chooseAction == 0) {
+        if(active) {
+            inputBox.update();
+        }
+        if(GO.isClick() || IsKeyPressed(KEY_ENTER) && active) {
+            vector<string> ret;
+            ret.push_back("random");
+            if(inputBox.hasContent())
+                ret.push_back(inputBox.extract());
+            return ret;
+        }
+    }
+    else if(chooseAction == 1) {
+        if(active) {
+            inputBox.update();
+        }
+        if((GO.isClick() || IsKeyPressed(KEY_ENTER)) && active && inputBox.hasContent()) {
+            return {"data", inputBox.extract()};
+        }
+    }
+    
+    return {"nothing"};
 }
