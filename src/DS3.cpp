@@ -27,6 +27,16 @@ void DS3::draw() {
             RandomInitialize(request[2]);
     }
 
+    else if (request[0] == "initialize" && request[1] == "data") {
+        if (request.size() == 3) {
+            vector<int> nums = stringToVectorInt(request[2]);
+            if (nums.size() > 0) {
+                Tree.isInit = 1;
+                vectorIntInitialize(nums);
+            }
+        }
+    }
+
     else if(request[0] == "insert" && request[1] == "Insert") {
         if(request.size() == 3) {
             Tree.isInsert = 1;
@@ -97,3 +107,21 @@ void DS3::Delete(string num) {
     Tree.FindDeleteNode(Tree.TreeRoot, nullptr, val);
 }
 
+vector<int> DS3::stringToVectorInt(string s) {
+    for (auto c : s) {
+        if (c != ' ') {
+            if (c < '0' || c > '9') return {};
+        }
+    }
+    vector<int> res;
+    stringstream ss(s);
+    string num;
+    while(ss >> num) {
+        res.push_back(stoi(num));
+    }
+    return res;
+}
+
+void DS3::vectorIntInitialize(vector<int> nums) {
+    Tree.vectorIntInit(nums);
+}

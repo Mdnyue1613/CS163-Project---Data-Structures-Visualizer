@@ -62,17 +62,22 @@ void AVL::draw() {
 
 void AVL::initializeAnimation() {
     for(auto Node : allNode) {
+        float deltaX = abs(Node->targetPosition.x - Node->position.x);
+        float deltaY = abs(Node->targetPosition.y - Node->position.y);
+        float distance = sqrt(deltaX * deltaX + deltaY * deltaY);
+        float cosAlpha = distance != 0 ? deltaX / distance : 1;
+        float sinAlpha = distance != 0 ? deltaY / distance : 1;
         if(Node->position.x < Node->targetPosition.x) {
-            Node->position.x = min(Node->position.x + 3.f, Node->targetPosition.x);
+            Node->position.x = min(Node->position.x + 5.f * cosAlpha, Node->targetPosition.x);
         }
         else {
-            Node->position.x = max(Node->position.x - 3.f, Node->targetPosition.x);
+            Node->position.x = max(Node->position.x - 5.f * cosAlpha, Node->targetPosition.x);
         }
         if(Node->position.y < Node->targetPosition.y) {
-            Node->position.y = min(Node->targetPosition.y, Node->position.y + 3.f);
+            Node->position.y = min(Node->targetPosition.y, Node->position.y + 5.f * sinAlpha);
         }
         else {
-            Node->position.y = max(Node->targetPosition.y, Node->position.y - 3.f);
+            Node->position.y = max(Node->targetPosition.y, Node->position.y - 5.f * sinAlpha);
         }
     }
     int count = 0;
@@ -86,34 +91,31 @@ void AVL::initializeAnimation() {
 
 
 void AVL::insertAnimation() {
-    animationProgress += 0.02f; // animation speed
-    if (animationProgress >= 1.0f) {
-        animationProgress = 0.0f;
-        animationStep++;
-    }
-
     switch (animationStep) {
     case 0: // Khởi tạo
         hightLightNode();
+        if(hightLightNodeIndex >= Path.size()) animationStep = 1;
         break;
 
     case 1:
         if (NodeInsert) {
-            setCurrentPosition();
+            setCurrentPosition(1);
             appearNode();
+            animationStep = NodeInsert->radius >= 20.f ? 2 : 1;
             drawTree();
         }
         break;
 
     case 2: 
         checkRotation();
+        if(Path.empty() || hightLightNodeIndex < 0) animationStep = 3;
+        if(isNeedToRotate) animationStep = 3;
         break;
     
     case 3:
         if (Path.empty() || isNeedToRotate) {
             WaitTime(0.5);
         }
-        animationProgress = 0.0f;
         animationStep = 4;
         drawTree();
         break;
@@ -121,27 +123,24 @@ void AVL::insertAnimation() {
     case 4:
         if(isNeedToRotate == false) {
             animationStep = 6;
-            animationProgress = 0.f;
         }
         else {
             checkRotateChildNode();
             if (isNeedToRotateChild == false) {
                 animationStep = 5;
-                animationProgress = 0.0f;
             }
             else if (childRotateNode != nullptr && isNeedToRotate == true) {
                 rotateChildNode();
             }
         }
         if(isNeedToRotateChild) {
-            setCurrentPosition();
+            setCurrentPosition(0.5);
         }
         drawTree();
         break;
     case 5:
         if(isNeedToRotate == false) {
             animationStep = 6;
-            animationProgress = 0.f;
         }
         else {
             if(isNeedToRotate && rotationNode) {
@@ -151,7 +150,7 @@ void AVL::insertAnimation() {
             }
         }
         if (isNeedToRotate) {
-            setCurrentPosition();
+            setCurrentPosition(0.5);
         }
         drawTree();
         break;
@@ -160,6 +159,7 @@ void AVL::insertAnimation() {
         updateHeightInPath();
         hightLightNodeIndex--;
         Path.pop_back();
+        if(Path.empty() || hightLightNodeIndex < 0) animationStep = 7;
         break;
 
     default:
@@ -180,11 +180,6 @@ void AVL::insertAnimation() {
 }
 
 void AVL::deleteAnimation() {
-    animationProgress += 0.02;
-    if (animationProgress >= 1.0f) {
-        animationProgress = 0.0f;
-        animationStep++;
-    }
     switch (animationStep) {
     case 0:
         if (hightLightNodeIndex < Path.size()) {
@@ -200,6 +195,7 @@ void AVL::deleteAnimation() {
             drawTree();
             WaitTime(0.5);
         }
+        if(hightLightNodeIndex >= Path.size()) animationStep = 1;
         break;
 
     case 1:
@@ -214,19 +210,14 @@ void AVL::deleteAnimation() {
                 WaitTime(0.5);
             }
             else {
-                animationProgress = 0.0f;
                 animationStep = 2;
             }
         }
-        else {
-            animationProgress = 0.0f;
-            animationStep = 2;
-        }
+        animationStep = 2;
         break;
 
     case 2:
         prePareTreeForDelete();
-        animationProgress = 0.0f;
         animationStep = 3;
         updateTreePosition();
         WaitTime(0.5);
@@ -234,7 +225,8 @@ void AVL::deleteAnimation() {
 
     case 3:
         disapearnode();
-        setCurrentPosition();
+        setCurrentPosition(1);
+        animationStep = NodeDelete->radius <= 0 ? 4 : 3;
         break;
 
     case 4:
@@ -249,7 +241,6 @@ void AVL::deleteAnimation() {
         }
         updatePathAfterDelete();
         hightLightNodeIndex = Path.empty() ? -1 : Path.size() - 1;
-        animationProgress = 0.0f;
         animationStep = 5;
         break;
 
@@ -257,19 +248,19 @@ void AVL::deleteAnimation() {
         for(int i = Path.size() - 1; i >= 0; i--) {
             setHeight(Path[i]);
         }
-        animationProgress = 0.0f;
         animationStep = 6;
         break;
 
     case 6:
         checkRotation();
+        if(isNeedToRotate) animationStep = 7;
+        if(Path.empty() || hightLightNodeIndex < 0) animationStep = 7;
         break;
 
     case 7:
         if (Path.empty() || isNeedToRotate) {
             WaitTime(0.5);
         }
-        animationProgress = 0.0f;
         animationStep = 8;
         drawTree();
         break;
@@ -277,27 +268,24 @@ void AVL::deleteAnimation() {
     case 8:
         if(isNeedToRotate == false) {
             animationStep = 10;
-            animationProgress = 0.f;
         }
         else {
             checkRotateChildNode();
             if (isNeedToRotateChild == false) {
                 animationStep = 9;
-                animationProgress = 0.0f;
             }
             else if (childRotateNode != nullptr && isNeedToRotate == true) {
                 rotateChildNode();
             }
         }
         if(isNeedToRotateChild) {
-            setCurrentPosition();
+            setCurrentPosition(0.5);
         }
         drawTree();
         break;
     case 9:
         if(isNeedToRotate == false) {
             animationStep = 10;
-            animationProgress = 0.f;
         }
         else {
             if(isNeedToRotate && rotationNode) {
@@ -307,7 +295,7 @@ void AVL::deleteAnimation() {
             }
         }
         if (isNeedToRotate) {
-            setCurrentPosition();
+            setCurrentPosition(0.5);
         }
         drawTree();
         break;
@@ -320,13 +308,13 @@ void AVL::deleteAnimation() {
                 rotationNode = Path[hightLightNodeIndex];
                 Path[hightLightNodeIndex]->isHighlight = false;
                 Path[hightLightNodeIndex]->setColor(RED);
-                animationProgress = 0.0f;
                 animationStep =  7;
             }
             hightLightNodeIndex--;
             Path.pop_back();
             break;
         }
+        else animationStep = 11;
 
     default:
         for (auto Node : allNode) {
@@ -358,8 +346,8 @@ void AVL::animateRotation() {
 void AVL::appearNode() {
     if (NodeInsert) {
         float targetRadius = 20.0f;
-        NodeInsert->radius = targetRadius * animationProgress;
-        if(animationProgress >= 0.95) {
+        NodeInsert->radius = min(targetRadius, NodeInsert->radius + (float) 0.4);
+        if(NodeInsert->radius >= targetRadius) {
             NodeInsert->setColor(BLUE);
         }
     }
@@ -385,7 +373,6 @@ void AVL::checkRotation() {
     if (hightLightNodeIndex >= Path.size()) hightLightNodeIndex = Path.size() - 1;
     if (isNeedToRotate == 1) {
         WaitTime(0.5);
-        animationProgress = 0.f;
         animationStep++;
         return;
     }
@@ -425,7 +412,7 @@ void AVL::setPositionImmediately() {
 
 void AVL::disapearnode() {
     if(NodeDelete) {
-        NodeDelete->radius = NodeDelete->radius * (1 - animationProgress);
+        NodeDelete->radius = max(0 * 1.f, NodeDelete->radius - (float) 0.4);
     }
 }
 
