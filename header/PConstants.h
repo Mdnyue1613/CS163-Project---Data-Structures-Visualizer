@@ -43,6 +43,24 @@ namespace PConstants {
         const Color GOColor = RED;
     };
 
+    namespace PStepByStepMenu {
+        // Position
+        const Vector2 pos = {0, 387};
+        const Vector2 skipBackwardCenter = {53, 34};
+        const Vector2 undoCenter = {103, 34};
+        const Vector2 playCenter = {153, 34};
+        const Vector2 redoCenter = {203, 34};
+        const Vector2 skipForwardCenter = {253, 34};
+
+        // Size
+        const Vector2 size = {307, 69};
+        const float iconHeight = 25.f;
+        const float iconWidth = 25.f;
+
+        // Color
+        const Color regionColor = {120, 209, 210, 255};
+    };
+
     namespace PSwitchBox {
         // Size
         const float arrowHeadWidth = 22.f;
@@ -94,12 +112,20 @@ namespace PConstants {
     };
 
     namespace PNode {
+        // Node radius
         const float innerRadius = 20.f; // Radius of content region
         const float outerRadius = 23.f; // Radius of the whole node
+
+        // Size
         const float characterSize = 20.f; // Font size of content
+        const float informationSize = 20.f;
         const float lineThickness = 3.f; // Thickness of the line connecting nodes
         const float lineLength = 100.f; // Length of the line connecting nodes
 
+        // Space
+        const float textSpace = 5.f; // Space between text informing the node and the node
+
+        // Arrow head
         const float arrowWidth = 12.f;
         const float arrowHeight = 8.f;
     }

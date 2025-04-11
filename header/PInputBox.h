@@ -24,14 +24,20 @@ struct PInputBox : public PTitleBox {
     };
 
     BlinkingCursor cursor;
+    bool isOn;
     bool isChosen;
     string text;
 
     PInputBox(void); // Initializer
     PInputBox(Vector2 pos, Vector2 size, int outThickness, Color inColor, Color outColor, string name, int nameSize); // Initializer with parameters
-    void draw(void);
-    void DrawInputSymbol(void);
+
+    // Update
     void update(void);
+
+    // Draw
+    void draw(void);
+    void drawInputSymbol(void);
+
     bool hasContent(void);
     string extract(void);
     void changeTitle(string newTitle); // change the title of the box

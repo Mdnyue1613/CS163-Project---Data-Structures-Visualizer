@@ -34,6 +34,6 @@ struct PSwitchBox : public PTitleBox {
 
     PSwitchBox(void); // Default initialization
     PSwitchBox(Vector2 pos, Vector2 size, int outThickness, Color inColor, Color outColor, vector<string> options, int textSize); // Initialize with parameters
-    int draw(void);
-    void update(void); // Update when user interact with the box
+    void draw(void);
+    int update(void); // Update when user interact with the box
 };

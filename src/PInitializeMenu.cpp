@@ -64,7 +64,7 @@ PInitializeMenu::PInitializeMenu(Vector2 pos, Vector2 size) :
 
 void PInitializeMenu::draw(void) {
     // Draw mode button
-    currentMode = Mode.draw();
+    Mode.draw();
 
     // Change title of the input box for each corresponding mode
     InputBox.changeTitle(inputBoxTitle[currentMode]);
@@ -81,6 +81,8 @@ void PInitializeMenu::draw(void) {
 }
 
 vector<string> PInitializeMenu::update(void) {
+    currentMode = Mode.update();
+
     // Current mode: Random
     if(currentMode == ModeID::Random) {
         /* 

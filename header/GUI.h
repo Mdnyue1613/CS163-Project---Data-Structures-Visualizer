@@ -21,4 +21,5 @@ struct GUI {
     static void drawDS3();
     static void drawDS4();
     static void BACK();
+    static bool isBackButtonOn;
 };

@@ -37,7 +37,8 @@ void LInitializeMenu::prepare() {
 
 vector<string> LInitializeMenu::draw(bool active) {
     // Draw
-    int chooseAction = Mode.draw();
+    int chooseAction = Mode.update();
+    Mode.draw();
     if(chooseAction == 0) {
         inputBox.changeTitle("Number of nodes");
         inputBox.draw();
