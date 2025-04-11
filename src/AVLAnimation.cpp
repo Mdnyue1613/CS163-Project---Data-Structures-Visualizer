@@ -334,7 +334,7 @@ void AVL::deleteAnimation() {
 }
 
 void AVL::findAnimation() {
-
+    
 }
 
 void AVL::animateRotation() {

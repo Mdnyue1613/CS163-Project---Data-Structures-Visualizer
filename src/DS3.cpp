@@ -60,6 +60,9 @@ void DS3::draw() {
     }
     isAnimation = (Tree.isInit || Tree.isInsert || Tree.isDelete || Tree.isFind);
     // Draw Data Structure
+    if(isAnimation == false) {
+        updateSelectionNode();
+    }
     Tree.draw();
 }
 void DS3::RandomInitialize(string num) {
@@ -124,4 +127,23 @@ vector<int> DS3::stringToVectorInt(string s) {
 
 void DS3::vectorIntInitialize(vector<int> nums) {
     Tree.vectorIntInit(nums);
+}
+
+void DS3::updateSelectionNode() {
+    if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+        Vector2 mouse = GetMousePosition();
+        if(CheckCollisionPointRec(mouse, {6.4, 325.5, 293.9, 46.5})) return;
+        Tree.defaultTree();
+        for(auto Node : Tree.allNode) {
+            if(CheckCollisionPointCircle(mouse, Node->position, Node->radius)) {
+                if(Tree.selectionNode != Node) {
+                    Tree.selectionNode = Node;
+                    Tree.selectionNode->setColor(DARKBLUE);
+                    return;
+                }
+                else break;
+            }
+        }
+        Tree.selectionNode = nullptr;
+    }
 }

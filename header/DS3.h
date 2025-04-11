@@ -21,4 +21,5 @@ struct DS3 {
     void Delete(string num);
     void prepare();
     vector<int> stringToVectorInt(string s);
+    void updateSelectionNode();
 };
