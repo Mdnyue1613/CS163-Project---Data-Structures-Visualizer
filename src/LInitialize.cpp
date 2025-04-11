@@ -18,7 +18,8 @@ LInitializeMenu::LInitializeMenu(int x, int y, int width, int height, int charac
     GO = PTitleBox(x + horizontalSpace, y + height - horizontalSpace - boxHeight, width - 2 * horizontalSpace, boxHeight, boxOutlineThickness, WHITE, RED, goName, characterSize);
 }
 string LInitializeMenu::draw(bool active) {
-    int chooseAction = Mode.draw();
+    int chooseAction = Mode.update();
+    Mode.draw();
     GO.draw();
     if(GO.isClick() || IsKeyPressed(KEY_ENTER) && active) {
         return "random";

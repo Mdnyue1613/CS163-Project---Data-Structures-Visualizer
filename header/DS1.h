@@ -9,6 +9,7 @@
 #include <string>
 #include <vector>
 #include <random>
+#include <queue>
 using namespace std;
 
 struct DS1 {
@@ -18,20 +19,44 @@ struct DS1 {
     DoublyLinkedList doublyLinkedList;
     PRandom randomGenerator;
 
+    // Task queue
+    queue<vector<string>> taskQueue;
+
+    // Step by step function
+    bool stepByStep;
+
+    enum ModeID {
+        NoRequest,
+        Insert,
+        Delete,
+        Search
+    };
+
+    enum StepByStepButton {
+        SkipBackward,
+        GoBackward,
+        Play,
+        GoForward,
+        SkipForward
+    };
+
     DS1(void); // initialize
     ~DS1(void); // destructor
 
     void prepare(void); // prepare the areas
 
+    // Update
+    void update(void); // update
+
+    // Draw
     void draw(void); // draw
-    void update(void);
 
     // Initialize mode functions
-    void operateInitialize(vector<string>& request); // Operate initializing request
+    bool operateInitialize(vector<string>& request); // Operate initializing request: return true when done
     void randomInitialize(int x); // initialize a random data
     vector<int> stringToVectorInt(string& s);
     void vectorIntInitialize(vector<int>& vi);
 
     // Insert mode functions
-    void operateInsert(vector<string>& request); // Operate inserting request
+    bool operateInsert(vector<string>& request); // Operate inserting request: return true when done
 };

@@ -54,17 +54,31 @@ struct DoublyLinkedList {
         void setPosition(Vector2 pos);
     };
     
+    // Data structure
     int n;
     Node *head, *tail;
 
+    // Constructor
     DoublyLinkedList(void);
+
+    // Destructor
     ~DoublyLinkedList(void);
-    void draw(void); // draw the entire list
+
+    // Update
     void update(void);
-    void random(int n); // randomize with number of nodes
+
+    // Draw
+    void draw(void); // draw the entire list
+    void drawDataStructure(void); // Draw data structures
+    void drawHeadAndTailText(void); // Draw text indicating head and tail node
+
+    // Instantaneous functions
     void removeAll(void); // remove all nodes
+        // Initializing functions
+    void randomInitializer(int n); // randomize with number of nodes
+    void build(vector<int>& vi); // build a linked list with given vector<int>
+        // Inserting functions
     void insertHead(int x); // insert a new node at the head
     void insertTail(int x); // insert a new node at the tail
     void insertAfter(int p, int x); // insert a new node after node with index p (0-indexed)
-    void build(vector<int>& vi); // build a linked list with given vector<int>
 };

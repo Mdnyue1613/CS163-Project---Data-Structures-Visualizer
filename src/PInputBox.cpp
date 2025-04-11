@@ -20,41 +20,18 @@ PInputBox::PInputBox(Vector2 pos, Vector2 size, int outThickness, Color inColor,
     cursor(pos, size.y), 
     isChosen(false) {}
 
-void PInputBox::draw(void) {
-    update();
-
-    PBOX::draw();
-    if(text.empty()) {
-        int textWidth = MeasureText(title, titleSize);
-        DrawText(title, rec.x + (rec.width - textWidth) / 2, rec.y + (rec.height - titleSize) / 2, titleSize, PConstants::PInputBox::titleColor);
-    }
-    else {
-        DrawText(text.c_str(), rec.x + PConstants::PCursor::leftSpace, rec.y + (rec.height - titleSize) / 2, titleSize, PConstants::PInputBox::inputColor);
-    }
-    
-    if(isMove())
-        DrawInputSymbol();
-    else
-        ShowCursor();
-    
-    if(isChosen) {
-        if(fmod(GetTime(), PConstants::PCursor::fullTime) < PConstants::PCursor::onTime)
-            cursor.draw();
-    }
-}
-
-void PInputBox::DrawInputSymbol(void) {
-    HideCursor();
-    int x = GetMouseX();
-    int y = GetMouseY();
-    DrawLine(x, y, x, y + PConstants::PCursor::height, BLACK); // Vertical line
-    // Upper horizontal line
-    DrawLine(x - PConstants::PCursor::width / 2, y, x + PConstants::PCursor::width / 2, y, BLACK);
-    // Lower horizontal line
-    DrawLine(x - PConstants::PCursor::width / 2, y + PConstants::PCursor::height, x + PConstants::PCursor::width / 2, y + PConstants::PCursor::height, BLACK);
-}
-
 void PInputBox::update(void) {
+    // Update isOn
+    if(isOn == false && isMove() == true) {
+        SetMouseCursor(MOUSE_CURSOR_IBEAM);
+        isOn = true;
+    }
+    else if(isOn == true && isMove() == false) {
+        SetMouseCursor(MOUSE_CURSOR_DEFAULT);
+        isOn = false;
+    }
+
+    // Update isChosen
     if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && !isMove())
         isChosen = false;
     if(isClick())
@@ -81,6 +58,24 @@ void PInputBox::update(void) {
 
     // Update x position of the blinking cursor
     cursor.setX(rec.x + PConstants::PCursor::leftSpace + MeasureText(text.c_str(), titleSize));
+}
+
+void PInputBox::draw(void) {
+    update();
+
+    PBOX::draw();
+    if(text.empty()) {
+        int textWidth = MeasureText(title, titleSize);
+        DrawText(title, rec.x + (rec.width - textWidth) / 2, rec.y + (rec.height - titleSize) / 2, titleSize, PConstants::PInputBox::titleColor);
+    }
+    else {
+        DrawText(text.c_str(), rec.x + PConstants::PCursor::leftSpace, rec.y + (rec.height - titleSize) / 2, titleSize, PConstants::PInputBox::inputColor);
+    }
+    
+    if(isChosen) {
+        if(fmod(GetTime(), PConstants::PCursor::fullTime) < PConstants::PCursor::onTime)
+            cursor.draw();
+    }
 }
 
 bool PInputBox::hasContent(void) {

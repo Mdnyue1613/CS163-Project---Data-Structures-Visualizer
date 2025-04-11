@@ -16,6 +16,9 @@ PStepByStepMenu::PStepByStepMenu(Vector2 pos, Vector2 size) :
     play = PIconButton(playPos, buttonSize, "Assets/Images/PPlay.png");
     redo = PIconButton(redoPos, buttonSize, "Assets/Images/PRedo.png");
     skipForward = PIconButton(skipForwardPos, buttonSize, "Assets/Images/PSkipForward.png");
+
+    isOperating = false;
+    mode = NoRequest;
 }
 
 void PStepByStepMenu::prepare(void) {
@@ -33,4 +36,23 @@ void PStepByStepMenu::draw(void) {
     play.draw();
     redo.draw();
     skipForward.draw();
+}
+
+int PStepByStepMenu::getRequest(void) {
+    if(skipBackward.isClicked()) {
+        return 1; // Skip backward
+    }
+    else if(undo.isClicked()) {
+        return 2; // Undo
+    }
+    else if(play.isClicked()) {
+        return 3; // Play
+    }
+    else if(redo.isClicked()) {
+        return 4; // Redo
+    }
+    else if(skipForward.isClicked()) {
+        return 5; // Skip forward
+    }
+    return 0; // No request
 }

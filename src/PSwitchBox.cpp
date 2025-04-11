@@ -33,15 +33,13 @@ PSwitchBox::PSwitchBox(Vector2 pos, Vector2 size, int outThickness, Color inColo
         Vector2{pos.x + size.x - PConstants::PSwitchBox::arrowHeadSpace - PConstants::PSwitchBox::arrowHeadWidth, pos.y + size.y / 2.f - PConstants::PSwitchBox::arrowHeadHeight},
         Vector2{pos.x + size.x - PConstants::PSwitchBox::arrowHeadSpace - PConstants::PSwitchBox::arrowHeadWidth, pos.y + size.y / 2.f + PConstants::PSwitchBox::arrowHeadHeight}) {}
 
-int PSwitchBox::draw(void) {
-    update();
+void PSwitchBox::draw(void) {
     PTitleBox::draw();
     leftArrowHead.draw();
     rightArrowHead.draw();
-    return optionID;
 }
 
-void PSwitchBox::update(void) {
+int PSwitchBox::update(void) {
     bool updated = false;
     if(leftArrowHead.isClick()) {
         optionID = (optionID == 0 ? (int)options.size() - 1 : optionID - 1);
@@ -56,4 +54,5 @@ void PSwitchBox::update(void) {
             title[i] = options[optionID][i];
         title[options[optionID].size()] = '\0';
     }
+    return optionID;
 }

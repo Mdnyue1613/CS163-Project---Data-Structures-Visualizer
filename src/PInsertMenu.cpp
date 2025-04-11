@@ -34,7 +34,7 @@ PInsertMenu::PInsertMenu(Vector2 pos, Vector2 size) :
 
 void PInsertMenu::draw(void) {
     // Draw and update current mode
-    currentMode = Mode.draw();
+    Mode.draw();
     GO.draw();
 
     // Mode = Head input
@@ -53,6 +53,8 @@ void PInsertMenu::draw(void) {
 }
 
 vector<string> PInsertMenu::update(void) {
+    currentMode = Mode.update();
+
     /// I. Update head insert mode
     if(currentMode == ModeID::Head) {
         if(headInputBox.hasContent() && 

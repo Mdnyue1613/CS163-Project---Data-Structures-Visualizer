@@ -19,7 +19,14 @@ void PIconButton::prepare(void) {
 
 void PIconButton::draw(void) {
     const float scale = size.y / icon.height;
-    DrawTextureEx(icon, pos, 0.f, scale, WHITE);
+    if(isMove())
+        DrawTextureEx(icon, pos, 0.f, scale, GRAY);
+    else
+        DrawTextureEx(icon, pos, 0.f, scale, WHITE);
+}
+
+bool PIconButton::isMove(void) {
+    return CheckCollisionPointRec(GetMousePosition(), rec);
 }
 
 bool PIconButton::isClicked(void) {

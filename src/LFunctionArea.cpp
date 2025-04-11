@@ -19,7 +19,8 @@ vector<string> LFunctionArea::draw(bool active) {
     // Draw a background
     DrawRectangleRec(background, backgroundColor);
 
-    ChooseAction = Mode.draw();
+    ChooseAction = Mode.update();
+    Mode.draw();
 
     // Current mode: Initialize
     if(ChooseAction == 0) {

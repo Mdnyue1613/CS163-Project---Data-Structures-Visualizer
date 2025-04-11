@@ -125,11 +125,13 @@ void GUI::BACK() {
     BackButton.setRec(Button);
     const Rectangle HandCursorTexture = {0, 0, 15.5, 20};
     Rectangle HandDest = {GetMousePosition().x, GetMousePosition().y, 15.5, 20};
-    if (BackButton.isMove()) {
+    if (isBackButtonOn == false && BackButton.isMove() == true) {
         SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
+        isBackButtonOn = true;
     }
-    else {
+    else if(isBackButtonOn == true && BackButton.isMove() == false) {
         SetMouseCursor(MOUSE_CURSOR_DEFAULT);
+        isBackButtonOn = false;
     }
     if (BackButton.isClick()) {
         SetMouseCursor(MOUSE_CURSOR_DEFAULT);

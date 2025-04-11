@@ -17,5 +17,6 @@ struct PIconButton {
 
     void prepare(void);
     void draw(void);
+    bool isMove(void);
     bool isClicked(void);
 };

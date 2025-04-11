@@ -159,6 +159,11 @@ void DoublyLinkedList::update(void) {
 }
 
 void DoublyLinkedList::draw(void) {
+    drawDataStructure();
+    drawHeadAndTailText();
+}
+
+void DoublyLinkedList::drawDataStructure(void) {
     Node* tmp = head;
     while(tmp) {
         tmp->drawLine();
@@ -171,7 +176,35 @@ void DoublyLinkedList::draw(void) {
     }
 }
 
-void DoublyLinkedList::random(int n) {
+void DoublyLinkedList::drawHeadAndTailText(void) {
+    // Empty list
+    if(head == nullptr)
+        return;
+
+    const float textSize = PConstants::PNode::informationSize;
+    const float radius = PConstants::PNode::outerRadius;
+    const float space = PConstants::PNode::textSpace;
+    
+    // The list has one element
+    if(head == tail) {
+        string content = "head/tail";
+        float contentWidth = MeasureText(content.c_str(), textSize);
+
+        DrawText(content.c_str(), head->centerFrom.x - contentWidth / 2.f, head->centerFrom.y + radius + space, textSize, BLACK);
+    }
+    // The list has more than one
+    else {
+        string contentHead = "head";
+        string contentTail = "tail";
+        float contentHeadWidth = MeasureText(contentHead.c_str(), textSize);
+        float contentTailWidth = MeasureText(contentTail.c_str(), textSize);
+
+        DrawText(contentHead.c_str(), head->centerFrom.x - contentHeadWidth / 2.f, head->centerFrom.y + radius + space, textSize, BLACK);
+        DrawText(contentTail.c_str(), tail->centerFrom.x - contentTailWidth / 2.f, tail->centerFrom.y + radius + space, textSize, BLACK);
+    }
+}
+
+void DoublyLinkedList::randomInitializer(int n) {
     PRandom dist;
     
     if(head)
