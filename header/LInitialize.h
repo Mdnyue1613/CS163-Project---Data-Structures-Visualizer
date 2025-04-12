@@ -5,6 +5,8 @@
 #include<algorithm>
 #include"PTitleBox.h"
 #include"PSwitchBox.h"
+#include"PInputBox.h"
+#include"PIconBox.h"
 
 struct LInitializeMenu{
     const int boxHeight = 45;
@@ -15,8 +17,11 @@ struct LInitializeMenu{
     int x, y, width, height, characterSize;
     PTitleBox GO;
     PSwitchBox Mode;
+    PInputBox inputBox;
+    PIconBox inputFile;
 
     LInitializeMenu();
     LInitializeMenu(int x, int y, int width, int height, int characterSize);
-    string draw(bool active);
+    void prepare();
+    vector<string> draw(bool active);
 };

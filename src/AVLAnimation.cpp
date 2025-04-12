@@ -61,15 +61,26 @@ void AVL::draw() {
 
 
 void AVL::initializeAnimation() {
-    if(TreeRoot && TreeRoot->radius < 20) {
-        float newRadius = min(TreeRoot->radius + (float)0.5 * 1.f, 20 * 1.f);
-        setTreeSize(TreeRoot, newRadius);
-        distance_x = TreeRoot->radius * 1.25 * 1.f;
-        distance_y = TreeRoot->radius * 2 * 1.f;
-        updateTreePosition();
-        setPositionImmediately();
+    for(auto Node : allNode) {
+        if(Node->position.x < Node->targetPosition.x) {
+            Node->position.x = min(Node->position.x + 3.f, Node->targetPosition.x);
+        }
+        else {
+            Node->position.x = max(Node->position.x - 3.f, Node->targetPosition.x);
+        }
+        if(Node->position.y < Node->targetPosition.y) {
+            Node->position.y = min(Node->targetPosition.y, Node->position.y + 3.f);
+        }
+        else {
+            Node->position.y = max(Node->targetPosition.y, Node->position.y - 3.f);
+        }
     }
-    else isInit = 0;
+    int count = 0;
+    for (auto Node : allNode) {
+        if (Node->position.x != Node->targetPosition.x || Node->position.y != Node->targetPosition.y) break;
+        else count++;
+    }
+    isInit = (count != allNode.size());
     drawTree();
 }
 
@@ -147,6 +158,8 @@ void AVL::insertAnimation() {
 
     case 6:
         updateHeightInPath();
+        hightLightNodeIndex--;
+        Path.pop_back();
         break;
 
     default:
@@ -300,8 +313,20 @@ void AVL::deleteAnimation() {
         break;
 
     case 10:
-        updateHeightInPath();
-        break;
+        if(hightLightNodeIndex >= 0 && !Path.empty() && hightLightNodeIndex < Path.size()) {
+            updateHeightInPath();
+            if(getBalance(Path[hightLightNodeIndex]) > 1 || getBalance(Path[hightLightNodeIndex]) < -1) {
+                isNeedToRotate = 1;
+                rotationNode = Path[hightLightNodeIndex];
+                Path[hightLightNodeIndex]->isHighlight = false;
+                Path[hightLightNodeIndex]->setColor(RED);
+                animationProgress = 0.0f;
+                animationStep =  7;
+            }
+            hightLightNodeIndex--;
+            Path.pop_back();
+            break;
+        }
 
     default:
         for (auto Node : allNode) {
@@ -405,11 +430,9 @@ void AVL::disapearnode() {
 }
 
 void AVL::updateHeightInPath() {
-    if(!Path.empty()) {
+    if(!Path.empty() && hightLightNodeIndex >= 0 && hightLightNodeIndex < Path.size()) {
         setHeight(Path[hightLightNodeIndex]);
         Path[hightLightNodeIndex]->setColor(BLUE);
         WaitTime(0.5);
-        hightLightNodeIndex--;
-        Path.pop_back();
     }
 }

@@ -10,6 +10,7 @@ void GUI::startProgram() {
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     InitWindow(1200, 800, "Hello Raylib");
     linkedListVisualizer.prepare();
+    ds3.prepare();
     SetTargetFPS(60);
     while(isOpenDS1 || isOpenDS2 || isOpenDS3 || isOpenDS4 || isOpenMenu) {
         drawMenu();
@@ -103,7 +104,6 @@ void GUI::drawDS2() {
 }
 
 void GUI::drawDS3() {
-    DS3 ds3;
     while (GUI::isOpenDS3) {
         BeginDrawing();
         ClearBackground(WHITE);

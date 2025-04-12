@@ -95,8 +95,8 @@ void AVL::insertNodeNonDuplicate(TreeNode *&root, TreeNode *parent, int x) {
         allNode.push_back(root);
         root->parent = parent;
         if (parent == nullptr) {
-            root->position = {600, 400};
-            root->targetPosition = {600, 400};
+            root->position = rootPosition;
+            root->targetPosition = rootPosition;
         } else {
             if (x < parent->val) {
                 root->position = {parent->targetPosition.x - distance_x, parent->targetPosition.y + distance_y};
@@ -136,7 +136,9 @@ void AVL::random(int n) {
     random_device rd;
     mt19937 gen(rd());
     uniform_int_distribution<int> dist(1, 99);
-    
+    uniform_int_distribution<int> pos_x(200, 1000);
+    uniform_int_distribution<int> pos_y(100, 700);
+
     if(TreeRoot){
         removeAll();
     }
@@ -147,7 +149,11 @@ void AVL::random(int n) {
             insertNodeWithNoAnimation(TreeRoot, nullptr, num);
         }
     }
-    setTreeSize(TreeRoot, 0);
+    for (auto Node : allNode) {
+        Node->position.x = pos_x(gen) * 1.f;
+        Node->position.y = pos_y(gen) * 1.f;
+    }
+    updateTreePosition();
 }
 
 void AVL::moveTree(TreeNode *&root, bool direction) {
@@ -172,7 +178,7 @@ void AVL::updateTreePosition() {
 
     for (auto& Node : allNode) {
         if (Node == TreeRoot) {
-            Node->targetPosition = {600, 400};
+            Node->targetPosition = rootPosition;
         }
         else {
             TreeNode* cur = TreeRoot;
@@ -286,8 +292,8 @@ void AVL::insertNodeWithNoAnimation(TreeNode *&root, TreeNode *parent, int x) {
         allNode.push_back(root);
         root->parent = parent;
         if (parent == nullptr) {
-            root->position = {600, 400};
-            root->targetPosition = {600, 400};
+            root->position = rootPosition;
+            root->targetPosition = rootPosition;
         } else {
             if (x < parent->val) {
                 root->position = {parent->targetPosition.x - distance_x, parent->targetPosition.y + distance_y};

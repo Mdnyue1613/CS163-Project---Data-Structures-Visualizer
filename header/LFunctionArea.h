@@ -24,4 +24,5 @@ struct LFunctionArea{
     LFunctionArea();
     LFunctionArea(int x, int y, int width, int height, Color color);
     vector<string> draw(bool active);
+    void prepare();
 };

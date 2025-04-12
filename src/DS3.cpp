@@ -9,27 +9,35 @@ DS3::DS3() :
     isAnimation = false;
 }
 
+void DS3::prepare() {
+    functionArea.prepare();
+}
+
 void DS3::draw() {
     // Draw the title of Data Structure 1
     titleBox.draw();
     // Draw the function area and take request from user
     vector<string> request = functionArea.draw(isAnimation == false);
-    inputBox.draw(isAnimation == false);
     // Operate request
     if(request[0] == "initialize" && request[1] == "random") {
         Tree.isInit = 1;
-        RandomInitialize();
+        if(request.size() == 2)
+            RandomInitialize("");
+        else if(request.size() == 3)
+            RandomInitialize(request[2]);
     }
 
     else if(request[0] == "insert" && request[1] == "Insert") {
-        Tree.isInsert = 1;
-        Insert();
+        if(request.size() == 3) {
+            Tree.isInsert = 1;
+            Insert(request[2]);
+        }
     }
 
     else if(request[0] == "delete") {
-        if (request[1] == "delete") {
+        if (request[1] == "delete" && request.size() == 3) {
             Tree.isDelete = 1;
-            Delete();
+            Delete(request[2]);
         }
         else if (request[1] == "clear") {
             Tree.removeAll();
@@ -44,28 +52,48 @@ void DS3::draw() {
     // Draw Data Structure
     Tree.draw();
 }
-void DS3::RandomInitialize() {
-    if (inputBox.data == 0) {
+void DS3::RandomInitialize(string num) {
+    int val;
+    if (num == "") {
         random_device rd;
         mt19937 gen(rd());
         uniform_int_distribution<int> dist(7, 15);
         int numNode = dist(gen);
-        inputBox.data = numNode;
+        val = numNode;
     }
-    Tree.random(inputBox.data);
-    inputBox.data = 0;
-    inputBox.inputData = "";
+    else {
+        for (char c:num) {
+            if(c < '0' || c > '9') {
+                Tree.isInit = 0;
+                return;
+            }
+        }
+        val = stoi(num);
+    }
+    Tree.random(val);
 }
 
-void DS3::Insert() {
-    if(inputBox.inputData != "") Tree.insertNode(Tree.TreeRoot, nullptr, inputBox.data);
-    inputBox.data = 0;
-    inputBox.inputData = "";
+void DS3::Insert(string num) {
+    int val;
+    for (auto c : num) {
+        if (c < '0' || c  > '9') {
+            Tree.isDelete = 0;
+            return;
+        }
+    }
+    val = stoi(num);
+    Tree.insertNode(Tree.TreeRoot, nullptr, val);
 }
 
-void DS3::Delete() {
-    if(inputBox.inputData != "") Tree.FindDeleteNode(Tree.TreeRoot, nullptr, inputBox.data);
-    inputBox.data = 0;
-    inputBox.inputData = "";
+void DS3::Delete(string num) {
+    int val;
+    for (auto c : num) {
+        if (c < '0' || c  > '9') {
+            Tree.isDelete = 0;
+            return;
+        }
+    }
+    val = stoi(num);
+    Tree.FindDeleteNode(Tree.TreeRoot, nullptr, val);
 }
 
