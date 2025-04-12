@@ -74,7 +74,9 @@ void GUI::drawDS1() {
     while (GUI::isOpenDS1) {
         BeginDrawing();
         ClearBackground(WHITE);
+        // Update the data structure before rendering it
         linkedListVisualizer.update();
+        // Render the data structure
         linkedListVisualizer.draw();
         BACK();
         EndDrawing();

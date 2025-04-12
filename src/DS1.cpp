@@ -5,8 +5,8 @@ DS1::DS1(void) :
     stepByStepMenu(PConstants::PStepByStepMenu::pos, PConstants::PStepByStepMenu::size),
     titleBox(PConstants::PTitleBar::pos, PConstants::PTitleBar::size, PConstants::PTitleBar::outlineThickness, PConstants::PTitleBar::boxColor, PConstants::PTitleBar::outlineColor, "DOUBLY LINKED LIST", PConstants::PTitleBar::textSize),
     doublyLinkedList(),
-    randomGenerator(),
-    stepByStep(true) {}
+    taskManagement(),
+    randomGenerator() {}
 
 DS1::~DS1(void) {}
 
@@ -19,37 +19,32 @@ void DS1::update(void) {
     doublyLinkedList.update();
 
     // Take requests from user and put it into queue
-    vector<string> request = functionArea.update();
-    if(request[0] != "nothing") {
-        taskQueue.push(request);
-    }
+    taskManagement.takeRequest(functionArea.update());
 
     // Get current request
-    request = (taskQueue.empty() ? vector<string>{"nothing"} : taskQueue.front());
-    string requestType = (taskQueue.empty() ? "nothing" : taskQueue.front()[0]);
+    int type = taskManagement.getTaskType();
+    vector<string> request = taskManagement.getTask();
 
     // Initializing request
-    if(requestType == "initialize") {
+    if(type == Initialize) {
+        cout << "Initialize\n";
         bool done = operateInitialize(request);
-        if(done) {
-            taskQueue.pop();
-        }
+        if(done) taskManagement.nextTask();
     }
     // Inserting request
-    else if(requestType == "insert") {
+    else if(type == Insert) {
+        cout << "Insert\n";
         bool done = operateInsert(request);
-        if(done) {
-            taskQueue.pop();
-        }
+        if(done) taskManagement.nextTask();
     }
-    else if(requestType == "delete") {
-
+    else if(type == Delete) {
+        cout << "Delete\n";
     }
-    else if(requestType == "search") {
-
+    else if(type == Search) {
+        cout << "Search\n";
     }
-    else {
-
+    else if(type == NoTask) {
+        cout << "NoTask\n";
     }
 }
 
@@ -159,7 +154,7 @@ bool DS1::operateInsert(vector<string>& request) {
 
     if(requestType == "head") {
         int value = stoi(request[2]);
-        doublyLinkedList.insertHead(value);
+        return insertHead(value);
     }
     else if(requestType == "tail") {
         int value = stoi(request[2]);
@@ -172,4 +167,58 @@ bool DS1::operateInsert(vector<string>& request) {
     }
 
     return true;
+}
+
+bool DS1::insertHead(int value) {
+    /*
+    Code:
+        Node* tmp = new Node(x)
+        if(head == nullptr):
+            head = tail = tmp
+        else:
+            head->pPrev = tmp
+            tmp->pNext = head
+            head = tmp
+    Pseudo code:
+    0.    CreateNodeX: Add node value above the head with no connection
+    1.    PointToHeadNode: 
+    2.    PointToNewNode:
+    3.    AssignTmpToHead: Rename
+    */
+    int step = taskManagement.getStep();
+    if(step == 0) {
+        if(doublyLinkedList.inAnimation == false) {
+            // Create a node before head node and insert to the list
+            doublyLinkedList.addNodeHead(value);
+            doublyLinkedList.highlightNode(0);
+            doublyLinkedList.setDisplayLine(1, PNode::NoDraw);
+            doublyLinkedList.inAnimation = true;
+        }
+        else if(doublyLinkedList.head->updatedPosition) {
+            doublyLinkedList.inAnimation = false;
+            taskManagement.nextStep();
+            doublyLinkedList.unHighlightNode(0);
+        }
+    }
+    else if(step == 1) {
+        if(doublyLinkedList.head != nullptr) {
+            doublyLinkedList.displayLinkNext(1);
+        }
+        taskManagement.nextStep();
+    }
+    else if(step == 2) {
+        if(doublyLinkedList.head != nullptr) {
+            doublyLinkedList.displayLinkPrev(1);
+        }
+        taskManagement.nextStep();
+    }
+    else if(step == 3) {
+        taskManagement.nextStep();
+    }
+    else {
+        cerr << "Input wrong step in DS1::insertHead(value, step)\n";
+        exit(0);
+    }
+
+    return step == 3;
 }

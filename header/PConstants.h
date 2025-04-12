@@ -124,9 +124,19 @@ namespace PConstants {
 
         // Space
         const float textSpace = 5.f; // Space between text informing the node and the node
+        const float newNodeSpace = 40.f; // Space between the added node in animation
 
         // Arrow head
         const float arrowWidth = 12.f;
         const float arrowHeight = 8.f;
+
+        // Color
+        const Color innerColor = WHITE;
+        const Color outerColor = BLACK;
+        const Color textColor = BLACK;
+
+        const Color innerHighlightColor = {255, 138, 39, 255};
+        const Color outerHighlightColor = {255, 138, 39, 255};
+        const Color textHighlightColor = WHITE;
     }
 };

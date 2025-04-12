@@ -1,9 +1,11 @@
+#pragma once
 #include "raylib.h"
 #include <vector>
 #include "DS3.h"
 #include "DS1.h"
 #include "LActionBox.h"
-
+#include <chrono>
+using namespace chrono;
 using namespace std;
 
 struct GUI {

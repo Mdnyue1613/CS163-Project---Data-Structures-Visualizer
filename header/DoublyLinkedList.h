@@ -7,56 +7,13 @@
 #include <cstring>
 #include "PConstants.h"
 #include "PRandom.h"
+#include "PNode.h"
 using namespace std;
 
-struct DoublyLinkedList {
-    struct Node {
-        // const int innerRadius = 26;
-        // const int outerRadius = 30;
-        // const int characterSize = 20;
-        // const int lineThickness = 4;
-        // const int arrowWidth = 6;
-        // const int arrowHeight = 8;
-        // Data
-        int data;
-        Node *pNext, *pPrev;
-
-        // Position
-        Vector2 centerFrom, center; // Centers of the circle
-
-        // Line
-        Vector2 arrowHeadStart1, arrowHeadStart2, arrowHeadStart3; // Coordinates of the arrow head 1
-        Vector2 arrowHeadEnd1, arrowHeadEnd2, arrowHeadEnd3; // Coordinates of the arrow head 2
-
-        // Direction
-        int direction;
-
-        // Content
-        char label[5];
-        int labelLength;
-
-        // Initialize
-        Node(void);
-        Node(int data, Node *pPrev, Node* pNext);
-        void makeLabel(void); // initialize the label of the node
-        void makePosition(bool isNew); // initialize the position of the node or shift after insertion
-
-        // Update
-        void update(void); // update node's attributes
-        void updatePosition(void); // update node's position
-        void updateLine(void); // update line connecting with the previous node (if exists): arrowHeadStart1, arrowHeadStart2, arrowHeadStart3, arrowHeadEnd1, arrowHeadEnd2, arrowHead3
-
-        // Draw
-        void drawLine(void); // draw line (if exists)
-        void drawNode(void); // draw node and content
-
-        // Set
-        void setPosition(Vector2 pos);
-    };
-    
+struct DoublyLinkedList {    
     // Data structure
     int n;
-    Node *head, *tail;
+    PNode *head, *tail;
 
     // Constructor
     DoublyLinkedList(void);
@@ -66,11 +23,14 @@ struct DoublyLinkedList {
 
     // Update
     void update(void);
+    void updateDataStructure(void);
+    void updateAnimation(void);
 
     // Draw
-    void draw(void); // draw the entire list
+    void draw(void); // draw all
     void drawDataStructure(void); // Draw data structures
     void drawHeadAndTailText(void); // Draw text indicating head and tail node
+    void drawAnimation(void); // draw animations
 
     // Instantaneous functions
     void removeAll(void); // remove all nodes
@@ -81,4 +41,16 @@ struct DoublyLinkedList {
     void insertHead(int x); // insert a new node at the head
     void insertTail(int x); // insert a new node at the tail
     void insertAfter(int p, int x); // insert a new node after node with index p (0-indexed)
+    PNode* getIthNode(int i); // Get the pointer to the i-th node
+    void reloadPositions(void);
+
+    // Step-by-step functions
+    bool inAnimation;
+
+    void addNodeHead(int value); // Create a new node before the position-th node (0-indexed)
+    void highlightNode(int i); // Highlight the i-th node
+    void unHighlightNode(int i); // Unhighlight the i-th node
+    void displayLinkNext(int i); // Display the node[i]->pNext link
+    void displayLinkPrev(int i); // Display the node[i]->pPrev link
+    void setDisplayLine(int i, int state); // Set line display state of the i-th node = state
 };
