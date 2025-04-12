@@ -22,7 +22,8 @@ LDeleteMenu::LDeleteMenu(int x, int y, int width, int height, int characterSize)
         "input data", PConstants::PFunctionArea::textSize);
 }
 vector<string> LDeleteMenu::draw(bool active) {
-    int chooseAction = Mode.draw();
+    int chooseAction = Mode.update();
+    Mode.draw();
     if(active) {
         inputBox.update();
     }

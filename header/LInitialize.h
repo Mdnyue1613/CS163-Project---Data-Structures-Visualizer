@@ -7,6 +7,8 @@
 #include"PSwitchBox.h"
 #include"PInputBox.h"
 #include"PIconBox.h"
+#include"tinyfiledialogs.h"
+#include<fstream>
 
 struct LInitializeMenu{
     const int boxHeight = 45;

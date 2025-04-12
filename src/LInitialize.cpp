@@ -37,7 +37,8 @@ void LInitializeMenu::prepare() {
 
 vector<string> LInitializeMenu::draw(bool active) {
     // Draw
-    int chooseAction = Mode.draw();
+    int chooseAction = Mode.update();
+    Mode.draw();
     if(chooseAction == 0) {
         inputBox.changeTitle("Number of nodes");
         inputBox.draw();
@@ -68,6 +69,22 @@ vector<string> LInitializeMenu::draw(bool active) {
         }
         if((GO.isClick() || IsKeyPressed(KEY_ENTER)) && active && inputBox.hasContent()) {
             return {"data", inputBox.extract()};
+        }
+        if(inputFile.isClick()) {
+            char const * inputTypeFilter[] = {"*.*"};
+            char* fileDestination = tinyfd_openFileDialog("Open file", NULL, 1, inputTypeFilter, NULL, 0);
+            if(fileDestination) {
+                fstream inp(fileDestination, ios::in | ios::binary | ios::ate);
+
+                ifstream::pos_type fileSize = inp.tellg();
+                inp.seekg(0, ios::beg);
+
+                vector<char> data(fileSize);
+                inp.read(data.data(), fileSize);
+                inp.close();
+                data.push_back('\0');
+                return {"data", data.data()};
+            }
         }
     }
     

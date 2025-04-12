@@ -44,7 +44,6 @@ struct AVL {
     Vector2 rootPosition = {750, 200};
     float distance_x;
     float distance_y;
-    float animationProgress = 0.f;
     int animationStep = 0;
     int hightLightNodeIndex = 0;
     AVL();
@@ -57,6 +56,7 @@ struct AVL {
     void removeAll();
     ~AVL();
     void random(int n);
+    void vectorIntInit(vector<int> nums);
     void draw();
     void moveTree(TreeNode *&root, bool distance);
     void updateTreePosition();
@@ -66,7 +66,7 @@ struct AVL {
     void deleteAnimation();
     void findAnimation();
     void drawTree();
-    void setCurrentPosition();
+    void setCurrentPosition(float speed);
     void checkRotation();
     void rotateNode(TreeNode*& root);
     void animateRotation();
