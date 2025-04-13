@@ -27,21 +27,21 @@ void DS1::update(void) {
     // Update step-by-step menu
     stepByStepMenu.update();
 
-    // Update explanation area
-    explanationArea.update();
-
     // Get current request
     int type = taskManagement.getTaskType();
     vector<string> request = taskManagement.getTask();
 
+    // Explanation
+    string explanationText;
+
     // Initializing request
     if(type == Initialize) {
-        bool done = operateInitialize(request);
+        bool done = operateInitialize(request, explanationText);
         if(done) taskManagement.nextTask();
     }
     // Inserting request
     else if(type == Insert) {
-        bool done = operateInsert(request);
+        bool done = operateInsert(request, explanationText);
         if(done) taskManagement.nextTask();
     }
     else if(type == Delete) {
@@ -50,6 +50,9 @@ void DS1::update(void) {
     }
     else if(type == NoTask) {
     }
+
+    // Update explanation area
+    explanationArea.update(explanationText);
 }
 
 void DS1::draw(void) {
@@ -69,15 +72,16 @@ void DS1::draw(void) {
     doublyLinkedList.draw();
 }
 
-bool DS1::operateInitialize(vector<string>& request) {
+bool DS1::operateInitialize(vector<string>& request, string& explanationText) {
     string requestType = request[1];
 
     // Random initializer
     if(requestType == "random") {
         // No input
-        if((int)request.size() == 2)
+        if((int)request.size() == 2) {
             // Operate request
-            doublyLinkedList.randomInitializer(randomGenerator.random(1, 99));
+            doublyLinkedList.randomInitializer(randomGenerator.random(1, 40));
+        }
         // With input
         else {
             // Check if the input is valid
@@ -151,21 +155,21 @@ void DS1::vectorIntInitialize(vector<int>& vi) {
     doublyLinkedList.build(vi);
 }
 
-bool DS1::operateInsert(vector<string>& request) {
+bool DS1::operateInsert(vector<string>& request, string& explanationText) {
     string requestType = request[1];
 
     if(requestType == "head") {
         int value = stoi(request[2]);
-        return animationManagement.insertHead(value);
+        return animationManagement.insertHead(value, explanationText);
     }
     else if(requestType == "tail") {
         int value = stoi(request[2]);
-        return animationManagement.insertTail(value);
+        return animationManagement.insertTail(value, explanationText);
     }
     else if(requestType == "after") {
         int position = stoi(request[2]);
         int value = stoi(request[3]);
-        return animationManagement.insertAfter(position, value);
+        return animationManagement.insertAfter(position, value, explanationText);
     }
 
     return true;

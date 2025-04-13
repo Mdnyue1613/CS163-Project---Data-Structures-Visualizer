@@ -70,6 +70,14 @@ namespace PConstants {
 
         // Color
         const Color backgroundColor = {151, 219, 174, 255};
+
+        // Space 
+        const float spaceX = 5.f;
+        const float spaceY = 5.f;
+
+        // Text
+        const float fontSize = 20.f;
+        const Color textColor = BLACK;
     };
 
     namespace PSwitchBox {

@@ -8,7 +8,7 @@ PDSAnimation::PDSAnimation(DoublyLinkedList * dataStructurePointer, PTaskManagem
     dataStructurePointer(dataStructurePointer), 
     taskManagementPointer(taskManagementPointer) {}
 
-bool PDSAnimation::insertHead(int value) {
+bool PDSAnimation::insertHead(int value, string& explanationText) {
     /*
     Pseudo code:
     Step 0.    CreateNodeBefore(0, x) : tmp = new Node(x); this node is created before the 0-th node
@@ -36,6 +36,8 @@ bool PDSAnimation::insertHead(int value) {
             // Highlight the new node
             dataStructurePointer->setHighlightAnimationTmp(true);
         }
+        // Explanation text
+        explanationText = "Create a new node.";
         // Go to the next step
         if(doneAnimation0) {
             // Unhighlight the new node
@@ -55,6 +57,8 @@ bool PDSAnimation::insertHead(int value) {
             if(dataStructurePointer->createdHead())
                 dataStructurePointer->highlightHead();
         }
+        // Explanation text
+        explanationText = "Check if the list is empty.";
         // Update time
         taskManagementPointer->updateTime();
         // Go to the next step
@@ -86,6 +90,13 @@ bool PDSAnimation::insertHead(int value) {
                 // Highlight the link
                 dataStructurePointer->setHighlightHeadPrevLink(true);
             }
+        }
+        // Explanation text
+        if(emptyList) {
+            explanationText = "head points to tmp.";
+        }
+        else {
+            explanationText = "head->pPrev points to tmp.";
         }
         // Update time
         taskManagementPointer->updateTime();
@@ -119,6 +130,13 @@ bool PDSAnimation::insertHead(int value) {
                 dataStructurePointer->setHighlightAnimationTmpNextLink(true);
             }
         }
+        // Explanation text
+        if(emptyList) {
+            explanationText = "tail points to tmp";
+        }
+        else {
+            explanationText = "tmp->pNext points to head";
+        }
         // Update time
         taskManagementPointer->updateTime();
         // Go to the next step
@@ -147,6 +165,8 @@ bool PDSAnimation::insertHead(int value) {
             // head = tmp
             dataStructurePointer->assignAnimationTmpToHead();
         }
+        // Explanation text
+        explanationText = "head points to tmp.";
         // Update time
         taskManagementPointer->updateTime();
         // Go to the next step
@@ -167,7 +187,7 @@ bool PDSAnimation::insertHead(int value) {
     return done;
 }
 
-bool PDSAnimation::insertTail(int value) {
+bool PDSAnimation::insertTail(int value, string& explanationText) {
     /*
     Pseudo code:
     Step 0.    CreateNodeAfter(0, x) : tmp = new Node(x); this node is created after the 0-th node
@@ -195,6 +215,8 @@ bool PDSAnimation::insertTail(int value) {
             // Highlight the new node
             dataStructurePointer->setHighlightAnimationTmp(true);
         }
+        // Explanation text
+        explanationText = "Create a new node.";
         // Go to the next step
         if(doneAnimation0) {
             // Unhighlight the new node
@@ -214,6 +236,8 @@ bool PDSAnimation::insertTail(int value) {
             if(dataStructurePointer->createdHead())
                 dataStructurePointer->highlightHead();
         }
+        // Explanation text
+        explanationText = "Check if the list is empty.";
         // Update time
         taskManagementPointer->updateTime();
         // Go to the next step
@@ -246,6 +270,11 @@ bool PDSAnimation::insertTail(int value) {
                 dataStructurePointer->setHighlightTailNextLink(true);
             }
         }
+        // Explanation text
+        if(emptyList == true) 
+            explanationText = "head points to tmp.";
+        else
+            explanationText = "tail->pNext points to tmp.";
         // Update time
         taskManagementPointer->updateTime();
         // Go to the next step
@@ -279,6 +308,11 @@ bool PDSAnimation::insertTail(int value) {
                 dataStructurePointer->setHighlightAnimationTmpPrevLink(true);
             }
         }
+        // Explanation text
+        if(emptyList == true)
+            explanationText = "tail points to tmp.";
+        else
+            explanationText = "tmp->pPrev points to tail.";
         // Update time
         taskManagementPointer->updateTime();
         // Go to the next step
@@ -308,6 +342,8 @@ bool PDSAnimation::insertTail(int value) {
             // tail = tmp
             dataStructurePointer->assignAnimationTmpToTail();
         }
+        // Explanation text
+        explanationText = "tail points to tmp.";
         // Update time
         taskManagementPointer->updateTime();
         // Go to the next step
@@ -328,7 +364,7 @@ bool PDSAnimation::insertTail(int value) {
     return done;
 }
 
-bool PDSAnimation::insertAfter(int position, int value) {
+bool PDSAnimation::insertAfter(int position, int value, string& explanationText) {
     /*
     Code:
         Node* prev = head;
@@ -368,10 +404,13 @@ bool PDSAnimation::insertAfter(int position, int value) {
         bool doneAnimation0 = taskManagementPointer->getTime() > PConstants::PAnimation::waitTime;
         // Algorithm step 0
         if(taskManagementPointer->getTime() == 0.f) {
+            // prev = head
             dataStructurePointer->assignHeadToAnimationPrev();
             // Highlight
             dataStructurePointer->setHighlightAnimationPrev(true);
         }
+        // Explanation text
+        explanationText = "prev points to head.";
         // Update time
         taskManagementPointer->updateTime();
         // Go to the next step
@@ -395,7 +434,8 @@ bool PDSAnimation::insertAfter(int position, int value) {
             // Highlight prev
             dataStructurePointer->setHighlightAnimationPrev(true);
         }
-        
+        // Explanation text
+        explanationText = "Traverse pre to the desired position.";
         // Update time
         taskManagementPointer->updateTime();
         // Loop
@@ -422,6 +462,8 @@ bool PDSAnimation::insertAfter(int position, int value) {
                 dataStructurePointer->setHighlightAnimationPrev(true);
             }
         }
+        // Explanation text
+        explanationText = "Check if the desired position is found.";
         // Update time
         taskManagementPointer->updateTime();
         // Go to the next step
@@ -449,6 +491,8 @@ bool PDSAnimation::insertAfter(int position, int value) {
             dataStructurePointer->createNodeAfter(position, value);
             dataStructurePointer->setHighlightAnimationTmp(true);
         }
+        // Explanation text
+        explanationText = "Create a new node.";
         // Update time
         taskManagementPointer->updateTime();
         // Go to the next step
@@ -467,7 +511,8 @@ bool PDSAnimation::insertAfter(int position, int value) {
             // Highlight the link
             dataStructurePointer->setHighlightAnimationTmpNextLink(true);
         }
-
+        // Explanation text
+        explanationText = "tmp->pNext points to prev->pNext.";
         taskManagementPointer->updateTime();
         if(doneAnimation4) {
             // Unhighlight the link
@@ -485,7 +530,8 @@ bool PDSAnimation::insertAfter(int position, int value) {
             // Highlight
             dataStructurePointer->setHighlightAnimationPrevNextLink(true);
         }
-
+        // Explanation text
+        explanationText = "prev->pNext points to tmp.";
         taskManagementPointer->updateTime();
         if(doneAnimation5) {
             // Unighlight
@@ -503,7 +549,8 @@ bool PDSAnimation::insertAfter(int position, int value) {
             // Highlight
             dataStructurePointer->setHighlightAnimationTmpPrevLink(true);
         }
-
+        // Explanation text
+        explanationText = "tmp->pPrev points to prev.";
         taskManagementPointer->updateTime();
         if(doneAnimation6) {
             // Unighlight
@@ -521,7 +568,8 @@ bool PDSAnimation::insertAfter(int position, int value) {
             // Highlight tmp->pNext->pPrev
             dataStructurePointer->setHighlightAnimationTmpNextPrevLink(true);
         }
-
+        // Explanation text
+        explanationText = "tmp->pNext->pPrev points to tmp.";
         taskManagementPointer->updateTime();
         if(doneAnimation7) {
             // Unighlight
@@ -539,7 +587,8 @@ bool PDSAnimation::insertAfter(int position, int value) {
             // Highlight
             dataStructurePointer->setHighlightAnimationPrev(true);
         }
-
+        // Explanation text
+        explanationText = "Check if prev == tail.";
         taskManagementPointer->updateTime();
         if(doneAnimation8) {
             // Unighlight
@@ -558,7 +607,9 @@ bool PDSAnimation::insertAfter(int position, int value) {
                 dataStructurePointer->assignAnimationTmpToTail();
             }
         }
-
+        // Explanation text
+        if(taskManagementPointer->getCondition())
+            explanationText = "Check if tmp points to tail.";
         taskManagementPointer->updateTime();
         if(doneAnimation9) {
             // Pop condition stack (2)
