@@ -1,17 +1,35 @@
 #include "../header/DoublyLinkedList.h"
 
 DoublyLinkedList::DoublyLinkedList(void) {
+    // Data structure
     n = 0;
     head = tail = nullptr;
-    inAnimation = false;
+    // Animation
+    // tmp
+    animationTmp = nullptr;
+    // prev
+    animationPrev = nullptr;
+    prevPosition = 0;
 }
 
 DoublyLinkedList::~DoublyLinkedList(void) {
+    // Remove dynamic memory from linked list
     removeAll();
+
+    // Remove dynamic memory from animation
+    if(animationTmp != nullptr) {
+        delete animationTmp;
+    }
+    if(animationPrev != nullptr) {
+        delete animationPrev;
+    }
 }
 
 void DoublyLinkedList::update(void) {
+    // Update data structure before rendering
     updateDataStructure();
+
+    // Update animation before rendering
     updateAnimation();
 }
 
@@ -19,17 +37,30 @@ void DoublyLinkedList::updateDataStructure(void) {
     PNode* tmp = head;
     while(tmp != nullptr) {
         tmp->update();
+        tmp->resetInformationState();
         tmp = tmp->pNext;
+    }
+    if(head != nullptr) {
+        head->setInformationState(Head, true);
+    }
+    if(tail != nullptr) {
+        tail->setInformationState(Tail, true);
     }
 }
 
 void DoublyLinkedList::updateAnimation(void) {
-    
+    if(animationTmp != nullptr) {
+        animationTmp->update();
+        animationTmp->setInformationState(Tmp, true);
+    }
+    if(animationPrev != nullptr) {
+        animationPrev->update();
+        animationPrev->setInformationState(Prev, true);
+    }
 }
 
 void DoublyLinkedList::draw(void) {
     drawDataStructure();
-    drawHeadAndTailText();
     drawAnimation();
 }
 
@@ -42,40 +73,30 @@ void DoublyLinkedList::drawDataStructure(void) {
     tmp = head;
     while(tmp) {
         tmp->drawNode();
+        tmp->drawText();
         tmp = tmp->pNext;
     }
 }
 
-void DoublyLinkedList::drawHeadAndTailText(void) {
-    // Empty list
-    if(head == nullptr)
-        return;
-
-    const float textSize = PConstants::PNode::informationSize;
-    const float radius = PConstants::PNode::outerRadius;
-    const float space = PConstants::PNode::textSpace;
-    
-    // The list has one element
-    if(head == tail) {
-        string content = "head/tail";
-        float contentWidth = MeasureText(content.c_str(), textSize);
-
-        DrawText(content.c_str(), head->centerFrom.x - contentWidth / 2.f, head->centerFrom.y + radius + space, textSize, BLACK);
-    }
-    // The list has more than one
-    else {
-        string contentHead = "head";
-        string contentTail = "tail";
-        float contentHeadWidth = MeasureText(contentHead.c_str(), textSize);
-        float contentTailWidth = MeasureText(contentTail.c_str(), textSize);
-
-        DrawText(contentHead.c_str(), head->centerFrom.x - contentHeadWidth / 2.f, head->centerFrom.y + radius + space, textSize, BLACK);
-        DrawText(contentTail.c_str(), tail->centerFrom.x - contentTailWidth / 2.f, tail->centerFrom.y + radius + space, textSize, BLACK);
-    }
+void DoublyLinkedList::drawAnimation(void) {
+    // Draw the tmp node
+    drawAnimationTmp();
 }
 
-void DoublyLinkedList::drawAnimation(void) {
-    
+void DoublyLinkedList::drawAnimationTmp(void) {
+    if(animationTmp == nullptr) 
+        return;
+    animationTmp->drawLine();
+    animationTmp->drawNode();
+    animationTmp->drawText();
+}
+
+int DoublyLinkedList::getNumNode(void) {
+    return n;
+}
+
+void DoublyLinkedList::addNumNode(int x) {
+    n += x;
 }
 
 void DoublyLinkedList::randomInitializer(int n) {
@@ -85,8 +106,11 @@ void DoublyLinkedList::randomInitializer(int n) {
         removeAll();
 
     for(int i = 0; i < n; i++) {
-        insertTail(dist.random(1, 30));
+        insertTail(dist.random(1, 99));
     }
+
+    // Shift to correct positions
+    reloadPositions();
 }
 
 void DoublyLinkedList::removeAll(void) {
@@ -101,31 +125,31 @@ void DoublyLinkedList::removeAll(void) {
 
 void DoublyLinkedList::insertHead(int x) {
     n++;
+    PNode* tmp = new PNode(x);
     if(head == nullptr) {
-        head = new PNode(x, nullptr, nullptr);
-        tail = head;
+        head = tmp;
+        tail = tmp;
     }
     else {
-        head->pPrev = new PNode(x, nullptr, head);
-        head = head->pPrev;
+        head->pPrev = tmp;
+        tmp->pNext = head;
+        head = tmp;
     }
-    // Shift positions
-    PNode* tmp = head;
-    while(tmp != nullptr) {
-        tmp->makePosition(false);
-        tmp = tmp->pNext;
-    }
+    // Reload positions
+    reloadPositions();
 }
 
 void DoublyLinkedList::insertTail(int x) {
     n++;
+    PNode* tmp = new PNode(x);
     if(head == nullptr) {
-        head = new PNode(x, nullptr, nullptr);
-        tail = head;
+        head = tmp;
+        tail = tmp;
     }
     else {
-        tail->pNext = new PNode(x, tail, nullptr);
-        tail = tail->pNext;
+        tail->pNext = tmp;
+        tmp->pPrev = tail;
+        tail = tmp;
     }
 }
 
@@ -134,24 +158,28 @@ void DoublyLinkedList::insertAfter(int p, int x) {
     if(head == nullptr) {
         return;
     }
-    
-    // Unvalid format: p exceeds number of nodes
-    if(p >= n) {
+
+    // Find indicated position
+    PNode* pre = getIthNode(p);
+
+    // The p-th node does not exist
+    if(pre == nullptr) {
         return;
     }
 
     n++;
-
-    // Find indicated position
-    PNode* pre = head;
-    for(int i = 0; i < p; i++)
-        pre = pre->pNext;
-
+    
+    // Create the new node
+    PNode* tmp = new PNode(x);
+    // Declare the nxt node
     PNode* nxt = pre->pNext;
-    PNode* add = new PNode(x, pre, nxt);
-    pre->pNext = add;
-    if(nxt != nullptr)
-        nxt->pPrev = add;
+    
+    // Make links
+    tmp->pPrev = pre;
+    pre->pNext = tmp;
+    if(nxt != nullptr) tmp->pNext = nxt;
+    if(nxt != nullptr) nxt->pPrev = tmp;
+    if(pre == tail) tail = tmp;
 
     // Shift positions
     reloadPositions();
@@ -162,72 +190,272 @@ void DoublyLinkedList::build(vector<int>& vi) {
     for(int i = 0; i < (int)vi.size(); i++) {
         insertTail(vi[i]);
     }
+
+    // Shift positions
+    reloadPositions();
 }
 
 PNode* DoublyLinkedList::getIthNode(int n) {
     PNode* tmp = head;
-    for(int i = 1; i <= n; i++) {
-        if(tmp == nullptr) 
-            return nullptr;
+    for(int i = 0; i < n && tmp != nullptr; i++)
         tmp = tmp->pNext;
-    }
     return tmp;
 }
 
 void DoublyLinkedList::reloadPositions(void) {
     PNode* tmp = head;
     while(tmp != nullptr) {
-        tmp->makePosition(false);
+        // Reloading position based on the linked list
+        if(tmp == head) {
+            tmp->setPosition(PConstants::DS1::headPosition);
+        }
+        else {
+            nextNodePosition(tmp->pPrev, tmp);
+        }
+
+        // If there is an animationTmp node, shift the node 'tmp' forward
+        if(animationTmp != nullptr && tmp->center == animationTmp->center) {
+            nextNodePosition(animationTmp, tmp);
+        }
+
+        // Moving to the next node in the linked list
         tmp = tmp->pNext;
     }
 }
 
-void DoublyLinkedList::addNodeHead(int value) {
-    // I. Create a new node
-    PNode* newNode = new PNode(value, nullptr, nullptr);
+void DoublyLinkedList::nextNodePosition(PNode *& node, PNode *& next) {
+    const float outerRadius = PConstants::PNode::outerRadius;
+    const float lineLength = PConstants::PNode::lineLength;
+    const float screenWidth = 1200;
+    const float distanceBetweenTwoCenter = 2.f * outerRadius + lineLength;
+    const float distanceBetweenTwoCenterPlusARadius = distanceBetweenTwoCenter + outerRadius;
+    const float functionAreaWidth = PConstants::PFunctionArea::size.x;
+    // Next node go to the right
+    if(node->direction == 1 && node->center.x + distanceBetweenTwoCenterPlusARadius < screenWidth) {
+        next->direction = 1;
+        next->setPosition(Vector2Add(node->center, {distanceBetweenTwoCenter, 0}));
+    }
+    // Next node go to the left
+    else if(node->direction == -1 && node->center.x - distanceBetweenTwoCenterPlusARadius > functionAreaWidth) {
+        next->direction = -1;
+        next->setPosition(Vector2Subtract(node->center, {distanceBetweenTwoCenter, 0}));
+    }
+    // Next node go downward
+    else {
+        next->direction = - node->direction;
+        next->setPosition(Vector2Add(node->center, {0, distanceBetweenTwoCenter}));
+    }
+}
 
-    // II. Set position above the indicated position
-    if(head == nullptr) {
-        head = tail = newNode;
+bool DoublyLinkedList::createdHead(void) {
+    return head != nullptr;
+}
+
+void DoublyLinkedList::highlightHead(void) {
+    head->setHighlight(true);
+}
+
+void DoublyLinkedList::unhighlightHead(void) {
+    head->setHighlight(false);
+}
+
+void DoublyLinkedList::assignAnimationTmpToHead(void) {
+    // head = tmp
+    head = animationTmp;
+}
+
+void DoublyLinkedList::assignAnimationTmpToHeadPrev(void) {
+    if(head != nullptr) {
+        head->pPrev = animationTmp;
     }
     else {
-        head->pPrev = newNode;
-        newNode->pNext = head;
-        head = newNode;
+        cerr << "Warning: DoublyLinkedList::assignAnimationTmpToHeadPrev(void).\n";
     }
-
-    reloadPositions();
 }
 
-void DoublyLinkedList::highlightNode(int i) {
+void DoublyLinkedList::setHighlightHeadPrevLink(bool on) {
+    head->setHighlightPrevLink(on);
+}
+
+void DoublyLinkedList::assignAnimationTmpToTail(void) {
+    // tail = tmp
+    tail = animationTmp;
+}
+
+void DoublyLinkedList::assignAnimationTmpToTailNext(void) {
+    if(tail != nullptr) {
+        tail->pNext = animationTmp;
+    }
+    else {
+        cerr << "Warning: DoublyLinkedList::assignAnimationTmpToTailNext(void).\n";
+    }
+}
+
+void DoublyLinkedList::setHighlightTailNextLink(bool on) {
+    tail->setHighlightNextLink(on);
+}
+
+bool DoublyLinkedList::createdAnimationTmp(void) {
+    return animationTmp != nullptr;
+}
+
+bool DoublyLinkedList::animationTmpIsUpdated(void) {
+    return animationTmp->positionIsUpdated();
+}
+
+void DoublyLinkedList::setHighlightAnimationTmp(bool on) {
+    animationTmp->setHighlight(on);
+}
+
+void DoublyLinkedList::setAnimationTmpToNull(void) {
+    animationTmp = nullptr;
+}
+
+void DoublyLinkedList::assignHeadToAnimationTmpNext(void) {
+    animationTmp->pNext = head;
+}
+
+void DoublyLinkedList::setHighlightAnimationTmpNextLink(bool on) {
+    animationTmp->setHighlightNextLink(on);
+}
+
+void DoublyLinkedList::assignTailToAnimationTmpPrev(void) {
+    animationTmp->pPrev = tail;
+}
+
+void DoublyLinkedList::assignAnimationPrevToAnimationTmpPrev(void) {
+    animationTmp->pPrev = animationPrev;
+}
+
+void DoublyLinkedList::setHighlightAnimationTmpPrevLink(bool on) {
+    animationTmp->setHighlightPrevLink(on);
+}
+
+void DoublyLinkedList::assignAnimationPrevNextToAnimationTmpNext(void) {
+    animationTmp->pNext = animationPrev->pNext;
+}
+
+void DoublyLinkedList::assignAnimationTmpToAnimationTmpNextPrev(void) {
+    if(animationTmp->pNext != nullptr)
+        animationTmp->pNext->pPrev = animationTmp;
+}
+
+void DoublyLinkedList::setHighlightAnimationTmpNextPrevLink(bool on) {
+    if(animationTmp->pNext != nullptr)
+        animationTmp->pNext->setHighlightPrevLink(on);
+}
+
+void DoublyLinkedList::assignHeadToAnimationPrev(void) {
+    animationPrev = head;
+    prevPosition = 0;
+}
+
+bool DoublyLinkedList::traversePrevDone(int position) {
+    if(animationPrev == nullptr || prevPosition >= position) {
+        prevPosition = 0;
+        return true;
+    }
+    return false;
+}
+
+void DoublyLinkedList::traversePrev(int position) {
+    if(traversePrevDone(position) == false) {
+        animationPrev = animationPrev->pNext;
+        prevPosition++;
+    }
+}
+
+void DoublyLinkedList::setHighlightAnimationPrev(bool on) {
+    if(animationPrev != nullptr) {
+        animationPrev->setHighlight(on);
+    }
+}
+
+bool DoublyLinkedList::createdAnimationPrev(void) {
+    return animationPrev != nullptr;
+}
+
+void DoublyLinkedList::setAnimationPrevToNull(void) {
+    animationPrev = nullptr;
+    prevPosition = -1;
+}
+
+void DoublyLinkedList::assignAnimationTmpToAnimationPrevNext(void) {
+    animationPrev->pNext = animationTmp;
+}
+
+void DoublyLinkedList::setHighlightAnimationPrevNextLink(bool on) {
+    animationPrev->setHighlightNextLink(on);
+}
+
+void DoublyLinkedList::setHighlightAnimationPrevPrevLink(bool on) {
+    animationPrev->setHighlightPrevLink(on);
+}
+
+bool DoublyLinkedList::isAnimationPrevTail(void) {
+    return animationPrev == tail;
+}
+
+void DoublyLinkedList::createANewNode(int x) {
+    if(animationTmp != nullptr) 
+                delete animationTmp;
+    animationTmp = new PNode(x);
+}
+
+void DoublyLinkedList::createNodeBefore(int i, int x) {
+    // Get the i-th node: tmp
     PNode* tmp = getIthNode(i);
-    if(tmp == nullptr) return;
-    tmp->highlight = true;
+    // Cannot found tmp
+    if(tmp == nullptr) {
+        // Head position
+        if(i == 0) {
+            // Create a new node
+            createANewNode(x);
+            // Set position to head's position
+            animationTmp->setPosition(PConstants::DS1::headPosition);
+        }
+        // Input is not valid
+        else {
+            cerr << "DoublyLinkedList::createNodeBefore(i, x): Input is not valid.\n";
+            return;
+        }
+    }
+    // Found tmp
+    else {
+        // Create a new node at the i-th node's position
+        createANewNode(x);
+        // Set position to tmp's position
+        animationTmp->setPosition(tmp->center);
+        // Reload all positions
+        reloadPositions();
+    }
 }
 
-void DoublyLinkedList::unHighlightNode(int i) {
+void DoublyLinkedList::createNodeAfter(int i, int x) {
+    // Get the i-th node: tmp
     PNode* tmp = getIthNode(i);
-    if(tmp == nullptr) return;
-    tmp->highlight = false;
-}
-
-void DoublyLinkedList::displayLinkNext(int i) {
-    PNode* cur = getIthNode(i);
-    if(cur == nullptr) 
-        return;
-    cur->addLineState(PNode::NextOnly);
-}
-
-void DoublyLinkedList::displayLinkPrev(int i) {
-    PNode* cur = getIthNode(i);
-    if(cur == nullptr) 
-        return;
-    cur->addLineState(PNode::PrevOnly);
-}
-
-void DoublyLinkedList::setDisplayLine(int i, int state) {
-    PNode* tmp = getIthNode(i);
-    if(tmp == nullptr)
-        return;
-    tmp->setLineState(state);
+    // Cannot found tmp
+    if(tmp == nullptr) {
+        // Head position
+        if(i == -1) {
+            // Create a new node
+            createANewNode(x);
+            // Set position to head's position
+            animationTmp->setPosition(PConstants::DS1::headPosition);
+        }
+        // Input is not valid
+        else {
+            cerr << "DoublyLinkedList::createNodeAfter(i, x): Input is not valid.\n";
+            return;
+        }
+    }
+    // Found tmp
+    else {
+        // Create a new node at the i-th node's position
+        createANewNode(x);
+        // Set position after the tmp's position
+        nextNodePosition(tmp, animationTmp);
+        // Reload all positions
+        reloadPositions();
+    }
 }

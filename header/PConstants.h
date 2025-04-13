@@ -61,6 +61,17 @@ namespace PConstants {
         const Color regionColor = {120, 209, 210, 255};
     };
 
+    namespace PExplanationArea {
+        // Position 
+        const Vector2 pos = {0, 461};
+
+        // Size
+        const Vector2 size = {307, 65};
+
+        // Color
+        const Color backgroundColor = {151, 219, 174, 255};
+    };
+
     namespace PSwitchBox {
         // Size
         const float arrowHeadWidth = 22.f;
@@ -108,7 +119,11 @@ namespace PConstants {
     };
 
     namespace DS1 {
-        const float speed = 400.f;
+        // Movement
+        const float speed = 600.f;
+
+        // Position
+        const Vector2 headPosition = {400, 200};
     };
 
     namespace PNode {
@@ -138,5 +153,19 @@ namespace PConstants {
         const Color innerHighlightColor = {255, 138, 39, 255};
         const Color outerHighlightColor = {255, 138, 39, 255};
         const Color textHighlightColor = WHITE;
+
+        const Color informationTextColor = BLACK;
     }
+
+    namespace PNodeLine {
+        const Color color = BLACK;
+        const Color highlightColor = {255, 138, 39, 255};
+    }
+
+    namespace PAnimation
+    {
+        // Time
+        const float waitTime = 1.0f;
+    }
+    
 };

@@ -36,7 +36,6 @@ struct PInputBox : public PTitleBox {
 
     // Draw
     void draw(void);
-    void drawInputSymbol(void);
 
     bool hasContent(void);
     string extract(void);

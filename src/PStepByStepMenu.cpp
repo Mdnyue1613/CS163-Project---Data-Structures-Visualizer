@@ -29,6 +29,10 @@ void PStepByStepMenu::prepare(void) {
     skipForward.prepare();
 }
 
+void PStepByStepMenu::update(void) {
+    
+}
+
 void PStepByStepMenu::draw(void) {
     DrawRectangleRec(background, PConstants::PStepByStepMenu::regionColor);
     skipBackward.draw();

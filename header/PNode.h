@@ -3,17 +3,12 @@
 #include <raymath.h>
 #include <iostream>
 #include <cstring>
+#include "PNodeLine.h"
 #include "PRandom.h"
 #include "PConstants.h"
 using namespace std;
 
 struct PNode {
-    // const int innerRadius = 26;
-    // const int outerRadius = 30;
-    // const int characterSize = 20;
-    // const int lineThickness = 4;
-    // const int arrowWidth = 6;
-    // const int arrowHeight = 8;
     // Data
     int data;
     PNode *pNext, *pPrev;
@@ -22,15 +17,7 @@ struct PNode {
     Vector2 centerFrom, center; // Centers of the circle
 
     // Line
-    enum lineStateID {
-        NoDraw,
-        NextOnly,
-        PrevOnly,
-        DrawAll
-    };
-    int lineState;
-    Vector2 arrowHeadStart1, arrowHeadStart2, arrowHeadStart3; // Coordinates of the arrow head 1
-    Vector2 arrowHeadEnd1, arrowHeadEnd2, arrowHeadEnd3; // Coordinates of the arrow head 2
+    PNodeLine lPrev, lNext;
 
     // Direction
     int direction;
@@ -38,6 +25,11 @@ struct PNode {
     // Content
     char label[5];
     int labelLength;
+
+    // Information
+    const string informationName[4] = { "head", "tail", "tmp", "prev" };
+    bool informationState[4] = {false, false, false, false};
+    string information;
 
     // Hightlight
     bool highlight;
@@ -47,9 +39,9 @@ struct PNode {
 
     // Initialize
     PNode(void);
-    PNode(int data, PNode *pPrev, PNode* pNext);
+    PNode(int data);
     void makeLabel(void); // initialize the label of the node
-    void makePosition(bool isNew); // initialize the position of the node or shift after insertion
+    void makePosition(void); // initialie the position of the node
 
     // Update
     void update(void); // update node's attributes
@@ -59,9 +51,19 @@ struct PNode {
     // Draw
     void drawLine(void); // draw line (if exists)
     void drawNode(void); // draw node and content
+    void drawText(void); // draw a text informing the node below the node
 
     // Set
     void setPosition(Vector2 pos); // move to pos
-    void setLineState(int state); // set line state
-    void addLineState(int state); // add line state
+    void setHighlight(bool on); // set the highlight state
+    void setHighlightPrevLink(bool on); // set the highlight state of the previous link
+    void setHighlightNextLink(bool on); // set the highlight state of the next link
+
+    // Information
+    void setInformation(string information); // set information
+    void setInformationState(int i, bool on); // set information state
+    void resetInformationState(void); // reset information type
+
+    // Get
+    bool positionIsUpdated(void);
 };

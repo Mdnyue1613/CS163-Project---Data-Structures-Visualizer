@@ -1,57 +1,28 @@
 #include "../header/PNode.h"
 
 PNode::PNode(void) :
-    data(-1), pNext(nullptr), pPrev(nullptr), highlight(false), lineState(3),
-    updatedPosition(false) {
+    data(-1), pNext(nullptr), pPrev(nullptr), highlight(false), lPrev(), lNext(),
+    updatedPosition(false), direction(1), information() {
     makeLabel();
-    makePosition(true);
+    makePosition();
 }
 
-PNode::PNode(int data, PNode *pPrev, PNode *pNext) :
-    data(data), pNext(pNext), pPrev(pPrev), highlight(false), lineState(3),
-    updatedPosition(false) {
+PNode::PNode(int data) :
+    data(data), pNext(nullptr), pPrev(nullptr), highlight(false), lPrev(), lNext(),
+    updatedPosition(false), direction(1), information() {
     makeLabel();
-    makePosition(true);
+    makePosition();
+}
+
+void PNode::makePosition(void) {
+    PRandom randomGenerator;
+    centerFrom = {1.f * randomGenerator.random(350, 1200), 1.f * randomGenerator.random(200, 800)};
 }
 
 void PNode::makeLabel(void) {
     string convertedData = to_string(data);
     if(convertedData.size() < 5)
         strcpy(label, convertedData.c_str());
-}
-
-void PNode::makePosition(bool isNew) {
-    if(isNew) {
-        PRandom randomGenerator;
-        centerFrom = Vector2{1.f * randomGenerator.random(400, 1200), 1.f * randomGenerator.random(200, 800)};
-    }
-    // Case: The first node
-    if(pPrev == nullptr) {
-        center = {400.f, 200.f};
-        direction = 1;
-    }
-    // There are some previous nodes
-    else {
-        float radius = PConstants::PNode::outerRadius;
-        float lineLength = PConstants::PNode::lineLength;
-        int preDirection = pPrev->direction;
-        Vector2 preCenter = pPrev->center;
-        float dist1 = 3.f * radius + lineLength; // Distance from the center of a node to the farest point of the next node;
-        float dist2 = 2.f * radius + lineLength; // Distance between centers of two consecutive nodes
-        
-        if(preDirection == 1 && preCenter.x + dist1 < 1200.f) { // Rightward
-            direction = 1;
-            center = {preCenter.x + dist2, preCenter.y};
-        }
-        else if(preDirection == -1 && preCenter.x - dist1 > 312.f) { // Leftward
-            direction = -1;
-            center = {preCenter.x - dist2, preCenter.y};
-        }
-        else { // Downward
-            direction = -preDirection;
-            center = {preCenter.x, preCenter.y + dist2};
-        }
-    }
 }
 
 void PNode::update(void) {
@@ -90,46 +61,23 @@ bool PNode::updatePosition(void) {
 }
 
 void PNode::updateLine(void) {
-    if(pPrev == nullptr)
-        return;
-
-    Vector2 start = pPrev->centerFrom;
-    Vector2 end = centerFrom;
-    float dx = end.x - start.x;
-    float dy = end.y - start.y;
-    float length = Vector2Length(Vector2Subtract(end, start));
-    float angle = atan2f(dy, dx);
-    float perAngle = atan2f(-dx, dy);
-    float radius = PConstants::PNode::innerRadius;
-    float arrowWidth = PConstants::PNode::arrowWidth;
-
-    // Update line: arrowHeadStart1 (top), arrowHeadEnd1 (top)
-    arrowHeadStart1 = Vector2Add(start, {radius * cos(angle), radius * sin(angle)});
-    arrowHeadEnd1 = Vector2Subtract(end, {radius * cos(angle), radius * sin(angle)});
-
-    // Update arrow heads: 
-        // Head 1:  arrowHeadStart2 (left), arrowHeadStart3 (right)
-    Vector2 head1 = Vector2Add(arrowHeadStart1, {arrowWidth * cos(angle), arrowWidth * sin(angle)});
-    arrowHeadStart2 = Vector2Subtract(head1, {arrowWidth / 2.f * cos(perAngle), arrowWidth / 2.f * sin(perAngle)});
-    arrowHeadStart3 = Vector2Add(head1, {arrowWidth / 2.f * cos(perAngle), arrowWidth / 2.f * sin(perAngle)});
-
-        // Head 2:  arrowHeadEnd2 (left), arrowHeadEnd3 (right)
-    Vector2 head2 = Vector2Subtract(arrowHeadEnd1, {arrowWidth * cos(angle), arrowWidth * sin(angle)});
-    arrowHeadEnd2 = Vector2Add(head2, {arrowWidth / 2.f * cos(perAngle), arrowWidth / 2.f * sin(perAngle)});
-    arrowHeadEnd3 = Vector2Subtract(head2, {arrowWidth / 2.f * cos(perAngle), arrowWidth / 2.f * sin(perAngle)});
+    // Update line to previous node (if exists)
+    if(pPrev) {
+        lPrev.setDirection(centerFrom, pPrev->centerFrom);
+        lPrev.update();
+    }
+    // Update line to next node (if exists)
+    if(pNext) {
+        lNext.setDirection(centerFrom, pNext->centerFrom);
+        lNext.update();
+    } lNext.update();
 }
 
 void PNode::drawLine(void) {
-    const float lineThickness = PConstants::PNode::lineThickness;
-
-    if(pPrev) {
-        if(lineState != NoDraw) 
-            DrawLineEx(pPrev->centerFrom, centerFrom, lineThickness, BLACK);
-        if(lineState == PrevOnly || lineState == DrawAll)
-            DrawTriangle(arrowHeadStart3, arrowHeadStart1, arrowHeadStart2, BLACK);
-        if(lineState == NextOnly || lineState == DrawAll)
-            DrawTriangle(arrowHeadEnd3, arrowHeadEnd1, arrowHeadEnd2, BLACK);
-    }
+    if(pNext != nullptr)
+        lNext.draw();
+    if(pPrev != nullptr)
+        lPrev.draw();
 }
 
 void PNode::drawNode(void) {
@@ -149,15 +97,57 @@ void PNode::drawNode(void) {
     DrawText(label, centerFrom.x - MeasureText(label, characterSize) / 2, centerFrom.y - characterSize / 2, characterSize, textColor);
 }
 
+void PNode::drawText(void) {
+    // Prepare information
+    information.clear();
+    for(int i = 0; i < 4; i++) {
+        if(informationState[i]) {
+            if(information.size())
+                information += '/';
+            information += informationName[i];
+        }
+    }
+    // Calculate
+    const float textSize = PConstants::PNode::informationSize;
+    const float radius = PConstants::PNode::outerRadius;
+    const float space = PConstants::PNode::textSpace;
+    const Color color = PConstants::PNode::informationTextColor;
+    float contentWidth = MeasureText(information.c_str(), textSize);
+    // Draw
+    DrawText(information.c_str(), centerFrom.x - contentWidth / 2.f, centerFrom.y + radius + space, textSize, color);
+}
+
 void PNode::setPosition(Vector2 pos) {
     center = pos;
     updatedPosition = false;
 }
 
-void PNode::setLineState(int state) {
-    lineState = state;
+void PNode::setHighlight(bool on) {
+    highlight = on;
 }
 
-void PNode::addLineState(int state) {
-    lineState |= state;
+void PNode::setHighlightPrevLink(bool on) {
+    lPrev.setHighlight(on);
+}
+
+void PNode::setHighlightNextLink(bool on) {
+    lNext.setHighlight(on);
+}
+
+void PNode::setInformation(string information) {
+    this->information = information;
+}
+
+void PNode::setInformationState(int i, bool on) {
+    informationState[i] = on;
+}
+
+void PNode::resetInformationState(void) {
+    for(int i = 0; i < 4; i++) {
+        informationState[i] = false;
+    }
+}
+
+bool PNode::positionIsUpdated(void) {
+    return updatedPosition;
 }

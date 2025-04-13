@@ -7,6 +7,8 @@
 #include "PRandom.h"
 #include "PStepByStepMenu.h"
 #include "PTaskManagement.h"
+#include "PDSAnimation.h"
+#include "PExplanationArea.h"
 #include <string>
 #include <vector>
 #include <random>
@@ -20,6 +22,9 @@ struct DS1 {
     DoublyLinkedList doublyLinkedList;
     PRandom randomGenerator;
     PTaskManagement taskManagement;
+    PDSAnimation animationManagement;
+    PExplanationArea explanationArea;
+
     enum taskType {
         Initialize,
         Insert,
@@ -41,11 +46,9 @@ struct DS1 {
 
     // Initialize mode functions
     bool operateInitialize(vector<string>& request); // Operate initializing request: return true when done
-    void randomInitialize(int x); // initialize a random data
     vector<int> stringToVectorInt(string& s);
     void vectorIntInitialize(vector<int>& vi);
 
     // Insert mode functions
     bool operateInsert(vector<string>& request); // Operate inserting request: return true when done
-    bool insertHead(int value);
 };
