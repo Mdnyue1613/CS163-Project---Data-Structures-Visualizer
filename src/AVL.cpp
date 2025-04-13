@@ -230,17 +230,19 @@ void AVL::setCurrentPosition(float speed) {
         float distance = sqrt(deltaX * deltaX + deltaY * deltaY);
         float cosAlpha = distance != 0 ? deltaX / distance : 1;
         float sinAlpha = distance != 0 ? deltaY / distance : 1;
+        float horizontalSpeed = speed + (float)0.5 * deltaX / distance_x;
+        float vericalSpeed = speed + (float)0.5 * deltaY / distance_y;
         if(Node->position.x < Node->targetPosition.x) {
-            Node->position.x = min(Node->position.x + 1.f * cosAlpha * speed, Node->targetPosition.x);
+            Node->position.x = min(Node->position.x + 1.f * cosAlpha * horizontalSpeed, Node->targetPosition.x);
         }
         else {
-            Node->position.x = max(Node->position.x - 1.f * cosAlpha * speed, Node->targetPosition.x);
+            Node->position.x = max(Node->position.x - 1.f * cosAlpha * horizontalSpeed, Node->targetPosition.x);
         }
         if(Node->position.y < Node->targetPosition.y) {
-            Node->position.y = min(Node->targetPosition.y, Node->position.y + 5.f * sinAlpha * speed);
+            Node->position.y = min(Node->targetPosition.y, Node->position.y + 1.f * sinAlpha * vericalSpeed);
         }
         else {
-            Node->position.y = max(Node->targetPosition.y, Node->position.y - 5.f * sinAlpha * speed);
+            Node->position.y = max(Node->targetPosition.y, Node->position.y - 1.f * sinAlpha * vericalSpeed);
         }
     }
     int count = 0;
@@ -512,6 +514,17 @@ void AVL::updatePathAfterDelete() {
     Path.clear();
     for (auto Node : allNode) {
         if(Node->isHighlight) Path.push_back(Node);
+    }
+}
+
+void AVL::findNode(TreeNode*& root, int x) {
+    if(!root) return;
+    Path.push_back(root);
+    if(root->val < x) findNode (root->right, x);
+    else if (root->val > x) findNode(root->left, x);
+    else {
+        selectionNode = root;
+        return;
     }
 }
 

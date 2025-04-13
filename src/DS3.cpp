@@ -45,21 +45,35 @@ void DS3::draw() {
     }
 
     else if(request[0] == "delete") {
-        if (request[1] == "delete" && request.size() == 3) {
-            Tree.isDelete = 1;
-            Delete(request[2]);
+        if (request[1] == "delete") {
+            if (request.size() == 3) {
+                if(Tree.selectionNode) {
+                    request[2] = to_string(Tree.selectionNode->val);
+                }
+                if(request[2] != "") {
+                    Delete(request[2]);
+                }
+            }
         }
         else if (request[1] == "clear") {
             Tree.removeAll();
         }
     }
 
-    else if(request[0] == "find" && request[1] == "Find") {
-        Tree.isFind = 1;
-        // Find();
+    else if(request[0] == "find" && request[1] == "find") {
+        if(request.size() == 3) {
+            if(Tree.selectionNode) request[2] = to_string(Tree.selectionNode->val);
+            if(request[2] != "") {
+                Tree.isFind = 1;
+                Find(request[2]);
+            }
+        }
     }
     isAnimation = (Tree.isInit || Tree.isInsert || Tree.isDelete || Tree.isFind);
     // Draw Data Structure
+    if(isAnimation == false) {
+        updateSelectionNode();
+    }
     Tree.draw();
 }
 void DS3::RandomInitialize(string num) {
@@ -124,4 +138,34 @@ vector<int> DS3::stringToVectorInt(string s) {
 
 void DS3::vectorIntInitialize(vector<int> nums) {
     Tree.vectorIntInit(nums);
+}
+
+void DS3::updateSelectionNode() {
+    if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+        Vector2 mouse = GetMousePosition();
+        if(CheckCollisionPointRec(mouse, {0, 86, 307, 296})) return;
+        Tree.defaultTree();
+        for(auto Node : Tree.allNode) {
+            if(CheckCollisionPointCircle(mouse, Node->position, Node->radius)) {
+                if(Tree.selectionNode != Node) {
+                    Tree.selectionNode = Node;
+                    Tree.selectionNode->setColor(DARKBLUE);
+                    return;
+                }
+            }
+        }
+        Tree.selectionNode = nullptr;
+    }
+}
+
+void DS3::Find(string num) {
+    int val;
+    for (auto c : num) {
+        if (c < '0' || c  > '9') {
+            Tree.isFind = 0;
+            return;
+        }
+    }
+    val = stoi(num);
+    Tree.findNode(Tree.TreeRoot, val);
 }

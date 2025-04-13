@@ -37,6 +37,7 @@ struct AVL {
     TreeNode* childRotateNode = nullptr;
     TreeNode* NodeDelete = nullptr;
     TreeNode* newDeleteNode = nullptr;
+    TreeNode* selectionNode = nullptr;
     int indexOfDeleteNodeInPath = 0;
     bool isInsert, isDelete, isFind, isInit;
     bool isNeedToRotate = false, isNeedToRotateChild = false;
@@ -87,4 +88,5 @@ struct AVL {
     void updatePathAfterDelete();
     void updateHeightInPath();
     void insertNodeRunAtOnce(TreeNode *&root, TreeNode *parent, int x);
+    void findNode(TreeNode*& root, int x);
 };

@@ -173,6 +173,7 @@ void AVL::insertAnimation() {
         isNeedToRotate = false;
         rotationNode = nullptr;
         animationStep = 0;
+        selectionNode = nullptr;
         drawTree();
         break;
     }
@@ -199,6 +200,11 @@ void AVL::deleteAnimation() {
         break;
 
     case 1:
+        if (NodeDelete == nullptr) {
+            animationStep = 11;
+            WaitTime(0.5);
+            break;
+        }
         if(NodeDelete) {
             if (NodeDelete->left && NodeDelete->right) {
                 newDeleteNode = Path[hightLightNodeIndex - 1];
@@ -326,6 +332,7 @@ void AVL::deleteAnimation() {
         NodeDelete = nullptr;
         isNeedToRotate = false;
         rotationNode = nullptr;
+        selectionNode = nullptr;
         animationStep = 0;
         drawTree();
         break;
@@ -334,7 +341,41 @@ void AVL::deleteAnimation() {
 }
 
 void AVL::findAnimation() {
-
+    switch (animationStep) {
+    case 0:
+        hightLightNode();
+        if(hightLightNodeIndex >= Path.size()) {
+            animationStep = 1;
+        }
+        break;
+    case 1:
+        WaitTime(0.5);
+        if(selectionNode != nullptr) {
+            selectionNode->setColor(DARKBLUE);
+        }
+        animationStep = 2;
+        break;
+    case 2:
+        WaitTime(0.5);
+        defaultTree();
+        if(selectionNode != nullptr) {
+            selectionNode->setColor(DARKBLUE);
+        }
+        animationStep = 3;
+        break;
+    default:
+        defaultTree();
+        selectionNode = nullptr;
+        isFind = 0;
+        Path.clear();
+        hightLightNodeIndex = 0;
+        animationStep= 0;
+        for(auto Node:allNode) {
+            Node->isHighlight = 0;
+        }
+        break;
+    }
+    drawTree();
 }
 
 void AVL::animateRotation() {

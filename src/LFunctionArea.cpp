@@ -5,7 +5,8 @@ LFunctionArea::LFunctionArea() {}
 LFunctionArea::LFunctionArea(int x, int y, int width, int height, Color color) :
     initializeMenu(x, y, width, height, 20),
     insertMenu(x, y, width, height, 20),
-    deleteMenu(x, y, width, height, 20) {
+    deleteMenu(x, y, width, height, 20),
+    findMenu(x, y, width, height, 20) {
     background.x = x;
     background.y = y;
     background.width = width;
@@ -48,6 +49,14 @@ vector<string> LFunctionArea::draw(bool active) {
     else if(ChooseAction == 2) {
         vector<string> ret = deleteMenu.draw(active);
         res.push_back("delete");
+        res.insert(res.end(), ret.begin(), ret.end());
+        if(active) 
+            return res;
+    }
+    
+    else if (ChooseAction == 3) {
+        vector<string> ret = findMenu.draw(active);
+        res.push_back("find");
         res.insert(res.end(), ret.begin(), ret.end());
         if(active) 
             return res;
