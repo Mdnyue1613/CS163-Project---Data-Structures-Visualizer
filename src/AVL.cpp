@@ -517,3 +517,14 @@ void AVL::updatePathAfterDelete() {
     }
 }
 
+void AVL::findNode(TreeNode*& root, int x) {
+    if(!root) return;
+    Path.push_back(root);
+    if(root->val < x) findNode (root->right, x);
+    else if (root->val > x) findNode(root->left, x);
+    else {
+        selectionNode = root;
+        return;
+    }
+}
+

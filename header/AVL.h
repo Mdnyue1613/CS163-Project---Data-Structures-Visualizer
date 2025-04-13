@@ -88,4 +88,5 @@ struct AVL {
     void updatePathAfterDelete();
     void updateHeightInPath();
     void insertNodeRunAtOnce(TreeNode *&root, TreeNode *parent, int x);
+    void findNode(TreeNode*& root, int x);
 };

@@ -1,17 +1,18 @@
-#include"../header/LDeleteMenu.h"
+#include"../header/LFindMenu.h"
 
-LDeleteMenu::LDeleteMenu() {
+
+LFindMenu::LFindMenu() {
     
 }
-LDeleteMenu::LDeleteMenu(int x, int y, int width, int height, int characterSize) {
+LFindMenu::LFindMenu(int x, int y, int width, int height, int characterSize) {
     this->x = x;
     this->y = y;
     this->width = width;
     this->height = height;
     this->characterSize = characterSize;
+    char modeName[] = "Input Data";
     char goName[] = "GO";
-    Mode = PSwitchBox(Vector2{1.f * x + horizontalSpace, 1.f * y + boxHeight + 2 * verticalSpace}, 
-                    Vector2{1.f * width - 2 * horizontalSpace, 1.f * boxHeight}, boxOutlineThickness, WHITE, BLACK, {"Delete a node", "Clear"}, characterSize);
+    Mode = PTitleBox(x + horizontalSpace, y + boxHeight + 2 * verticalSpace, width - 2 * horizontalSpace, boxHeight, boxOutlineThickness, WHITE, BLACK, modeName, characterSize);
     
     GO = PTitleBox(x + horizontalSpace, y + height - horizontalSpace - boxHeight, width - 2 * horizontalSpace, boxHeight, boxOutlineThickness, WHITE, RED, goName, characterSize);
     inputBox = PInputBox(Vector2{1.f * x + PConstants::PFunctionArea::spaceX, 1.f * y + 2 * PConstants::PFunctionArea::boxHeight + 3 * PConstants::PFunctionArea::spaceY},
@@ -20,9 +21,10 @@ LDeleteMenu::LDeleteMenu(int x, int y, int width, int height, int characterSize)
         PConstants::PFunctionArea::boxColor,
         PConstants::PFunctionArea::outlineBoxColor,
         "input data", PConstants::PFunctionArea::textSize);
+
 }
-vector<string> LDeleteMenu::draw(bool active) {
-    int chooseAction = Mode.update();
+vector<string> LFindMenu::draw(bool active) {
+    // Name.draw();
     Mode.draw();
     if(active) {
         inputBox.update();
@@ -30,13 +32,8 @@ vector<string> LDeleteMenu::draw(bool active) {
     inputBox.draw();
     GO.draw();
     if((GO.isClick() || IsKeyPressed(KEY_ENTER)) && active) {
-        if(chooseAction == 0) {
-            if(inputBox.hasContent()) return {"delete", inputBox.extract()};
-            else return {"delete", ""};
-        }
-        else if(chooseAction == 1) {
-            return {"clear"};
-        }
+        if(inputBox.hasContent()) return {"find", inputBox.extract()};
+        else return {"find", ""};
     }
     return {"nothing"};
 }

@@ -19,6 +19,7 @@ struct DS3 {
     void vectorIntInitialize(vector<int> nums);
     void Insert(string num);
     void Delete(string num);
+    void Find(string num);
     void prepare();
     vector<int> stringToVectorInt(string s);
     void updateSelectionNode();
