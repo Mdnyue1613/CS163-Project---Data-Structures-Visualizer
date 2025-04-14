@@ -28,11 +28,13 @@ struct PStepByStepMenu {
     bool isOperating;
     int mode;
 
-    enum ModeID {
+    enum requestID {
         NoRequest,
-        Insert,
-        Delete,
-        Search
+        SkipBackward,
+        GoBackward,
+        Play,
+        GoForward,
+        SkipForward
     };
 
     PStepByStepMenu(void);

@@ -45,10 +45,10 @@ struct DS1 {
     void draw(void); // draw
 
     // Initialize mode functions
-    bool operateInitialize(vector<string>& request, string& explanationText); // Operate initializing request: return true when done
+    bool operateInitialize(vector<string>& request, int stepRequest, string& explanationText); // Operate initializing request: return true when done
     vector<int> stringToVectorInt(string& s);
     void vectorIntInitialize(vector<int>& vi);
 
     // Insert mode functions
-    bool operateInsert(vector<string>& request, string& explanationText); // Operate inserting request: return true when done
+    bool operateInsert(vector<string>& request, int stepRequest, string& explanationText); // Operate inserting request: return true when done
 };

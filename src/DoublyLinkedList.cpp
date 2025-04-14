@@ -31,6 +31,9 @@ void DoublyLinkedList::update(void) {
 
     // Update animation before rendering
     updateAnimation();
+
+    // Update nodes' information text
+    updateInformation();
 }
 
 void DoublyLinkedList::updateDataStructure(void) {
@@ -57,6 +60,42 @@ void DoublyLinkedList::updateAnimation(void) {
         animationPrev->update();
         animationPrev->setInformationState(Prev, true);
     }
+}
+
+void DoublyLinkedList::updateInformation(void) {
+    // Delete old information text
+    PNode* tmp = head;
+    while(tmp != nullptr) {
+        tmp->resetInformationState();
+        tmp = tmp->pNext;
+    }
+    if(animationTmp != nullptr) {
+        animationTmp->resetInformationState();
+    }
+    if(animationPrev != nullptr) {
+        animationPrev->resetInformationState();
+    }
+    // Update information text
+    if(head != nullptr) {
+        head->setInformationState(Head, true);
+    }
+    if(tail != nullptr) {
+        tail->setInformationState(Tail, true);
+    }
+    if(animationTmp != nullptr) {
+        animationTmp->setInformationState(Tmp, true);
+    }
+    if(animationPrev != nullptr) {
+        animationPrev->setInformationState(Prev, true);
+    }
+}
+
+void DoublyLinkedList::quickUpdateAnimation(void) {
+    quickUpdateAnimationTmp();
+}
+
+void DoublyLinkedList::quickUpdateAnimationTmp(void) {
+    animationTmp->quickUpdate();
 }
 
 void DoublyLinkedList::draw(void) {
@@ -251,12 +290,8 @@ bool DoublyLinkedList::createdHead(void) {
     return head != nullptr;
 }
 
-void DoublyLinkedList::highlightHead(void) {
-    head->setHighlight(true);
-}
-
-void DoublyLinkedList::unhighlightHead(void) {
-    head->setHighlight(false);
+void DoublyLinkedList::setHighlightHead(bool on) {
+    head->setHighlight(on);
 }
 
 void DoublyLinkedList::assignAnimationTmpToHead(void) {
@@ -277,6 +312,14 @@ void DoublyLinkedList::setHighlightHeadPrevLink(bool on) {
     head->setHighlightPrevLink(on);
 }
 
+void DoublyLinkedList::setHeadToNull(void) {
+    head = nullptr;
+}
+
+void DoublyLinkedList::setHeadPrevLinkToNull(void) {
+    head->pPrev = nullptr;
+}
+
 void DoublyLinkedList::assignAnimationTmpToTail(void) {
     // tail = tmp
     tail = animationTmp;
@@ -291,8 +334,16 @@ void DoublyLinkedList::assignAnimationTmpToTailNext(void) {
     }
 }
 
+void DoublyLinkedList::setHighlightTail(bool on) {
+    tail->setHighlight(on);
+}
+
 void DoublyLinkedList::setHighlightTailNextLink(bool on) {
     tail->setHighlightNextLink(on);
+}
+
+void DoublyLinkedList::setTailToNull(void) {
+    tail = nullptr;
 }
 
 bool DoublyLinkedList::createdAnimationTmp(void) {
@@ -343,6 +394,16 @@ void DoublyLinkedList::assignAnimationTmpToAnimationTmpNextPrev(void) {
 void DoublyLinkedList::setHighlightAnimationTmpNextPrevLink(bool on) {
     if(animationTmp->pNext != nullptr)
         animationTmp->pNext->setHighlightPrevLink(on);
+}
+
+void DoublyLinkedList::deleteAnimationTmp(void) {
+    delete animationTmp;
+    animationTmp = nullptr;
+    reloadPositions();
+}
+
+void DoublyLinkedList::setAnimationTmpNextLinkToNull(void) {
+    animationTmp->pNext = nullptr;
 }
 
 void DoublyLinkedList::assignHeadToAnimationPrev(void) {

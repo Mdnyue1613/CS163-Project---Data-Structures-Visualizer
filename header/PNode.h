@@ -47,6 +47,7 @@ struct PNode {
     void update(void); // update node's attributes
     bool updatePosition(void); // update node's position, return true if the progress is completed
     void updateLine(void); // update line connecting with the previous node (if exists): arrowHeadStart1, arrowHeadStart2, arrowHeadStart3, arrowHeadEnd1, arrowHeadEnd2, arrowHead3
+    void quickUpdate(void); // skip animation
 
     // Draw
     void drawLine(void); // draw line (if exists)

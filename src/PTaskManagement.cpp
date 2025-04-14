@@ -1,12 +1,25 @@
 #include "../header/PTaskManagement.h"
 
-PTaskManagement::PTaskManagement(void) : step(0), time(0.f) {}
+PTaskManagement::PTaskManagement(void) : step(0), time(0.f), taskDone(false) {
+    task.clear();
+}
 
 void PTaskManagement::takeRequest(vector<string> request) {
-    if(request[0] == "nothing")
+    if(doneTask() == false)
         return;
+
+    if(request.size() == 1 || request[1] == "nothing") {
+        return;
+    }
+
+    cout << "Recieve task ";
+    for(string task : request) {
+        cout << task << ' ';
+    }
+    cout << '\n';
     
-    taskQueue.push(request);
+    nextTask();
+    task = request;
 }
 
 void PTaskManagement::takeCondition(bool condition) {
@@ -38,12 +51,17 @@ void PTaskManagement::nextStep(void) {
     step++;
 }
 
+void PTaskManagement::prevStep(void) {
+    time = 0;
+    step--;
+    taskDone = false;
+}
+
 int PTaskManagement::getTaskType(void) {
-    // Manage error
-    if(taskQueue.empty())
+    if(task.empty())
         return NoRequest;
 
-    string type = taskQueue.front()[0];
+    string type = task[0];
     if(type == "initialize")
         return Initilize;
     else if(type == "insert")
@@ -57,24 +75,24 @@ int PTaskManagement::getTaskType(void) {
 }
 
 vector<string> PTaskManagement::getTask(void) {
-    if(taskQueue.empty())
+    if(task.empty())
         return {"NoRequest"};
 
-    return taskQueue.front();
+    return task;
+}
+
+void PTaskManagement::endTask(void) {
+    taskDone = true;
 }
 
 void PTaskManagement::nextTask(void) {
-    // Manage errors
-    if(taskQueue.empty()) {
-        cerr << "taskQueue in PTaskManagement is empty.\n";
-        exit(0);
-    }
-
     time = 0.f;
-
     step = 0;
-    
-    taskQueue.pop();
+    taskDone = false;
+}
+
+bool PTaskManagement::doneTask(void) {
+    return task.empty() || taskDone;
 }
 
 void PTaskManagement::updateTime(void) {

@@ -15,14 +15,12 @@ struct PTaskManagement {
             - nextTask(): update after completing a task
     */
     int step;
-    queue<vector<string>> taskQueue;
-    stack<bool> conditionStack;
+    vector<string> task;
+    bool taskDone;
+    stack<bool> conditionStack, undoCondtionStack;
     float time;
 
     PTaskManagement(void);
-
-    // Task queue
-    void takeRequest(vector<string> request); // Push new request into task queue
 
     // Condition stack
     void takeCondition(bool condition); // Push new condition into the condition stack
@@ -33,6 +31,7 @@ struct PTaskManagement {
     // Step
     int getStep(void); // Return 'step'
     void nextStep(void); // Go to the next step
+    void prevStep(void); // Go to the previous step
 
     // Task
     enum taskType {
@@ -42,9 +41,12 @@ struct PTaskManagement {
         Search,
         NoRequest
     };
+    void takeRequest(vector<string> request); // Push new request into task queue
     int getTaskType(void); // Get the type of the task
     vector<string> getTask(void); // Get the task
+    void endTask(void); // End a task
     void nextTask(void); // Go to the next task
+    bool doneTask(void); // Return if the task is done
 
     // Time
     void updateTime(void);

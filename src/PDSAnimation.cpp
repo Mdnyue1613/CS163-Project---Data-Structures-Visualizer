@@ -2,13 +2,15 @@
 
 PDSAnimation::PDSAnimation(void) : 
     dataStructurePointer(nullptr), 
-    taskManagementPointer(nullptr) {}
+    taskManagementPointer(nullptr),
+    waitRequest(true) {}
 
 PDSAnimation::PDSAnimation(DoublyLinkedList * dataStructurePointer, PTaskManagement * taskManagementPointer) : 
     dataStructurePointer(dataStructurePointer), 
-    taskManagementPointer(taskManagementPointer) {}
+    taskManagementPointer(taskManagementPointer),
+    waitRequest(true) {}
 
-bool PDSAnimation::insertHead(int value, string& explanationText) {
+bool PDSAnimation::insertHead(int value, int stepRequest, string& explanationText) {
     /*
     Pseudo code:
     Step 0.    CreateNodeBefore(0, x) : tmp = new Node(x); this node is created before the 0-th node
@@ -23,171 +25,294 @@ bool PDSAnimation::insertHead(int value, string& explanationText) {
     */
     // Track if the progress is done
     bool done = false;
-    // Get step id
+    // Direction of the flow
+    bool forward = (stepRequest != goBackward && stepRequest != skipBackward);
+    if(forward && taskManagementPointer->doneTask())
+        return true;
+    // Update waitRequest state
+    if(stepRequest == play)
+        waitRequest = false;
+    else if(stepRequest == skipBackward || stepRequest == goBackward || stepRequest == goForward || stepRequest == skipForward)
+        waitRequest = true;
+    // Doing steps
     int step = taskManagementPointer->getStep();
-    // Step 0
     if(step == 0) {
-        bool doneAnimation0 = (dataStructurePointer->createdAnimationTmp() && 
-            dataStructurePointer->animationTmpIsUpdated());
-        // Create the node. If it is created, skip
-        if(dataStructurePointer->createdAnimationTmp() == false) {
-            // Create a node before the head node
-            dataStructurePointer->createNodeBefore(0, value);
-            // Highlight the new node
-            dataStructurePointer->setHighlightAnimationTmp(true);
-        }
-        // Explanation text
-        explanationText = "Create a new node.";
-        // Go to the next step
-        if(doneAnimation0) {
-            // Unhighlight the new node
-            dataStructurePointer->setHighlightAnimationTmp(false);
-            taskManagementPointer->nextStep();
-        }
+        if(forward)
+            done = insertHeadStep0(value, stepRequest, explanationText);
     }
-    // Step 1
-    else if(step == 1) {
-        bool doneAnimation1 = taskManagementPointer->getTime() >= PConstants::PAnimation::waitTime;
-        // Do algorithm
-        if(taskManagementPointer->getNumCondition() == 0) {
-            // Check if the list is empty
-            bool emptyList = dataStructurePointer->createdHead() == false;
-            taskManagementPointer->takeCondition(emptyList);
-            // Highlight the head node (if exists)
-            if(dataStructurePointer->createdHead())
-                dataStructurePointer->highlightHead();
-        }
-        // Explanation text
-        explanationText = "Check if the list is empty.";
-        // Update time
-        taskManagementPointer->updateTime();
-        // Go to the next step
-        if(doneAnimation1) {
-            // Unhighlight the head node (if exists)
-            if(dataStructurePointer->createdHead())
-                dataStructurePointer->unhighlightHead();
-            taskManagementPointer->nextStep();
-        }
-    }
-    // Step 2
-    else if(step == 2) {
-        // Done condition
-        bool doneAnimation2 = taskManagementPointer->getTime() >= PConstants::PAnimation::waitTime;
-        // State of the list
-        bool emptyList = taskManagementPointer->getCondition();
-        // At time = 0, do back end
-        if(taskManagementPointer->getTime() == 0.f) {
-            // Algorithm for the empty list
-            if(emptyList == true) {
-                // head = tmp
-                dataStructurePointer->assignAnimationTmpToHead();
-            }
-            // Algorithm for the non-empty list
-            else {
-                // head->pPrev = tmp
-                dataStructurePointer->assignAnimationTmpToHeadPrev();
-                // Animation
-                // Highlight the link
-                dataStructurePointer->setHighlightHeadPrevLink(true);
-            }
-        }
-        // Explanation text
-        if(emptyList) {
-            explanationText = "head points to tmp.";
-        }
-        else {
-            explanationText = "head->pPrev points to tmp.";
-        }
-        // Update time
-        taskManagementPointer->updateTime();
-        // Go to the next step
-        if(doneAnimation2) {
-            if(emptyList == true) {}
-            else {
-                // Unhighlight the link
-                dataStructurePointer->setHighlightHeadPrevLink(false);
-            }
-            taskManagementPointer->nextStep();
-        }
-    }
-    // Step 3
-    else if(step == 3) {
-        // Done condition
-        bool doneAnimation3 = taskManagementPointer->getTime() >= PConstants::PAnimation::waitTime;
-        // State of the list
-        bool emptyList = taskManagementPointer->getCondition();
-        if(taskManagementPointer->getTime() == 0.f) {
-            // Algorithm for the empty list
-            if(emptyList == true) {
-                // tail = tmp
-                dataStructurePointer->assignAnimationTmpToTail();
-            }
-            // Algorithm for the non-empty list
-            else {
-                // tmp->pNext = head
-                dataStructurePointer->assignHeadToAnimationTmpNext();
-                // Highlight the link
-                dataStructurePointer->setHighlightAnimationTmpNextLink(true);
-            }
-        }
-        // Explanation text
-        if(emptyList) {
-            explanationText = "tail points to tmp";
-        }
-        else {
-            explanationText = "tmp->pNext points to head";
-        }
-        // Update time
-        taskManagementPointer->updateTime();
-        // Go to the next step
-        if(doneAnimation3 == true) {
-            if(emptyList == true) {
-                // animationTmp = nullptr
-                dataStructurePointer->setAnimationTmpToNull();
-                // n += 1
-                dataStructurePointer->addNumNode(1);
-                taskManagementPointer->popCondition();
-                done = true;
-            }
-            else {
-                // Unhighlight the link
-                dataStructurePointer->setHighlightAnimationTmpNextLink(false);
-            }
-            taskManagementPointer->nextStep();
-        }
-    }
-    // Step 4
-    else if(step == 4) {
-        // Done condition
-        bool doneAnimation4 = (taskManagementPointer->getTime() >= PConstants::PAnimation::waitTime);
-        // Algorithm
-        if(taskManagementPointer->getTime() == 0.f) {
-            // head = tmp
-            dataStructurePointer->assignAnimationTmpToHead();
-        }
-        // Explanation text
-        explanationText = "head points to tmp.";
-        // Update time
-        taskManagementPointer->updateTime();
-        // Go to the next step
-        if(doneAnimation4) {
-            // animationTmp = nullptr
-            dataStructurePointer->setAnimationTmpToNull();
-            // n += 1
-            dataStructurePointer->addNumNode(1);
-            taskManagementPointer->popCondition();
-            done = true;
-        }
-    }
+    else if(step == 1)
+        done = forward ? insertHeadStep1(value, stepRequest, explanationText) : undoInsertHead0(value, stepRequest, explanationText);
+    else if(step == 2)
+        done = forward ? insertHeadStep2(value, stepRequest, explanationText) : undoInsertHead1(value, stepRequest, explanationText);
+    else if(step == 3)
+        done = forward ? insertHeadStep3(value, stepRequest, explanationText) : undoInsertHead2(value, stepRequest, explanationText);
+    else if(step == 4)
+        done = forward ? insertHeadStep4(value, stepRequest, explanationText) : undoInsertHead3(value, stepRequest, explanationText);
     else {
         cerr << "Input wrong step in DS1::insertHead(value, step)\n";
-        exit(0);
+        exit(1);
     }
     // Check if the progress is done
     return done;
 }
 
-bool PDSAnimation::insertTail(int value, string& explanationText) {
+bool PDSAnimation::insertHeadStep0(int value, int stepRequest, string& explanationText) {
+    bool doneAnimation0 = (waitRequest == false && dataStructurePointer->createdAnimationTmp() && dataStructurePointer->animationTmpIsUpdated());
+    // Create the node. If it is created, skip
+    if(dataStructurePointer->createdAnimationTmp() == false) {
+        // Create a node before the head node
+        dataStructurePointer->createNodeBefore(0, value);
+        // Highlight the new node
+        dataStructurePointer->setHighlightAnimationTmp(true);
+    }
+    // Explanation text
+    explanationText = "Create a new node.";
+    // Skip animation
+    if(stepRequest == goForward || stepRequest == skipForward) {
+        dataStructurePointer->quickUpdateAnimation();
+        doneAnimation0 = true;
+    }
+    // Go to the next step
+    if(doneAnimation0) {
+        // Unhighlight the new node
+        dataStructurePointer->setHighlightAnimationTmp(false);
+        taskManagementPointer->nextStep();
+        // Move to the next step
+        if(stepRequest == skipForward)
+            return insertHeadStep1(value, stepRequest, explanationText);
+    }
+    // Step ends, process does not end
+    return false;
+}
+bool PDSAnimation::insertHeadStep1(int value, int stepRequest, string& explanationText) {
+    bool doneAnimation1 = (waitRequest == false && taskManagementPointer->getTime() >= PConstants::PAnimation::waitTime);
+    // Do algorithm
+    if(taskManagementPointer->getNumCondition() == 0) {
+        // Check if the list is empty
+        bool emptyList = dataStructurePointer->createdHead() == false;
+        taskManagementPointer->takeCondition(emptyList);
+        // Highlight the head node (if exists)
+        if(dataStructurePointer->createdHead())
+            dataStructurePointer->setHighlightHead(true);
+    }
+    // Explanation text
+    explanationText = "Check if the list is empty.";
+    // Skip animation
+    if(stepRequest == goForward || stepRequest == skipForward) {
+        doneAnimation1 = true;
+    }
+    // Update time
+    taskManagementPointer->updateTime();
+    // Go to the next step
+    if(doneAnimation1) {
+        // Unhighlight the head node (if exists)
+        if(dataStructurePointer->createdHead())
+            dataStructurePointer->setHighlightHead(false);
+        taskManagementPointer->nextStep();
+        if(stepRequest == skipForward)
+            return insertHeadStep2(value, stepRequest, explanationText);
+    }
+    return false;
+}
+bool PDSAnimation::insertHeadStep2(int value, int stepRequest, string& explanationText) {
+    // Done condition
+    bool doneAnimation2 = (waitRequest == false && taskManagementPointer->getTime() >= PConstants::PAnimation::waitTime);
+    // State of the list
+    bool emptyList = taskManagementPointer->getCondition();
+    // Algorithm
+    if(taskManagementPointer->getTime() == 0.f) {
+        if(emptyList == true) {
+            dataStructurePointer->assignAnimationTmpToHead();
+            dataStructurePointer->setHighlightHead(true);
+        }
+        else {
+            dataStructurePointer->assignAnimationTmpToHeadPrev();
+            dataStructurePointer->setHighlightHeadPrevLink(true);
+        }
+    }
+    // Explanation text
+    if(emptyList) {
+        explanationText = "head points to tmp.";
+    }
+    else {
+        explanationText = "head->pPrev points to tmp.";
+    }
+    // Skip animation
+    if(stepRequest == goForward || stepRequest == skipForward) {
+        doneAnimation2 = true;
+    }
+    // Update time
+    taskManagementPointer->updateTime();
+    // Go to the next step
+    if(doneAnimation2) {
+        // Update
+        if(emptyList == true)
+            dataStructurePointer->setHighlightHead(false);
+        else
+            dataStructurePointer->setHighlightHeadPrevLink(false);
+        taskManagementPointer->nextStep();
+        if(stepRequest == skipForward)
+            return insertHeadStep3(value, stepRequest, explanationText);
+    }
+    return false;
+}
+bool PDSAnimation::insertHeadStep3(int value, int stepRequest, string& explanationText) {
+    // Done condition
+    bool doneAnimation3 = (waitRequest == false && taskManagementPointer->getTime() >= PConstants::PAnimation::waitTime);
+    // State of the list
+    bool emptyList = taskManagementPointer->getCondition();
+    // Algorithm
+    if(taskManagementPointer->getTime() == 0.f) {
+        if(emptyList == true) {
+            dataStructurePointer->assignAnimationTmpToTail();
+            dataStructurePointer->setHighlightTail(true);
+        }
+        else {
+            dataStructurePointer->assignHeadToAnimationTmpNext();
+            dataStructurePointer->setHighlightAnimationTmpNextLink(true);
+        }
+    }
+    // Explanation text
+    if(emptyList) {
+        explanationText = "tail points to tmp";
+    }
+    else {
+        explanationText = "tmp->pNext points to head";
+    }
+    // Update time
+    taskManagementPointer->updateTime();
+    // Skip animation
+    if(stepRequest == goForward || stepRequest == skipForward) {
+        doneAnimation3 = true;
+    }
+    // Go to the next step
+    if(doneAnimation3 == true) {
+        // End algorithm
+        if(emptyList == true) {
+            dataStructurePointer->setHighlightTail(false);
+            dataStructurePointer->setAnimationTmpToNull();
+            dataStructurePointer->addNumNode(1);
+            taskManagementPointer->popCondition();
+            taskManagementPointer->undoCondtionStack.push(emptyList == true);
+            return true;
+        }
+        else {
+            dataStructurePointer->setHighlightAnimationTmpNextLink(false);
+            taskManagementPointer->nextStep();
+        }
+        // Case skip
+        if(stepRequest == skipForward) 
+            return insertHeadStep4(value, stepRequest, explanationText);
+    }
+    return false;
+}
+bool PDSAnimation::insertHeadStep4(int value, int stepRequest, string& explanationText) {
+    // Done condition
+    bool doneAnimation4 = (waitRequest == false && taskManagementPointer->getTime() >= PConstants::PAnimation::waitTime);
+    // Algorithm
+    if(taskManagementPointer->getTime() == 0.f) {
+        dataStructurePointer->assignAnimationTmpToHead();
+        dataStructurePointer->setHighlightHead(true);
+    }
+    // Explanation text
+    explanationText = "head points to tmp.";
+    // Skip animation
+    if(stepRequest == goForward || stepRequest == skipForward) {
+        doneAnimation4 = true;
+    }
+    // Update time
+    taskManagementPointer->updateTime();
+    // Go to the next step
+    if(doneAnimation4) {
+        // End algorithm
+        dataStructurePointer->setHighlightHead(false);
+        dataStructurePointer->setAnimationTmpToNull();
+        dataStructurePointer->addNumNode(1);
+        taskManagementPointer->undoCondtionStack.push(taskManagementPointer->getCondition());
+        taskManagementPointer->popCondition();
+        return true;
+    }
+    return false;
+}
+
+bool PDSAnimation::undoInsertHead0(int value, int stepRequest, string& explanationText) {
+    if(dataStructurePointer->createdHead()) 
+        dataStructurePointer->setHighlightHead(false);
+    taskManagementPointer->popCondition();
+    taskManagementPointer->prevStep();
+    dataStructurePointer->setHighlightAnimationTmp(true);
+    return false;
+}
+bool PDSAnimation::undoInsertHead1(int value, int stepRequest, string& explanationText) {
+    cout << "Called undoInsertHead1( " << value << ", " << stepRequest << ", " << explanationText << ")\n";
+    bool condition = taskManagementPointer->getCondition();
+    cout << "Ended undoInsertHead1( " << value << ", " << stepRequest << ", " << explanationText << ")\n";
+    if(condition == true) {
+        dataStructurePointer->setHighlightHead(false);
+        dataStructurePointer->setHeadToNull();
+    }
+    else {
+        dataStructurePointer->setHighlightHeadPrevLink(false);
+        dataStructurePointer->setHeadPrevLinkToNull();
+    }
+    taskManagementPointer->prevStep();
+    if(dataStructurePointer->createdHead())
+        dataStructurePointer->setHighlightHead(true);
+    if(stepRequest == skipBackward)
+        return undoInsertHead0(value, stepRequest, explanationText);
+    return false;
+}
+bool PDSAnimation::undoInsertHead2(int value, int stepRequest, string& explanationText) {
+    cout << "Called undoInsertHead2.\n";
+    if(taskManagementPointer->doneTask()) {
+        taskManagementPointer->takeCondition(taskManagementPointer->undoCondtionStack.top());
+        taskManagementPointer->undoCondtionStack.pop();
+        dataStructurePointer->addNumNode(-1);
+        dataStructurePointer->animationTmp = dataStructurePointer->tail;
+        dataStructurePointer->setHighlightTail(true);
+    }
+    bool condition = taskManagementPointer->getCondition();
+    if(condition == true) {
+        dataStructurePointer->setHighlightTail(false);
+        dataStructurePointer->setTailToNull();
+    }
+    else {
+        dataStructurePointer->setHighlightAnimationTmpNextLink(false);
+        dataStructurePointer->setAnimationTmpNextLinkToNull();
+    }
+    taskManagementPointer->prevStep();
+    if(condition == true)
+        dataStructurePointer->setHighlightHead(true);
+    else
+        dataStructurePointer->setHighlightHeadPrevLink(true);
+    if(stepRequest == skipBackward)
+        return undoInsertHead1(value, stepRequest, explanationText);
+    cout << "Ended undoInsertHead2.\n";
+    return false;
+}
+bool PDSAnimation::undoInsertHead3(int value, int stepRequest, string& explanationText) {
+    cout << "Called undoInsertHead3.\n";
+    if(taskManagementPointer->doneTask()) {
+        taskManagementPointer->takeCondition(taskManagementPointer->undoCondtionStack.top());
+        taskManagementPointer->undoCondtionStack.pop();
+        dataStructurePointer->addNumNode(-1);
+        dataStructurePointer->animationTmp = dataStructurePointer->head;
+        dataStructurePointer->setHighlightHead(true);
+    }
+    dataStructurePointer->setHighlightHead(false);
+    dataStructurePointer->head = dataStructurePointer->animationTmp->pNext;
+    taskManagementPointer->prevStep();
+    dataStructurePointer->setHighlightAnimationTmpNextLink(true);
+    if(stepRequest == skipBackward)
+        return undoInsertHead2(value, stepRequest, explanationText);
+    cout << dataStructurePointer->head->data << '\n';
+    cout << dataStructurePointer->tail->data << '\n';
+    cout << dataStructurePointer->animationTmp->data << '\n';
+    cout << "Ended undoInsertHead3.\n";
+    return false;
+}
+
+bool PDSAnimation::insertTail(int value, int stepRequest, string& explanationText) {
     /*
     Pseudo code:
     Step 0.    CreateNodeAfter(0, x) : tmp = new Node(x); this node is created after the 0-th node
@@ -234,7 +359,7 @@ bool PDSAnimation::insertTail(int value, string& explanationText) {
             taskManagementPointer->takeCondition(emptyList);
             // Highlight the head node (if exists)
             if(dataStructurePointer->createdHead())
-                dataStructurePointer->highlightHead();
+                dataStructurePointer->setHighlightHead(true);
         }
         // Explanation text
         explanationText = "Check if the list is empty.";
@@ -244,7 +369,7 @@ bool PDSAnimation::insertTail(int value, string& explanationText) {
         if(doneAnimation1) {
             // Unhighlight the head node (if exists)
             if(dataStructurePointer->createdHead())
-                dataStructurePointer->unhighlightHead();
+                dataStructurePointer->setHighlightHead(false);
             taskManagementPointer->nextStep();
         }
     }
@@ -364,7 +489,7 @@ bool PDSAnimation::insertTail(int value, string& explanationText) {
     return done;
 }
 
-bool PDSAnimation::insertAfter(int position, int value, string& explanationText) {
+bool PDSAnimation::insertAfter(int position, int value, int stepRequest, string& explanationText) {
     /*
     Code:
         Node* prev = head;
@@ -614,6 +739,8 @@ bool PDSAnimation::insertAfter(int position, int value, string& explanationText)
         if(doneAnimation9) {
             // Pop condition stack (2)
             for(int i = 0; i < 2; i++) taskManagementPointer->popCondition();
+            // n++
+            dataStructurePointer->addNumNode(1);
             // tmp = prev = nullptr
             dataStructurePointer->setAnimationTmpToNull();
             dataStructurePointer->setAnimationPrevToNull();

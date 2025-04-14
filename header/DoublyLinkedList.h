@@ -37,6 +37,9 @@ struct DoublyLinkedList {
     void update(void);
     void updateDataStructure(void); // Update the data structure
     void updateAnimation(void);
+    void updateInformation(void);
+    void quickUpdateAnimation(void); // Skip animation
+    void quickUpdateAnimationTmp(void); // Skip animation of animation tmp
 
     // Draw
     void draw(void); // draw all
@@ -64,16 +67,19 @@ struct DoublyLinkedList {
 
     // Manipulating head
     bool createdHead(void); // Return true if head is created
-    void highlightHead(void); // Highlight the head node
-    void unhighlightHead(void); // Unhighlight the head node
+    void setHighlightHead(bool on); // Set the highlight state of the head node
     void assignAnimationTmpToHead(void); // head = animationTmp
     void assignAnimationTmpToHeadPrev(void); // head->pPrev = animationTmp
     void setHighlightHeadPrevLink(bool on); // set the highlight state of the previous link of the head node
+    void setHeadToNull(void); // head = nullptr
+    void setHeadPrevLinkToNull(void); // head->pPrev = nullptr
 
     // Manipulating tail
     void assignAnimationTmpToTail(void); // tail = animationTmp
     void assignAnimationTmpToTailNext(void); // tail->pNext = animationTmp
+    void setHighlightTail(bool on);
     void setHighlightTailNextLink(bool on); // set the highlight state of the next link of the tail node
+    void setTailToNull(void); // tail = nullptr
 
     // Manipulating animationTmp
     bool createdAnimationTmp(void); // Return true if createdAnimationTmp
@@ -88,6 +94,8 @@ struct DoublyLinkedList {
     void assignAnimationPrevNextToAnimationTmpNext(void); // animationTmp->pNext = animationPrev->pNext
     void assignAnimationTmpToAnimationTmpNextPrev(void); // animationTmp->pNext->pPrev = animationTmp
     void setHighlightAnimationTmpNextPrevLink(bool on); // Set the highlight state of the previous link of animationTmp->pNext
+    void deleteAnimationTmp(void); // Delete animationTmp
+    void setAnimationTmpNextLinkToNull(void); // animationTmp->pNext = nullptr
 
     // Manipulating animationPrev
     void assignHeadToAnimationPrev(void); // animationPrev = head

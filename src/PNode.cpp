@@ -73,6 +73,10 @@ void PNode::updateLine(void) {
     } lNext.update();
 }
 
+void PNode::quickUpdate(void) {
+    centerFrom = center;
+}
+
 void PNode::drawLine(void) {
     if(pNext != nullptr)
         lNext.draw();
