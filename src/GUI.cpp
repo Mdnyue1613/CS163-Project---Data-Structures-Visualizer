@@ -3,6 +3,7 @@
 #include "../header/BOX.h"
 #include "../header/LInputBox.h"
 #include "../header/AVL.h"
+#include "../header/DS2.h"
 #include <iostream>
 void GUI::startProgram() {
     InitWindow(1200, 800, "Hello Raylib");
@@ -82,9 +83,11 @@ void GUI::drawDS1() {
 }
 
 void GUI::drawDS2() {
+    DS2 hashtable;
     while(GUI::isOpenDS2) {
         BeginDrawing();
-        ClearBackground(RED);
+        ClearBackground(WHITE);
+        hashtable.draw();
         BACK();
         EndDrawing();
         if(WindowShouldClose()) {

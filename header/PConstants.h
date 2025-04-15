@@ -81,6 +81,7 @@ namespace PConstants {
 
     namespace PLimit {
         const int intData = (int)1e9;
+        const int maxInputLength = 9;
     };
 
     namespace PIconBox {

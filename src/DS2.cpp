@@ -1,5 +1,4 @@
 #include "../header/DS2.h"
-
 DS2::DS2(void) :
     functionArea(PConstants::PFunctionArea::pos, PConstants::PFunctionArea::size),
     titleBox(PConstants::PTitleBar::pos, PConstants::PTitleBar::size, PConstants::PTitleBar::outlineThickness, PConstants::PTitleBar::boxColor, PConstants::PTitleBar::outlineColor, "HASH TABLE CHAINING", PConstants::PTitleBar::textSize),
@@ -7,6 +6,12 @@ DS2::DS2(void) :
 
 DS2::~DS2(void) {
     UnloadTexture(icon);
+}
+
+void DS2::setStatusMessage(const string& msg, float duration) {
+    statusMessage = msg;
+    statusMessageTimer = duration;
+    cout << "Status: " << msg << endl; // Also log to console for debugging
 }
 
 void DS2::draw(void) {
@@ -21,6 +26,9 @@ void DS2::draw(void) {
         operateInitialize(request);
     }
 
+    if(request[0] =="insert"){
+        //  operateInsert(value);
+    }
     // DrawTexture(icon, 0, 0, WHITE);
 
     // Draw Data Structure
@@ -63,6 +71,10 @@ void DS2::operateInitialize(vector<string>& request) {
             // Announce to the user that the input is not valid
         }
     }
+}
+
+void DS2::operateInsert(int &value){
+    hashtable.insert(value);
 }
 
 void DS2::randomInitialize(int x) {
