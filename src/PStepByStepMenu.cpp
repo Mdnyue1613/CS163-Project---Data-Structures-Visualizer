@@ -29,6 +29,10 @@ void PStepByStepMenu::prepare(void) {
     skipForward.prepare();
 }
 
+void PStepByStepMenu::update(void) {
+    
+}
+
 void PStepByStepMenu::draw(void) {
     DrawRectangleRec(background, PConstants::PStepByStepMenu::regionColor);
     skipBackward.draw();
@@ -40,19 +44,19 @@ void PStepByStepMenu::draw(void) {
 
 int PStepByStepMenu::getRequest(void) {
     if(skipBackward.isClicked()) {
-        return 1; // Skip backward
+        return SkipBackward; // Skip backward
     }
     else if(undo.isClicked()) {
-        return 2; // Undo
+        return GoBackward; // Undo
     }
     else if(play.isClicked()) {
-        return 3; // Play
+        return Play; // Play
     }
     else if(redo.isClicked()) {
-        return 4; // Redo
+        return GoForward; // Redo
     }
     else if(skipForward.isClicked()) {
-        return 5; // Skip forward
+        return SkipForward; // Skip forward
     }
-    return 0; // No request
+    return NoRequest; // No request
 }

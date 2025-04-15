@@ -61,6 +61,8 @@ vector<string> PInsertMenu::update(void) {
             (GO.isClick() || (headInputBox.isChosen && IsKeyPressed(KEY_ENTER)))) {
             return {"head", headInputBox.extract()};
         }
+        // Update headInputBox for rendering
+        headInputBox.update();
     }
     /// II. Update tail insert mode
     else if(currentMode == ModeID::Tail) {
@@ -68,6 +70,8 @@ vector<string> PInsertMenu::update(void) {
             (GO.isClick() || (tailInputBox.isChosen && IsKeyPressed(KEY_ENTER)))) {
             return {"tail", tailInputBox.extract()};
         }
+        // Update tailInputBox for rendering
+        tailInputBox.update();
     }
     /// III. Update after-a-position insert mode
     else if(currentMode == ModeID::SpecifiedPosition) {
@@ -80,6 +84,9 @@ vector<string> PInsertMenu::update(void) {
         ) {
             return {"after", specifiedPositionInputBox.extract(), specifiedValueInputBox.extract()};
         }
+        // Update specifiedPositionInputBox, specifiedValueInputBox for rendering
+        specifiedPositionInputBox.update();
+        specifiedValueInputBox.update();
     }
     return {"nothing"};
 }

@@ -28,17 +28,20 @@ struct PStepByStepMenu {
     bool isOperating;
     int mode;
 
-    enum ModeID {
+    enum requestID {
         NoRequest,
-        Insert,
-        Delete,
-        Search
+        SkipBackward,
+        GoBackward,
+        Play,
+        GoForward,
+        SkipForward
     };
 
     PStepByStepMenu(void);
     PStepByStepMenu(Vector2 pos, Vector2 size); // initialize with parameters: using Vector2
 
     void prepare(void);
+    void update(void);
     void draw(void);
     int getRequest(void);
 };

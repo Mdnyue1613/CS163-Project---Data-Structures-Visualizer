@@ -61,6 +61,25 @@ namespace PConstants {
         const Color regionColor = {120, 209, 210, 255};
     };
 
+    namespace PExplanationArea {
+        // Position 
+        const Vector2 pos = {0, 461};
+
+        // Size
+        const Vector2 size = {307, 65};
+
+        // Color
+        const Color backgroundColor = {151, 219, 174, 255};
+
+        // Space 
+        const float spaceX = 5.f;
+        const float spaceY = 5.f;
+
+        // Text
+        const float fontSize = 20.f;
+        const Color textColor = BLACK;
+    };
+
     namespace PSwitchBox {
         // Size
         const float arrowHeadWidth = 22.f;
@@ -108,7 +127,11 @@ namespace PConstants {
     };
 
     namespace DS1 {
-        const float speed = 400.f;
+        // Movement
+        const float speed = 600.f;
+
+        // Position
+        const Vector2 headPosition = {400, 200};
     };
 
     namespace PNode {
@@ -124,9 +147,33 @@ namespace PConstants {
 
         // Space
         const float textSpace = 5.f; // Space between text informing the node and the node
+        const float newNodeSpace = 40.f; // Space between the added node in animation
 
         // Arrow head
         const float arrowWidth = 12.f;
         const float arrowHeight = 8.f;
+
+        // Color
+        const Color innerColor = WHITE;
+        const Color outerColor = BLACK;
+        const Color textColor = BLACK;
+
+        const Color innerHighlightColor = {255, 138, 39, 255};
+        const Color outerHighlightColor = {255, 138, 39, 255};
+        const Color textHighlightColor = WHITE;
+
+        const Color informationTextColor = BLACK;
     }
+
+    namespace PNodeLine {
+        const Color color = BLACK;
+        const Color highlightColor = {255, 138, 39, 255};
+    }
+
+    namespace PAnimation
+    {
+        // Time
+        const float waitTime = 1.0f;
+    }
+    
 };

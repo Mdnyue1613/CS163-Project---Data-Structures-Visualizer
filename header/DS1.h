@@ -6,6 +6,9 @@
 #include "PConstants.h"
 #include "PRandom.h"
 #include "PStepByStepMenu.h"
+#include "PTaskManagement.h"
+#include "PDSAnimation.h"
+#include "PExplanationArea.h"
 #include <string>
 #include <vector>
 #include <random>
@@ -18,26 +21,16 @@ struct DS1 {
     PStepByStepMenu stepByStepMenu;
     DoublyLinkedList doublyLinkedList;
     PRandom randomGenerator;
+    PTaskManagement taskManagement;
+    PDSAnimation animationManagement;
+    PExplanationArea explanationArea;
 
-    // Task queue
-    queue<vector<string>> taskQueue;
-
-    // Step by step function
-    bool stepByStep;
-
-    enum ModeID {
-        NoRequest,
+    enum taskType {
+        Initialize,
         Insert,
         Delete,
-        Search
-    };
-
-    enum StepByStepButton {
-        SkipBackward,
-        GoBackward,
-        Play,
-        GoForward,
-        SkipForward
+        Search,
+        NoTask
     };
 
     DS1(void); // initialize
@@ -52,11 +45,10 @@ struct DS1 {
     void draw(void); // draw
 
     // Initialize mode functions
-    bool operateInitialize(vector<string>& request); // Operate initializing request: return true when done
-    void randomInitialize(int x); // initialize a random data
+    bool operateInitialize(vector<string>& request, int stepRequest, string& explanationText); // Operate initializing request: return true when done
     vector<int> stringToVectorInt(string& s);
     void vectorIntInitialize(vector<int>& vi);
 
     // Insert mode functions
-    bool operateInsert(vector<string>& request); // Operate inserting request: return true when done
+    bool operateInsert(vector<string>& request, int stepRequest, string& explanationText); // Operate inserting request: return true when done
 };
