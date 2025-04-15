@@ -9,6 +9,8 @@ bool GUI::isOpenDS2 = false;
 bool GUI::isOpenDS3 = false;
 bool GUI::isOpenDS4 = false;
 DS1 GUI::linkedListVisualizer;
+DS3 GUI::ds3;
+bool GUI::isBackButtonOn = false;
 
 int main() {
     GUI::startProgram();

@@ -1,3 +1,5 @@
+#pragma once
+
 #include "raylib.h"
 #include "tinyfiledialogs.h"
 #include "HOBJECT.h"
@@ -13,27 +15,40 @@ struct GraphGUI
     static TextBox guideBG;
     static TextBox explainBG;
     static int margin;
+    static bool freeze;
+    static TextBox notification;
     static int currentFunction;
     static vector <const char*> listFunction;
-    static NavigateButton leftButton;
-    static NavigateButton rightButton;
+    static TextBox undirectedButton;
+    static TextBox directedButton;
+    static NavigateButton leftNavigationButton;
+    static NavigateButton rightNavigationButton;
+    static TextBox functionTitle;
+    static TextBox chooseFileButton;
+    static TextBox randomButton;
+    static InputBox inputBox;
+    static InputBox addBox;
+    static InputBox deleteBox;
+    static TextBox GoButton;
+
     static Graph G;
     static void GraphVisualize();
-    static void InitializeBackGround();
+    static void InitializeObject();
     static void DrawBackGround();
     static void DrawFunction();
 
     static void DrawCustomizeGraphType();
-    static void DrawTitleFunction(TextBox &title, const char* name);
-    static void NavigationButton(TextBox functionTitle);
+    static void DrawTitleFunction(const char* name);
+    static void DrawNavigationButton();
 
-    static void DrawInitializeFunction(TextBox title);
+    static void DrawInitializeFunction();
     static void DrawAddFunction();
     static void DrawDeleteFunction();
-    static void DrawUpdateFunction();
-    static void DrawSearchFunction();
     static void DrawShortedPathFunction();
 
+    static void Notify(char *message);
+    static void ZoomInputArea(InputBox &inputArea);
+    static void DrawZoomInputAreaButton(Rectangle &zoomButton, InputBox &inputArea, Color color);
 };
 
 

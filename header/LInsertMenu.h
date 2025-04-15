@@ -4,6 +4,7 @@
 #include<cstring>
 #include<algorithm>
 #include"PTitleBox.h"
+#include"PInputBox.h"
 
 struct LInsertMenu{
     const int boxHeight = 45;
@@ -12,8 +13,10 @@ struct LInsertMenu{
     const int boxOutlineThickness = 2;
 
     int x, y, width, height, characterSize;
-    PTitleBox Name, Mode, GO;
+    PTitleBox Mode, GO;
+    PInputBox inputBox;
+
     LInsertMenu();
     LInsertMenu(int x, int y, int width, int height, int characterSize);
-    string draw();
+    vector<string> draw(bool active);
 };

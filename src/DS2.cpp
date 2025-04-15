@@ -19,7 +19,8 @@ void DS2::draw(void) {
     titleBox.draw();
 
     // Draw the function area and take request from user
-    vector<string> request = functionArea.draw();
+    vector<string> request = functionArea.update();
+    functionArea.draw();
 
     // Initialize request
     if(request[0] == "initialize") {

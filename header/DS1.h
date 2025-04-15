@@ -5,23 +5,50 @@
 #include "DoublyLinkedList.h"
 #include "PConstants.h"
 #include "PRandom.h"
+#include "PStepByStepMenu.h"
+#include "PTaskManagement.h"
+#include "PDSAnimation.h"
+#include "PExplanationArea.h"
 #include <string>
 #include <vector>
 #include <random>
+#include <queue>
 using namespace std;
 
 struct DS1 {
     PTitleBox titleBox;
     PFunctionArea functionArea;
+    PStepByStepMenu stepByStepMenu;
     DoublyLinkedList doublyLinkedList;
     PRandom randomGenerator;
+    PTaskManagement taskManagement;
+    PDSAnimation animationManagement;
+    PExplanationArea explanationArea;
+
+    enum taskType {
+        Initialize,
+        Insert,
+        Delete,
+        Search,
+        NoTask
+    };
 
     DS1(void); // initialize
     ~DS1(void); // destructor
+
+    void prepare(void); // prepare the areas
+
+    // Update
+    void update(void); // update
+
+    // Draw
     void draw(void); // draw
-    void operateInitialize(vector<string>& request);
-    void randomInitialize(int x); // initialize a random data
+
+    // Initialize mode functions
+    bool operateInitialize(vector<string>& request, int stepRequest, string& explanationText); // Operate initializing request: return true when done
     vector<int> stringToVectorInt(string& s);
     void vectorIntInitialize(vector<int>& vi);
-    void prepare(void);
+
+    // Insert mode functions
+    bool operateInsert(vector<string>& request, int stepRequest, string& explanationText); // Operate inserting request: return true when done
 };
