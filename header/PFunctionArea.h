@@ -4,6 +4,8 @@
 #include "PInitializeMenu.h"
 #include "PConstants.h"
 #include "PInsertMenu.h"
+#include "PRemoveMenu.h"
+#include "PSearchMenu.h"
 #include <string>
 #include <vector>
 using namespace std;
@@ -12,12 +14,16 @@ struct PFunctionArea {
     Rectangle background;
     PInitializeMenu menuInitialize;
     PInsertMenu menuInsert;
+    PRemoveMenu menuRemove;
+    PSearchMenu menuSearch;
     PSwitchBox state;
     int currentMode;
 
     enum StateID {
         Initialize,
-        Insert
+        Insert,
+        Remove,
+        Search
     };
     
     PFunctionArea(void); // initialize

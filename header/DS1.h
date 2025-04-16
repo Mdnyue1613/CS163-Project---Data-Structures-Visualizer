@@ -19,7 +19,7 @@ struct DS1 {
     PTitleBox titleBox;
     PFunctionArea functionArea;
     PStepByStepMenu stepByStepMenu;
-    DoublyLinkedList doublyLinkedList;
+    DoublyLinkedList * doublyLinkedList;
     PRandom randomGenerator;
     PTaskManagement taskManagement;
     PDSAnimation animationManagement;
@@ -28,7 +28,7 @@ struct DS1 {
     enum taskType {
         Initialize,
         Insert,
-        Delete,
+        Remove,
         Search,
         NoTask
     };
@@ -51,4 +51,10 @@ struct DS1 {
 
     // Insert mode functions
     bool operateInsert(vector<string>& request, int stepRequest, string& explanationText); // Operate inserting request: return true when done
+
+    // Remove mode functions
+    bool operateRemove(vector<string>& request, int stepRequest, string& explanationText); // Operate removing request: return true when done
+
+    // Search mode functions
+    bool operateSearch(vector<string>& request, int stepRequest, string& explanationText); // Operate searching request: return true when done
 };

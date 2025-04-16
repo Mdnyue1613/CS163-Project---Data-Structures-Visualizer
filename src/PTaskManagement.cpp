@@ -4,38 +4,33 @@ PTaskManagement::PTaskManagement(void) : step(0), time(0.f), taskDone(false) {
     task.clear();
 }
 
-void PTaskManagement::takeRequest(vector<string> request) {
+bool PTaskManagement::takeRequest(vector<string> request) {
     if(doneTask() == false)
-        return;
+        return false;
 
     if(request.size() == 1 || request[1] == "nothing") {
-        return;
+        return false;
     }
-
-    cout << "Recieve task ";
-    for(string task : request) {
-        cout << task << ' ';
-    }
-    cout << '\n';
     
     nextTask();
     task = request;
+    return true;
 }
 
 void PTaskManagement::takeCondition(bool condition) {
-    conditionStack.push(condition);
+    conditionStack.push_back(condition);
 }
 
-bool PTaskManagement::getCondition(void) {
-    if(conditionStack.empty()) {
-        cerr << "Error: PTaskManagement::getCondition()\n";
+bool PTaskManagement::getCondition(int i) {
+    if(i >= (int)conditionStack.size()) {
+        cerr << "Error: PTaskManagement::getCondition(" << i << ")\n";
         exit(1);
     }
-    return conditionStack.top();
+    return conditionStack[i];
 }
 
 void PTaskManagement::popCondition(void) {
-    conditionStack.pop();
+    conditionStack.pop_back();
 }
 
 int PTaskManagement::getNumCondition(void) {
@@ -47,12 +42,12 @@ int PTaskManagement::getStep(void) {
 }
 
 void PTaskManagement::nextStep(void) {
-    time = 0;
+    time = 0.f;
     step++;
 }
 
 void PTaskManagement::prevStep(void) {
-    time = 0;
+    time = 0.f;
     step--;
     taskDone = false;
 }
@@ -66,7 +61,7 @@ int PTaskManagement::getTaskType(void) {
         return Initilize;
     else if(type == "insert")
         return Insert;
-    else if(type == "delete") 
+    else if(type == "remove") 
         return Delete;
     else if(type == "search")
         return Search;
