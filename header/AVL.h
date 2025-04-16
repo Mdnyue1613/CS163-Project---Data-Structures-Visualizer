@@ -13,6 +13,7 @@
 #include <set>
 #include <iostream>
 #include"PExplanationArea.h"
+#include"LPseudoCode.h"
 using namespace std;
 
 struct TreeNode{
@@ -51,6 +52,7 @@ struct AVL {
     int animationStep = 0;
     int hightLightNodeIndex = 0;
     PExplanationArea explanationArea;
+    LPseudoCode PseudoCodeArea;
     AVL();
     int getBalance(TreeNode *root);
     void setHeight(TreeNode *&root);

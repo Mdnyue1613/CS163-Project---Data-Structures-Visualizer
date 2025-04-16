@@ -17,7 +17,8 @@ void TreeNode::setColor(Color color) {
 }
 
 AVL::AVL():
-    explanationArea() {
+    explanationArea(),
+    PseudoCodeArea() {
     TreeRoot = nullptr;
     distance_x = 25;
     distance_y = 40;
