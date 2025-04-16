@@ -4,13 +4,16 @@ DS1::DS1(void) :
     functionArea(PConstants::PFunctionArea::pos, PConstants::PFunctionArea::size),
     stepByStepMenu(PConstants::PStepByStepMenu::pos, PConstants::PStepByStepMenu::size),
     titleBox(PConstants::PTitleBar::pos, PConstants::PTitleBar::size, PConstants::PTitleBar::outlineThickness, PConstants::PTitleBar::boxColor, PConstants::PTitleBar::outlineColor, "DOUBLY LINKED LIST", PConstants::PTitleBar::textSize),
-    doublyLinkedList(),
     taskManagement(),
     randomGenerator(),
-    animationManagement(&doublyLinkedList, &taskManagement),
-    explanationArea() {}
+    explanationArea() {
+        doublyLinkedList = new DoublyLinkedList();
+        animationManagement = PDSAnimation(doublyLinkedList, &taskManagement);
+    }
 
-DS1::~DS1(void) {}
+DS1::~DS1(void) {
+    delete doublyLinkedList;
+}
 
 void DS1::prepare(void) {
     functionArea.prepare();
@@ -19,7 +22,9 @@ void DS1::prepare(void) {
 
 void DS1::update(void) {
     // Take requests from user and put it into queue, and update the function area
-    taskManagement.takeRequest(functionArea.update());
+    if(taskManagement.takeRequest(functionArea.update())) {
+        animationManagement.reset();
+    }
 
     // Update step-by-step menu
     stepByStepMenu.update();
@@ -42,9 +47,13 @@ void DS1::update(void) {
         bool done = operateInsert(request, stepRequest, explanationText);
         if(done) taskManagement.endTask();
     }
-    else if(type == Delete) {
+    else if(type == Remove) {
+        bool done = operateRemove(request, stepRequest, explanationText);
+        if(done) taskManagement.endTask();
     }
     else if(type == Search) {
+        bool done = operateSearch(request, stepRequest, explanationText);
+        if(done) taskManagement.endTask();
     }
     else if(type == NoTask) {
     }
@@ -53,7 +62,7 @@ void DS1::update(void) {
     explanationArea.update(explanationText);
 
     // Update linked list
-    doublyLinkedList.update();
+    doublyLinkedList->update();
 }
 
 void DS1::draw(void) {
@@ -70,7 +79,7 @@ void DS1::draw(void) {
     explanationArea.draw();
 
     // Draw Data Structure
-    doublyLinkedList.draw();
+    doublyLinkedList->draw();
 }
 
 bool DS1::operateInitialize(vector<string>& request, int stepRequest, string& explanationText) {
@@ -84,7 +93,7 @@ bool DS1::operateInitialize(vector<string>& request, int stepRequest, string& ex
         // No input
         if((int)request.size() == 2) {
             // Operate request
-            doublyLinkedList.randomInitializer(randomGenerator.random(1, 40));
+            doublyLinkedList->randomInitializer(randomGenerator.random(1, 40));
         }
         // With input
         else {
@@ -96,7 +105,7 @@ bool DS1::operateInitialize(vector<string>& request, int stepRequest, string& ex
             if(valid) {
                 // Operate request
                 int inputValue = stoi(request[2]);
-                doublyLinkedList.randomInitializer(inputValue);
+                doublyLinkedList->randomInitializer(inputValue);
             }
             else {
                 // Announce to the user that the input is not valid
@@ -156,25 +165,45 @@ vector<int> DS1::stringToVectorInt(string& s) {
 }
 
 void DS1::vectorIntInitialize(vector<int>& vi) {
-    doublyLinkedList.build(vi);
+    doublyLinkedList->build(vi);
 }
 
 bool DS1::operateInsert(vector<string>& request, int stepRequest, string& explanationText) {
+    bool done = true;
     string requestType = request[1];
 
     if(requestType == "head") {
         int value = stoi(request[2]);
-        return animationManagement.insertHead(value, stepRequest, explanationText);
+        done = animationManagement.insertHead(value, stepRequest, explanationText);
+        doublyLinkedList = animationManagement.dataStructurePointer;
     }
     else if(requestType == "tail") {
         int value = stoi(request[2]);
-        return animationManagement.insertTail(value, stepRequest, explanationText);
+        done = animationManagement.insertTail(value, stepRequest, explanationText);
+        doublyLinkedList = animationManagement.dataStructurePointer;
     }
     else if(requestType == "after") {
         int position = stoi(request[2]);
         int value = stoi(request[3]);
-        return animationManagement.insertAfter(position, value, stepRequest, explanationText);
+        done = animationManagement.insertAfter(position, value, stepRequest, explanationText);
+        doublyLinkedList = animationManagement.dataStructurePointer;
     }
 
-    return true;
+    return done;
+}
+
+bool DS1::operateRemove(vector<string>& request, int stepRequest, string& explanationText) {
+    bool done = true;
+    int value = stoi(request[1]);
+    done = animationManagement.remove(value, stepRequest, explanationText);
+    doublyLinkedList = animationManagement.dataStructurePointer;
+    return done;
+}
+
+bool DS1::operateSearch(vector<string>& request, int stepRequest, string& explanationText) {
+    bool done = true;
+    int value = stoi(request[1]);
+    done = animationManagement.search(value, stepRequest, explanationText);
+    doublyLinkedList = animationManagement.dataStructurePointer;
+    return done;
 }
