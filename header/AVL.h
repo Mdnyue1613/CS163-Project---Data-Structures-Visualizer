@@ -12,6 +12,7 @@
 #include <thread>
 #include <set>
 #include <iostream>
+#include"PExplanationArea.h"
 using namespace std;
 
 struct TreeNode{
@@ -39,7 +40,9 @@ struct AVL {
     TreeNode* newDeleteNode = nullptr;
     TreeNode* selectionNode = nullptr;
     int indexOfDeleteNodeInPath = 0;
+    int findData;
     bool isInsert, isDelete, isFind, isInit;
+    bool isNeedToFindAnotherDeleteNode = false;
     bool isNeedToRotate = false, isNeedToRotateChild = false;
     vector<TreeNode*> allNode, Path;
     Vector2 rootPosition = {750, 200};
@@ -47,6 +50,7 @@ struct AVL {
     float distance_y;
     int animationStep = 0;
     int hightLightNodeIndex = 0;
+    PExplanationArea explanationArea;
     AVL();
     int getBalance(TreeNode *root);
     void setHeight(TreeNode *&root);

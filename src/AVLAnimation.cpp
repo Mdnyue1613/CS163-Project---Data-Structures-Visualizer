@@ -57,6 +57,7 @@ void AVL::draw() {
     else {
         drawTree();
     }
+    explanationArea.draw();
 }
 
 
@@ -92,13 +93,26 @@ void AVL::initializeAnimation() {
 
 void AVL::insertAnimation() {
     switch (animationStep) {
-    case 0: // Khởi tạo
+    case 0: 
         hightLightNode();
+        if(hightLightNodeIndex - 1 >= 0 && NodeInsert) {
+            if(Path[hightLightNodeIndex - 1]->val < NodeInsert->val) {
+                explanationArea.update("root->val < data, root = root->right");
+            }
+            else if(Path[hightLightNodeIndex - 1]->val > NodeInsert->val) {
+                explanationArea.update("root->val > data, root = root->left");
+            }
+            else {
+                explanationArea.update("root->val == data, root was inserted");
+            }
+        }
         if(hightLightNodeIndex >= Path.size()) animationStep = 1;
         break;
 
     case 1:
+        if(NodeInsert->radius < 0.001) WaitTime(0.5);
         if (NodeInsert) {
+            explanationArea.update("root == NULL, root = new Node");
             setCurrentPosition(1);
             appearNode();
             animationStep = NodeInsert->radius >= 20.f ? 2 : 1;
@@ -187,9 +201,27 @@ void AVL::deleteAnimation() {
             if(Path[hightLightNodeIndex] == NodeDelete) {
                 Path[hightLightNodeIndex]->setColor(GREEN);
                 indexOfDeleteNodeInPath = hightLightNodeIndex;
+                if(hightLightNodeIndex + 1 < Path.size()) isNeedToFindAnotherDeleteNode = true;
+                if(isNeedToFindAnotherDeleteNode) {
+                    explanationArea.update("root->val == data, root->left && root right is not NULL, find child node to swap, root = root->left");
+                }
+                else {
+                    explanationArea.update("root->val == data");
+                }
             }
             else {
                 Path[hightLightNodeIndex]->setColor(YELLOW);
+                if(isNeedToFindAnotherDeleteNode) {
+                    explanationArea.update("root->right != nullptr, root = root->right");
+                }
+                else {
+                    if(NodeDelete && Path[hightLightNodeIndex]->val < NodeDelete->val) {
+                        explanationArea.update("root->val < data, root = root->right");
+                    }
+                    else if(NodeDelete && Path[hightLightNodeIndex]->val > NodeDelete->val) {
+                        explanationArea.update("root->val > data, root = root->left");
+                    }
+                }
             }
             Path[hightLightNodeIndex]->isHighlight = true;
             hightLightNodeIndex++;
@@ -202,6 +234,7 @@ void AVL::deleteAnimation() {
     case 1:
         if (NodeDelete == nullptr) {
             animationStep = 11;
+            explanationArea.update("data is not invalid in tree");
             WaitTime(0.5);
             break;
         }
@@ -213,6 +246,7 @@ void AVL::deleteAnimation() {
                 NodeDelete = newDeleteNode;
                 newDeleteNode->setColor(GREEN);
                 swap(Path[indexOfDeleteNodeInPath], Path[hightLightNodeIndex - 1]);
+                explanationArea.update("swap data of old target node and new target node");
                 WaitTime(0.5);
             }
             else {
@@ -231,6 +265,7 @@ void AVL::deleteAnimation() {
 
     case 3:
         disapearnode();
+        explanationArea.update("delete target node");
         setCurrentPosition(1);
         animationStep = NodeDelete->radius <= 0 ? 4 : 3;
         break;
@@ -315,6 +350,12 @@ void AVL::deleteAnimation() {
                 Path[hightLightNodeIndex]->isHighlight = false;
                 Path[hightLightNodeIndex]->setColor(RED);
                 animationStep =  7;
+                if(getBalance(Path[hightLightNodeIndex]) > 1) {
+                    explanationArea.update("root->getBalance > 1, is not ok");
+                }
+                else {
+                    explanationArea.update("root->getBalance < -1, is not ok");
+                }
             }
             hightLightNodeIndex--;
             Path.pop_back();
@@ -327,6 +368,7 @@ void AVL::deleteAnimation() {
             Node->setColor(BLUE); 
         }
         isDelete = 0;
+        isNeedToFindAnotherDeleteNode = 0;
         hightLightNodeIndex = 0;
         Path.clear();
         NodeDelete = nullptr;
@@ -347,11 +389,26 @@ void AVL::findAnimation() {
         if(hightLightNodeIndex >= Path.size()) {
             animationStep = 1;
         }
+        if(!Path.empty()) {
+            if(Path[hightLightNodeIndex - 1]->val < findData) {
+                explanationArea.update("root->val < data, root = root->right");
+            }
+            else if(Path[hightLightNodeIndex - 1]->val > findData) {
+                explanationArea.update("root->val > data, root = root->left");
+            }
+            else {
+                explanationArea.update("root->val == data. Data is valid in tree");
+            }
+        }
         break;
     case 1:
         WaitTime(0.5);
         if(selectionNode != nullptr) {
             selectionNode->setColor(DARKBLUE);
+            explanationArea.update("root->val == data. Data is valid in tree");
+        }
+        else {
+            explanationArea.update("root == NULL, data is invalid in tree");
         }
         animationStep = 2;
         break;
@@ -425,10 +482,19 @@ void AVL::checkRotation() {
             rotationNode = Path[hightLightNodeIndex];
             Path[hightLightNodeIndex]->isHighlight = false;
             Path[hightLightNodeIndex]->setColor(RED);
+            if(getBalance(Path[hightLightNodeIndex]) > 1) {
+                explanationArea.update("root->getBalance > 1, is not ok");
+            }
+            else {
+                explanationArea.update("root->getBalance < -1, is not ok");
+            }
             drawTree();
             animationStep++;
         }
         else {
+            int gb = getBalance(Path[hightLightNodeIndex]);
+            string s = "root->getBalance == " + to_string(gb) + " , is ok";
+            explanationArea.update(s);
             Path[hightLightNodeIndex]->setColor(BLUE);
             Path[hightLightNodeIndex]->isHighlight = false;
             Path.pop_back();
@@ -460,6 +526,9 @@ void AVL::disapearnode() {
 void AVL::updateHeightInPath() {
     if(!Path.empty() && hightLightNodeIndex >= 0 && hightLightNodeIndex < Path.size()) {
         setHeight(Path[hightLightNodeIndex]);
+        int gb = getBalance(Path[hightLightNodeIndex]);
+        string s = "root->getBalance == " + to_string(gb) + " , is ok";
+        explanationArea.update(s);
         Path[hightLightNodeIndex]->setColor(BLUE);
         WaitTime(0.5);
     }
