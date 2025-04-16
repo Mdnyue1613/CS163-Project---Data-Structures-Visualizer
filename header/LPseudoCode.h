@@ -18,6 +18,16 @@ struct LPseudoCode{
     Color textColor = PConstants::PseudoCodeArea::textColor;
     float fontSize = PConstants::PseudoCodeArea::fontSize;
     LPseudoCode();
+    LPseudoCode(LPseudoCode& other) {
+        backGround = other.backGround;
+        codeLine = other.codeLine;
+        codeLineColor = other.codeLineColor;
+        pseudoCode = other.pseudoCode;
+        backGroundColor = other.backGroundColor;
+        highlightCodeColor = other.highlightCodeColor;
+        textColor = other.textColor;
+        fontSize = other.fontSize;
+    }
     void update(int line);
     void draw();
 };

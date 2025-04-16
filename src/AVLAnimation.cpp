@@ -195,6 +195,10 @@ void AVL::insertAnimation() {
     drawTree();
 }
 
+vector<AVL> AVL::vectorInsertAnimation() {
+    
+}
+
 void AVL::deleteAnimation() {
     switch (animationStep) {
     case 0:
@@ -204,7 +208,7 @@ void AVL::deleteAnimation() {
                 indexOfDeleteNodeInPath = hightLightNodeIndex;
                 if(hightLightNodeIndex + 1 < Path.size()) isNeedToFindAnotherDeleteNode = true;
                 if(isNeedToFindAnotherDeleteNode) {
-                    explanationArea.update("root->val == data, root->left && root right is not NULL, find child node to swap, root = root->left");
+                    explanationArea.update("root->val == data, both children are not NULL");
                 }
                 else {
                     explanationArea.update("root->val == data");
@@ -216,10 +220,10 @@ void AVL::deleteAnimation() {
                     explanationArea.update("root->right != nullptr, root = root->right");
                 }
                 else {
-                    if(NodeDelete && Path[hightLightNodeIndex]->val < NodeDelete->val) {
+                    if(Path[hightLightNodeIndex]->val < findData) {
                         explanationArea.update("root->val < data, root = root->right");
                     }
-                    else if(NodeDelete && Path[hightLightNodeIndex]->val > NodeDelete->val) {
+                    else if(Path[hightLightNodeIndex]->val > findData) {
                         explanationArea.update("root->val > data, root = root->left");
                     }
                 }

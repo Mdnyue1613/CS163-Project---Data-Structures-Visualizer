@@ -66,7 +66,7 @@ namespace PConstants {
         const Vector2 pos = {0, 461};
 
         // Size
-        const Vector2 size = {307, 65};
+        const Vector2 size = {500, 65};
 
         // Color
         const Color backgroundColor = {151, 219, 174, 255};
@@ -84,7 +84,7 @@ namespace PConstants {
         const Vector2 pos = {0, 522.8};
 
         // Size
-        const Vector2 size = {306.7, 278.2};
+        const Vector2 size = {500, 278.2};
 
         //Color
         const Color backgroundColor = {205, 228, 173, 255};

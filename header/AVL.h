@@ -27,11 +27,24 @@ struct TreeNode{
     Color color;
 
     TreeNode *left, *right, *parent;
+    TreeNode(TreeNode& other) {
+        val = other.val;
+        height = other.height;
+        isLeft = other.isLeft;
+        isHighlight = other.isHighlight;
+        position = other.position;
+        targetPosition = other.targetPosition;
+        radius = other.radius;
+        color = other.color;
+        left = right = parent = nullptr;
+    }
     TreeNode(int x);
     void setRadius(float radius);
     void setColor(Color color);
 };
-
+/*
+    TreeRootStack.push(new TreeNode(*avl.TreeRoot));
+*/
 struct AVL {
     TreeNode* TreeRoot;
     TreeNode* rotationNode = nullptr;
@@ -95,4 +108,7 @@ struct AVL {
     void updateHeightInPath();
     void insertNodeRunAtOnce(TreeNode *&root, TreeNode *parent, int x);
     void findNode(TreeNode*& root, int x);
+    vector<AVL> vectorInsertAnimation();
+    vector<AVL> vectorDeleteAnimation();
+    vector<AVL> vectorFindAnimation();
 };
