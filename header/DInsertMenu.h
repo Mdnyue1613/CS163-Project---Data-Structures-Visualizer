@@ -15,8 +15,8 @@ struct DInsertMenu {
     int x, y, width, height;
     PSwitchBox Mode;
     PInputBox InputBox;
-    PTitleBox GO;
     PIconBox InputFileBox;
+    PTitleBox GO;
     int currentMode;
 
     enum ModeID {
@@ -35,6 +35,5 @@ struct DInsertMenu {
     DInsertMenu(Vector2 pos, Vector2 size); // Initialize Vector2 version
     void draw(void);
     vector<string> update(void);
-    void prepare(void);
 
 };

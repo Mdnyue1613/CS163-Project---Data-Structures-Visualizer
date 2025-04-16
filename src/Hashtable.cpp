@@ -101,6 +101,10 @@ void Hashtable::draw()
     }
 }
 
+void Hashtable::update(){
+    
+}
+
 void Hashtable::build(vector<int>& vi)
 {
     int number = vi.size();

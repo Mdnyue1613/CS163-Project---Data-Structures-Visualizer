@@ -10,10 +10,10 @@ using namespace std;
 
 struct DFunctionArea {
     Rectangle background;
-    bool initialize;
     DInitializeMenu menuInitialize;
     DInsertMenu menuInsert;
     PSwitchBox state;
+    int currentMode;
 
     enum StateID {
         Initialize,
@@ -23,6 +23,7 @@ struct DFunctionArea {
     DFunctionArea(void); // initialize
     DFunctionArea(int x, int y, int width, int height); // initialize with parameters
     DFunctionArea(Vector2 pos, Vector2 size); // initialize with parameters: using pair
-    vector<string> draw(void); // return the current request from the user
+    void draw(void); // return the current request from the user
+    vector<string> update(void);
     void prepare(void);
 };

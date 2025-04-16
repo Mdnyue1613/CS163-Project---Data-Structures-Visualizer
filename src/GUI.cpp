@@ -92,6 +92,7 @@ void GUI::drawDS2() {
     while(GUI::isOpenDS2) {
         BeginDrawing();
         ClearBackground(WHITE);
+        hashtable.update();
         hashtable.draw();
         BACK();
         EndDrawing();

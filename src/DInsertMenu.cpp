@@ -41,7 +41,7 @@ DInsertMenu::DInsertMenu(Vector2 pos, Vector2 size) :
         PConstants::PFunctionArea::boxOutlineThickness, 
         PConstants::PFunctionArea::boxColor, 
         PConstants::PFunctionArea::outlineBoxColor, 
-        {"Single", "Listt"}, PConstants::PFunctionArea::textSize);
+        {"Single", "List"}, PConstants::PFunctionArea::textSize);
     InputBox = PInputBox(Vector2{1.f * x + PConstants::PFunctionArea::spaceX, 1.f * y + 2 * PConstants::PFunctionArea::boxHeight + 3 * PConstants::PFunctionArea::spaceY},
         Vector2{1.f * width - 2 * PConstants::PFunctionArea::spaceX, PConstants::PFunctionArea::boxHeight},
         PConstants::PFunctionArea::boxOutlineThickness, 
@@ -65,83 +65,43 @@ DInsertMenu::DInsertMenu(Vector2 pos, Vector2 size) :
 
 void DInsertMenu::draw(void) {
     // Draw mode button
-    currentMode = Mode.draw();
-
-    // Change title of the input box for each corresponding mode
-    InputBox.changeTitle(inputBoxTitle[currentMode]);
-    // Draw input box
-    InputBox.draw();
-
-    if(currentMode == ModeID::List) {
-        InputFileBox.draw();
-    }
+    Mode.draw();
 
     // Draw GO button
     GO.draw();
+
+    // Mode = Head input
+    if(currentMode == ModeID::Single) {
+        InputBox.draw();
+    }
+    // Mode = Tail input
+    else if(currentMode == ModeID::List) {
+        InputBox.draw();
+        InputFileBox.draw();
+    }
+
 }
 
 vector<string> DInsertMenu::update(void) {
-    // Store request from the user
-    vector<string> result;
+    currentMode = Mode.update();
 
-    // Current mode: Random
+    /// I. Update head insert mode
     if(currentMode == ModeID::Single) {
-        /* 
-        When user click "GO" button:
-            a. Return request: random (no content in the input box)
-            b. Return request: random + content (has content)
-        */
-        if(GO.isClick()) {
-            result.push_back("single");
-            if(InputBox.hasContent())
-                result.push_back(InputBox.extract());
-            return result;
+        if(InputBox.hasContent() && 
+            (GO.isClick() || (InputBox.isChosen && IsKeyPressed(KEY_ENTER)))) {
+            return {"single", InputBox.extract()};
         }
-        /*
-        When user pressed "Enter" and the input box has content:
-            Return request: random + content
-        */
-        if(InputBox.isChosen && 
-            InputBox.hasContent() &&
-            IsKeyPressed(KEY_ENTER)) {
-            result = {"single", InputBox.extract()};
-            return result;
-        }
+        // Update headInputBox for rendering
+        InputBox.update();
     }
-    // Current mode: Input
+    /// II. Update tail insert mode
     else if(currentMode == ModeID::List) {
-        /* 
-        When the input box has content and user press enter or click GO button
-            Return request: input + content
-        */
         if(InputBox.hasContent() && 
             (GO.isClick() || (InputBox.isChosen && IsKeyPressed(KEY_ENTER)))) {
             return {"list", InputBox.extract()};
         }
-        /*
-        When user click on the load input from file box
-            Return request: input + file + content
-        */
-        if(InputFileBox.isClick()) {
-            char const * inputTypeFilter[] = {"*.*"};
-            char* fileDestination = tinyfd_openFileDialog("Open file", NULL, 1, inputTypeFilter, NULL, 0);
-            if(fileDestination) {
-                fstream inp(fileDestination, ios::in | ios::binary | ios::ate);
-
-                ifstream::pos_type fileSize = inp.tellg();
-                inp.seekg(0, ios::beg);
-
-                vector<char> data(fileSize);
-                inp.read(data.data(), fileSize);
-                inp.close();
-                data.push_back('\0');
-                return {"list", data.data()};
-            }
-        }
+        // Update tailInputBox for rendering
+        InputBox.update();
     }
     return {"nothing"};
-}
-
-void DInsertMenu::prepare(void) {
-    InputFileBox.prepare();
 }

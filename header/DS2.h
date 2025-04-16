@@ -29,8 +29,8 @@ struct DS2 {
     vector<int> stringToVectorInt(string& s);
     void vectorIntInitialize(vector<int>& vi);
     void loadTextures(void);
-    
+    void prepare(void);
+    void update (void);
     //notification for errors
     void setStatusMessage(const string& msg, float duration = 3.0f);
-    bool parseAndValidateInt(const string& str, int& value, int minValue, const string& fieldName);
 };

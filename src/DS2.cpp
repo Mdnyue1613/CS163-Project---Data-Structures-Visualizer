@@ -1,7 +1,7 @@
 #include "../header/DS2.h"
 DS2::DS2(void) :
     functionArea(PConstants::PFunctionArea::pos, PConstants::PFunctionArea::size),
-    titleBox(PConstants::PTitleBar::pos, PConstants::PTitleBar::size, PConstants::PTitleBar::outlineThickness, PConstants::PTitleBar::boxColor, PConstants::PTitleBar::outlineColor, "HASH TABLE CHAINING", PConstants::PTitleBar::textSize),
+    titleBox(PConstants::PTitleBar::pos, PConstants::PTitleBar::size, PConstants::PTitleBar::outlineThickness, PConstants::PTitleBar::boxColor, PConstants::PTitleBar::outlineColor, "HASH TABLE LINEAR PROBING", PConstants::PTitleBar::textSize),
     hashtable() {}
 
 DS2::~DS2(void) {
@@ -14,26 +14,30 @@ void DS2::setStatusMessage(const string& msg, float duration) {
     cout << "Status: " << msg << endl; // Also log to console for debugging
 }
 
+void DS2::prepare(void) {
+    functionArea.prepare();
+}
+
 void DS2::draw(void) {
-    // Draw the title of Data Structure 2
-    titleBox.draw();
+      // Draw the title of Data Structure 1
+      titleBox.draw();
 
-    // Draw the function area and take request from user
+      // Draw the function area
+      functionArea.draw();
+
+      // Draw Data Structure
+      hashtable.draw();
+}
+
+void DS2::update(void){
     vector<string> request = functionArea.update();
-    functionArea.draw();
-
-    // Initialize request
+    // hashtable.update();
     if(request[0] == "initialize") {
         operateInitialize(request);
     }
-
-    if(request[0] =="insert"){
-        //  operateInsert(value);
+    else if(request[0] == "insert") {
+        // operateInsert(request);
     }
-    // DrawTexture(icon, 0, 0, WHITE);
-
-    // Draw Data Structure
-    hashtable.draw();
 }
 
 void DS2::operateInitialize(vector<string>& request) {
@@ -42,7 +46,7 @@ void DS2::operateInitialize(vector<string>& request) {
         // No input
         if((int)request.size() == 2)
             // Operate request
-            randomInitialize(randomGenerator.random(1, 20));
+            hashtable.random(randomGenerator.random(1, 20));
         // With input
         else {
             // Check if the input is valid
@@ -53,7 +57,7 @@ void DS2::operateInitialize(vector<string>& request) {
             if(valid) {
                 // Operate request
                 int inputValue = stoi(request[2]);
-                randomInitialize(inputValue);
+                hashtable.random(inputValue);
             }
             else {
                 // Announce to the user that the input is not valid
@@ -72,14 +76,6 @@ void DS2::operateInitialize(vector<string>& request) {
             // Announce to the user that the input is not valid
         }
     }
-}
-
-void DS2::operateInsert(int &value){
-    hashtable.insert(value);
-}
-
-void DS2::randomInitialize(int x) {
-    hashtable.random(x);
 }
 
 vector<int> DS2::stringToVectorInt(string& s) {
@@ -114,6 +110,15 @@ vector<int> DS2::stringToVectorInt(string& s) {
         res.push_back(lastValue);
     return valid ? res : vector<int>(0);
 }
+
+void DS2::operateInsert(int &value){
+    hashtable.insert(value);
+}
+
+void DS2::randomInitialize(int x) {
+    hashtable.random(x);
+}
+
 
 void DS2::vectorIntInitialize(vector<int>& vi) {
     hashtable.build(vi);
