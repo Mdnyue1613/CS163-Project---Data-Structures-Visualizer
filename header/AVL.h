@@ -12,6 +12,7 @@
 #include <thread>
 #include <set>
 #include <iostream>
+#include"PExplanationArea.h"
 using namespace std;
 
 struct TreeNode{
@@ -37,15 +38,19 @@ struct AVL {
     TreeNode* childRotateNode = nullptr;
     TreeNode* NodeDelete = nullptr;
     TreeNode* newDeleteNode = nullptr;
+    TreeNode* selectionNode = nullptr;
     int indexOfDeleteNodeInPath = 0;
+    int findData;
     bool isInsert, isDelete, isFind, isInit;
+    bool isNeedToFindAnotherDeleteNode = false;
     bool isNeedToRotate = false, isNeedToRotateChild = false;
     vector<TreeNode*> allNode, Path;
+    Vector2 rootPosition = {750, 200};
     float distance_x;
     float distance_y;
-    float animationProgress = 0.f;
     int animationStep = 0;
     int hightLightNodeIndex = 0;
+    PExplanationArea explanationArea;
     AVL();
     int getBalance(TreeNode *root);
     void setHeight(TreeNode *&root);
@@ -56,6 +61,7 @@ struct AVL {
     void removeAll();
     ~AVL();
     void random(int n);
+    void vectorIntInit(vector<int> nums);
     void draw();
     void moveTree(TreeNode *&root, bool distance);
     void updateTreePosition();
@@ -65,7 +71,7 @@ struct AVL {
     void deleteAnimation();
     void findAnimation();
     void drawTree();
-    void setCurrentPosition();
+    void setCurrentPosition(float speed);
     void checkRotation();
     void rotateNode(TreeNode*& root);
     void animateRotation();
@@ -86,4 +92,5 @@ struct AVL {
     void updatePathAfterDelete();
     void updateHeightInPath();
     void insertNodeRunAtOnce(TreeNode *&root, TreeNode *parent, int x);
+    void findNode(TreeNode*& root, int x);
 };

@@ -1,9 +1,10 @@
-#include "../header/LInsertMenu.h"
+#include"../header/LFindMenu.h"
 
-LInsertMenu::LInsertMenu() {
+
+LFindMenu::LFindMenu() {
     
 }
-LInsertMenu::LInsertMenu(int x, int y, int width, int height, int characterSize) {
+LFindMenu::LFindMenu(int x, int y, int width, int height, int characterSize) {
     this->x = x;
     this->y = y;
     this->width = width;
@@ -22,7 +23,7 @@ LInsertMenu::LInsertMenu(int x, int y, int width, int height, int characterSize)
         "input data", PConstants::PFunctionArea::textSize);
 
 }
-vector<string> LInsertMenu::draw(bool active) {
+vector<string> LFindMenu::draw(bool active) {
     // Name.draw();
     Mode.draw();
     if(active) {
@@ -30,8 +31,9 @@ vector<string> LInsertMenu::draw(bool active) {
     }
     inputBox.draw();
     GO.draw();
-    if((GO.isClick() || IsKeyPressed(KEY_ENTER)) && active && inputBox.hasContent()) {
-        return {"Insert", inputBox.extract()};
+    if((GO.isClick() || IsKeyPressed(KEY_ENTER)) && active) {
+        if(inputBox.hasContent()) return {"find", inputBox.extract()};
+        else return {"find", ""};
     }
-    else return {"nothing"};
+    return {"nothing"};
 }

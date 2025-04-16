@@ -10,6 +10,7 @@ void GUI::startProgram() {
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     InitWindow(1200, 800, "Hello Raylib");
     linkedListVisualizer.prepare();
+    ds3.prepare();
     SetTargetFPS(60);
     while(isOpenDS1 || isOpenDS2 || isOpenDS3 || isOpenDS4 || isOpenMenu) {
         drawMenu();
@@ -74,7 +75,9 @@ void GUI::drawDS1() {
     while (GUI::isOpenDS1) {
         BeginDrawing();
         ClearBackground(WHITE);
+        // Update the data structure before rendering it
         linkedListVisualizer.update();
+        // Render the data structure
         linkedListVisualizer.draw();
         BACK();
         EndDrawing();
@@ -101,7 +104,6 @@ void GUI::drawDS2() {
 }
 
 void GUI::drawDS3() {
-    DS3 ds3;
     while (GUI::isOpenDS3) {
         BeginDrawing();
         ClearBackground(WHITE);
@@ -125,11 +127,13 @@ void GUI::BACK() {
     BackButton.setRec(Button);
     const Rectangle HandCursorTexture = {0, 0, 15.5, 20};
     Rectangle HandDest = {GetMousePosition().x, GetMousePosition().y, 15.5, 20};
-    if (BackButton.isMove()) {
+    if (isBackButtonOn == false && BackButton.isMove() == true) {
         SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
+        isBackButtonOn = true;
     }
-    else {
+    else if(isBackButtonOn == true && BackButton.isMove() == false) {
         SetMouseCursor(MOUSE_CURSOR_DEFAULT);
+        isBackButtonOn = false;
     }
     if (BackButton.isClick()) {
         SetMouseCursor(MOUSE_CURSOR_DEFAULT);

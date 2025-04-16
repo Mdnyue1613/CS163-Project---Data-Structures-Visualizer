@@ -6,6 +6,7 @@
 #include"LInitialize.h"
 #include "LInsertMenu.h"
 #include"LDeleteMenu.h"
+#include"LFindMenu.h"
 #include "PSwitchBox.h"
 using namespace std;
 
@@ -21,7 +22,9 @@ struct LFunctionArea{
     LInitializeMenu initializeMenu;
     LInsertMenu insertMenu;
     LDeleteMenu deleteMenu;
+    LFindMenu findMenu;
     LFunctionArea();
     LFunctionArea(int x, int y, int width, int height, Color color);
     vector<string> draw(bool active);
+    void prepare();
 };

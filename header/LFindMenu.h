@@ -4,9 +4,10 @@
 #include<cstring>
 #include<algorithm>
 #include"PTitleBox.h"
+#include"PSwitchBox.h"
 #include"PInputBox.h"
 
-struct LInsertMenu{
+struct LFindMenu {
     const int boxHeight = 45;
     const int verticalSpace = 5;
     const int horizontalSpace = 5;
@@ -16,7 +17,7 @@ struct LInsertMenu{
     PTitleBox Mode, GO;
     PInputBox inputBox;
 
-    LInsertMenu();
-    LInsertMenu(int x, int y, int width, int height, int characterSize);
+    LFindMenu();
+    LFindMenu(int x, int y, int width, int height, int characterSize);
     vector<string> draw(bool active);
 };

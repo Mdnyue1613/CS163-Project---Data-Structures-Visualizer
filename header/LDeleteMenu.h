@@ -5,6 +5,7 @@
 #include<algorithm>
 #include"PTitleBox.h"
 #include"PSwitchBox.h"
+#include"PInputBox.h"
 
 struct LDeleteMenu{
     const int boxHeight = 45;
@@ -15,8 +16,9 @@ struct LDeleteMenu{
     int x, y, width, height, characterSize;
     PTitleBox GO;
     PSwitchBox Mode;
+    PInputBox inputBox;
 
     LDeleteMenu();
     LDeleteMenu(int x, int y, int width, int height, int characterSize);
-    string draw(bool active);
+    vector<string> draw(bool active);
 };

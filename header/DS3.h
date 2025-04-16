@@ -6,16 +6,21 @@
 #include "PConstants.h"
 #include "LInputBox.h"
 #include "LFunctionArea.h"
+#include<sstream>
 
 struct DS3 {
     PTitleBox titleBox;
-    LInputBox inputBox;
     LFunctionArea functionArea;
     AVL Tree;
     bool isAnimation;
     DS3();
     void draw();
-    void RandomInitialize();
-    void Insert();
-    void Delete();
+    void RandomInitialize(string num);
+    void vectorIntInitialize(vector<int> nums);
+    void Insert(string num);
+    void Delete(string num);
+    void Find(string num);
+    void prepare();
+    vector<int> stringToVectorInt(string s);
+    void updateSelectionNode();
 };

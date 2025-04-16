@@ -43,6 +43,43 @@ namespace PConstants {
         const Color GOColor = RED;
     };
 
+    namespace PStepByStepMenu {
+        // Position
+        const Vector2 pos = {0, 387};
+        const Vector2 skipBackwardCenter = {53, 34};
+        const Vector2 undoCenter = {103, 34};
+        const Vector2 playCenter = {153, 34};
+        const Vector2 redoCenter = {203, 34};
+        const Vector2 skipForwardCenter = {253, 34};
+
+        // Size
+        const Vector2 size = {307, 69};
+        const float iconHeight = 25.f;
+        const float iconWidth = 25.f;
+
+        // Color
+        const Color regionColor = {120, 209, 210, 255};
+    };
+
+    namespace PExplanationArea {
+        // Position 
+        const Vector2 pos = {0, 461};
+
+        // Size
+        const Vector2 size = {307, 65};
+
+        // Color
+        const Color backgroundColor = {151, 219, 174, 255};
+
+        // Space 
+        const float spaceX = 5.f;
+        const float spaceY = 5.f;
+
+        // Text
+        const float fontSize = 20.f;
+        const Color textColor = BLACK;
+    };
+
     namespace PSwitchBox {
         // Size
         const float arrowHeadWidth = 22.f;
@@ -90,17 +127,53 @@ namespace PConstants {
     };
 
     namespace DS1 {
-        const float speed = 400.f;
+        // Movement
+        const float speed = 600.f;
+
+        // Position
+        const Vector2 headPosition = {400, 200};
     };
 
     namespace PNode {
+        // Node radius
         const float innerRadius = 20.f; // Radius of content region
         const float outerRadius = 23.f; // Radius of the whole node
+
+        // Size
         const float characterSize = 20.f; // Font size of content
+        const float informationSize = 20.f;
         const float lineThickness = 3.f; // Thickness of the line connecting nodes
         const float lineLength = 100.f; // Length of the line connecting nodes
 
+        // Space
+        const float textSpace = 5.f; // Space between text informing the node and the node
+        const float newNodeSpace = 40.f; // Space between the added node in animation
+
+        // Arrow head
         const float arrowWidth = 12.f;
         const float arrowHeight = 8.f;
+
+        // Color
+        const Color innerColor = WHITE;
+        const Color outerColor = BLACK;
+        const Color textColor = BLACK;
+
+        const Color innerHighlightColor = {255, 138, 39, 255};
+        const Color outerHighlightColor = {255, 138, 39, 255};
+        const Color textHighlightColor = WHITE;
+
+        const Color informationTextColor = BLACK;
     }
+
+    namespace PNodeLine {
+        const Color color = BLACK;
+        const Color highlightColor = {255, 138, 39, 255};
+    }
+
+    namespace PAnimation
+    {
+        // Time
+        const float waitTime = 1.0f;
+    }
+    
 };

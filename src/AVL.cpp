@@ -16,7 +16,8 @@ void TreeNode::setColor(Color color) {
     this->color = color;
 }
 
-AVL::AVL() {
+AVL::AVL():
+    explanationArea() {
     TreeRoot = nullptr;
     distance_x = 25;
     distance_y = 40;
@@ -79,8 +80,10 @@ TreeNode * AVL::rotateRight(TreeNode* &root) {
 }
 
 void AVL::insertNode(TreeNode *&root, TreeNode *parent, int x) {
+    isInsert = 1;
     for(auto Node : allNode) {
         if(x == Node->val) {
+            NodeInsert = Node;
             return;
         }
     }
@@ -95,8 +98,8 @@ void AVL::insertNodeNonDuplicate(TreeNode *&root, TreeNode *parent, int x) {
         allNode.push_back(root);
         root->parent = parent;
         if (parent == nullptr) {
-            root->position = {600, 400};
-            root->targetPosition = {600, 400};
+            root->position = rootPosition;
+            root->targetPosition = rootPosition;
         } else {
             if (x < parent->val) {
                 root->position = {parent->targetPosition.x - distance_x, parent->targetPosition.y + distance_y};
@@ -136,7 +139,9 @@ void AVL::random(int n) {
     random_device rd;
     mt19937 gen(rd());
     uniform_int_distribution<int> dist(1, 99);
-    
+    uniform_int_distribution<int> pos_x(200, 1000);
+    uniform_int_distribution<int> pos_y(100, 700);
+
     if(TreeRoot){
         removeAll();
     }
@@ -147,7 +152,26 @@ void AVL::random(int n) {
             insertNodeWithNoAnimation(TreeRoot, nullptr, num);
         }
     }
-    setTreeSize(TreeRoot, 0);
+    for (auto Node : allNode) {
+        Node->position.x = pos_x(gen) * 1.f;
+        Node->position.y = pos_y(gen) * 1.f;
+    }
+    updateTreePosition();
+}
+
+void AVL::vectorIntInit(vector<int> nums) {
+    for (auto num : nums) {
+        insertNodeWithNoAnimation(TreeRoot, nullptr, num);
+    }
+    random_device rd;
+    mt19937 gen(rd());
+    uniform_int_distribution<int> pos_x(200, 1000);
+    uniform_int_distribution<int> pos_y(100, 700);
+    for (auto Node : allNode) {
+        Node->position.x = pos_x(gen) * 1.f;
+        Node->position.y = pos_y(gen) * 1.f;
+    }
+    updateTreePosition();
 }
 
 void AVL::moveTree(TreeNode *&root, bool direction) {
@@ -172,7 +196,7 @@ void AVL::updateTreePosition() {
 
     for (auto& Node : allNode) {
         if (Node == TreeRoot) {
-            Node->targetPosition = {600, 400};
+            Node->targetPosition = rootPosition;
         }
         else {
             TreeNode* cur = TreeRoot;
@@ -202,10 +226,35 @@ void AVL::setTreeSize(TreeNode*& root, float radius) {
     setTreeSize(root->right, radius);
 }
 
-void AVL::setCurrentPosition() {
-    for (auto& Node : allNode) {
-        Node->position.x = Node->position.x + (Node->targetPosition.x - Node->position.x) * animationProgress;
-        Node->position.y = Node->position.y + (Node->targetPosition.y - Node->position.y) * animationProgress;
+void AVL::setCurrentPosition(float speed) {
+    for(auto Node : allNode) {
+        float deltaX = abs(Node->targetPosition.x - Node->position.x);
+        float deltaY = abs(Node->targetPosition.y - Node->position.y);
+        float distance = sqrt(deltaX * deltaX + deltaY * deltaY);
+        float cosAlpha = distance != 0 ? deltaX / distance : 1;
+        float sinAlpha = distance != 0 ? deltaY / distance : 1;
+        float horizontalSpeed = speed + (float)0.5 * deltaX / distance_x;
+        float vericalSpeed = speed + (float)0.5 * deltaY / distance_y;
+        if(Node->position.x < Node->targetPosition.x) {
+            Node->position.x = min(Node->position.x + 1.f * cosAlpha * horizontalSpeed, Node->targetPosition.x);
+        }
+        else {
+            Node->position.x = max(Node->position.x - 1.f * cosAlpha * horizontalSpeed, Node->targetPosition.x);
+        }
+        if(Node->position.y < Node->targetPosition.y) {
+            Node->position.y = min(Node->targetPosition.y, Node->position.y + 1.f * sinAlpha * vericalSpeed);
+        }
+        else {
+            Node->position.y = max(Node->targetPosition.y, Node->position.y - 1.f * sinAlpha * vericalSpeed);
+        }
+    }
+    int count = 0;
+    for (auto Node : allNode) {
+        if (Node->position.x != Node->targetPosition.x || Node->position.y != Node->targetPosition.y) break;
+        else count++;
+    }
+    if(count >= allNode.size()) {
+        animationStep++;
     }
 }
 
@@ -286,8 +335,8 @@ void AVL::insertNodeWithNoAnimation(TreeNode *&root, TreeNode *parent, int x) {
         allNode.push_back(root);
         root->parent = parent;
         if (parent == nullptr) {
-            root->position = {600, 400};
-            root->targetPosition = {600, 400};
+            root->position = rootPosition;
+            root->targetPosition = rootPosition;
         } else {
             if (x < parent->val) {
                 root->position = {parent->targetPosition.x - distance_x, parent->targetPosition.y + distance_y};
@@ -468,6 +517,17 @@ void AVL::updatePathAfterDelete() {
     Path.clear();
     for (auto Node : allNode) {
         if(Node->isHighlight) Path.push_back(Node);
+    }
+}
+
+void AVL::findNode(TreeNode*& root, int x) {
+    if(!root) return;
+    Path.push_back(root);
+    if(root->val < x) findNode (root->right, x);
+    else if (root->val > x) findNode(root->left, x);
+    else {
+        selectionNode = root;
+        return;
     }
 }
 

@@ -27,19 +27,32 @@ PFunctionArea::PFunctionArea(Vector2 pos, Vector2 size) :
         {"Initialize", "Insert"}, PConstants::PFunctionArea::textSize);
 };
 
-vector<string> PFunctionArea::draw(void) {
-    // Store request from the user
-    vector<string> res;
-
+void PFunctionArea::draw(void) {
     // Draw a background
     DrawRectangleRec(background, PConstants::PFunctionArea::regionColor);
 
     // Draw state button
-    int currentMode = state.draw();
+    state.draw();
 
     // Current state: Initialize
     if(currentMode == StateID::Initialize) {
         menuInitialize.draw();
+    }
+    // Current state: Insert
+    else if(currentMode == StateID::Insert) {
+        menuInsert.draw();
+    }
+}
+
+vector<string> PFunctionArea::update(void) {
+    // Store request from the user
+    vector<string> res;
+
+    // Get current mode
+    currentMode = state.update();
+
+    // Current state: Initialize
+    if(currentMode == StateID::Initialize) {
         vector<string> ret = menuInitialize.update();
         res.push_back("initialize");
         res.insert(res.end(), ret.begin(), ret.end());
@@ -48,7 +61,6 @@ vector<string> PFunctionArea::draw(void) {
     }
     // Current state: Insert
     else if(currentMode == StateID::Insert) {
-        menuInsert.draw();
         vector<string> ret = menuInsert.update();
         res.push_back("insert");
         res.insert(res.end(), ret.begin(), ret.end());
