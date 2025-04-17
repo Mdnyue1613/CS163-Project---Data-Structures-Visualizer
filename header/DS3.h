@@ -6,11 +6,14 @@
 #include "PConstants.h"
 #include "LInputBox.h"
 #include "LFunctionArea.h"
+#include "PStepByStepMenu.h"
 #include<sstream>
 
 struct DS3 {
     PTitleBox titleBox;
     LFunctionArea functionArea;
+    PStepByStepMenu stepByStepMenu;
+    
     AVL Tree;
     bool isAnimation;
     DS3();

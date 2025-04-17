@@ -16,7 +16,9 @@ void TreeNode::setColor(Color color) {
     this->color = color;
 }
 
-AVL::AVL() {
+AVL::AVL():
+    explanationArea(),
+    PseudoCodeArea() {
     TreeRoot = nullptr;
     distance_x = 25;
     distance_y = 40;
@@ -81,9 +83,13 @@ TreeNode * AVL::rotateRight(TreeNode* &root) {
 void AVL::insertNode(TreeNode *&root, TreeNode *parent, int x) {
     for(auto Node : allNode) {
         if(x == Node->val) {
+            NodeInsert = Node;
+            explanationArea.update("data is already in tree");
+            isInsert = 0;
             return;
         }
     }
+    isInsert = 1;
     Path.clear();
     insertNodeNonDuplicate(root, NULL, x);
     updateTreePosition();
@@ -115,7 +121,7 @@ void AVL::insertNodeNonDuplicate(TreeNode *&root, TreeNode *parent, int x) {
     Path.push_back(root);
     if (x < root->val) insertNodeNonDuplicate(root->left, root, x);
     else if (x > root->val) insertNodeNonDuplicate(root->right, root, x);
-
+    
     setHeight(root);
 }
 
@@ -382,7 +388,6 @@ void AVL::FindDeleteNode(TreeNode*& root, TreeNode* parent, int x) {
             if(root->left && root->right) {
                 FindNewDeleteNode(root->left);
             }
-            isDelete = 1;
             return;
     }
     if(root->val < x) {

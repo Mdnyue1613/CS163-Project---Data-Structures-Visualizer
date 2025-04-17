@@ -66,7 +66,7 @@ namespace PConstants {
         const Vector2 pos = {0, 461};
 
         // Size
-        const Vector2 size = {307, 65};
+        const Vector2 size = {500, 65};
 
         // Color
         const Color backgroundColor = {151, 219, 174, 255};
@@ -79,6 +79,26 @@ namespace PConstants {
         const float fontSize = 20.f;
         const Color textColor = BLACK;
     };
+    namespace PseudoCodeArea {
+        // Pos
+        const Vector2 pos = {0, 522.8};
+
+        // Size
+        const Vector2 size = {500, 278.2};
+
+        //Color
+        const Color backgroundColor = {205, 228, 173, 255};
+        const Color highlightCodeColor = {235, 147, 93, 255};
+
+        // Space 
+        const float spaceX = 5.f;
+        const float spaceY = 5.f;
+
+        // Text
+        const float fontSize = 20.f;
+        const Color textColor = BLACK;
+
+    }
 
     namespace PSwitchBox {
         // Size
@@ -91,6 +111,9 @@ namespace PConstants {
         // Color
         const Color arrowColor1 = BLACK;
         const Color arrowColor2 = {150, 150, 150, 255};
+        // Text
+        const float fontSize = 20.f;
+        const Color textColor = BLACK;
     };
 
     namespace PInputBox {
@@ -175,5 +198,5 @@ namespace PConstants {
         // Time
         const float waitTime = 1.0f;
     }
-    
+
 };
