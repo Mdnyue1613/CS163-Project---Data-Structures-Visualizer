@@ -21,6 +21,7 @@ struct DS3 {
     void RandomInitialize(string num);
     void vectorIntInitialize(vector<int> nums);
     void Insert(string num);
+    void insertAnimation();
     void Delete(string num);
     void Find(string num);
     void prepare();
