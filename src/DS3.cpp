@@ -32,7 +32,6 @@ void DS3::draw() {
         else if(request.size() == 3)
             RandomInitialize(request[2]);
     }
-
     else if (request[0] == "initialize" && request[1] == "data") {
         if (request.size() == 3) {
             vector<int> nums = stringToVectorInt(request[2]);
@@ -42,14 +41,12 @@ void DS3::draw() {
             }
         }
     }
-
     else if(request[0] == "insert" && request[1] == "Insert") {
         if(request.size() == 3) {
             Tree.isInsert = 1;
             Insert(request[2]);
         }
     }
-
     else if(request[0] == "delete") {
         if (request[1] == "delete") {
             if (request.size() == 3) {
@@ -65,7 +62,6 @@ void DS3::draw() {
             Tree.removeAll();
         }
     }
-
     else if(request[0] == "find" && request[1] == "find") {
         if(request.size() == 3) {
             if(Tree.selectionNode) request[2] = to_string(Tree.selectionNode->val);
@@ -112,7 +108,19 @@ void DS3::Insert(string num) {
         }
     }
     val = stoi(num);
+    Tree.clearAnimation();
     Tree.insertNode(Tree.TreeRoot, nullptr, val);
+    if(Tree.TreeRoot && Tree.isInsert) {
+        Tree.runAllInsertStepBeforeAnimation();
+        Tree.assignAnimation(0);
+    }
+    else {
+        Tree.isInsert = 0;
+    }
+}
+
+void DS3::insertAnimation() {
+    Tree.drawTree();
 }
 
 void DS3::Delete(string num) {

@@ -238,12 +238,14 @@ void AVL::setCurrentPosition(float speed) {
         float sinAlpha = distance != 0 ? deltaY / distance : 1;
         float horizontalSpeed = speed + (float)0.5 * deltaX / distance_x;
         float vericalSpeed = speed + (float)0.5 * deltaY / distance_y;
+        animation.recordFloat(&Node->position.x);
         if(Node->position.x < Node->targetPosition.x) {
             Node->position.x = min(Node->position.x + 1.f * cosAlpha * horizontalSpeed, Node->targetPosition.x);
         }
         else {
             Node->position.x = max(Node->position.x - 1.f * cosAlpha * horizontalSpeed, Node->targetPosition.x);
         }
+        animation.recordFloat(&Node->position.y);
         if(Node->position.y < Node->targetPosition.y) {
             Node->position.y = min(Node->targetPosition.y, Node->position.y + 1.f * sinAlpha * vericalSpeed);
         }
@@ -257,6 +259,7 @@ void AVL::setCurrentPosition(float speed) {
         else count++;
     }
     if(count >= allNode.size()) {
+        animation.recordInt(&animationStep);
         animationStep++;
     }
 }
@@ -308,6 +311,8 @@ void AVL::rotateNode(TreeNode*& root) {
 
 void AVL::checkRotateChildNode() {
     if(rotationNode) {
+        animation.recordTreeNodePointer(&childRotateNode);
+        animation.recordBool(&isNeedToRotateChild);
         if(getBalance(rotationNode) > 1 && getBalance(rotationNode->left) < 0) {
             childRotateNode = rotationNode->left;
             isNeedToRotateChild = true;
