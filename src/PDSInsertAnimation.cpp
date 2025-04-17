@@ -27,8 +27,7 @@ bool PDSAnimation::insertHead(int value, int stepRequest, string& explanationTex
     // Doing steps
     int step = taskManagementPointer->getStep();
     if(step == 0) {
-        if(forward)
-            done = insertHeadStep0(value, stepRequest, explanationText);
+        done = forward ? insertHeadStep0(value, stepRequest, explanationText) : false;
     }
     else if(step == 1)
         done = forward ? insertHeadStep1(value, stepRequest, explanationText) : undoInsertHead0(value, stepRequest, explanationText);
@@ -41,6 +40,14 @@ bool PDSAnimation::insertHead(int value, int stepRequest, string& explanationTex
     else {
         cerr << "Input wrong step in DS1::insertHead(value, step)\n";
         exit(1);
+    }
+    if(done) {
+        PNode* tmp = dataStructurePointer->head;
+        while(tmp != nullptr) {
+            recordVector2(&tmp->center);
+            tmp = tmp->pNext;
+        }
+        dataStructurePointer->reloadPositions();
     }
     // Check if the progress is done
     return done;
@@ -323,6 +330,14 @@ bool PDSAnimation::insertTail(int value, int stepRequest, string& explanationTex
         cerr << "Input wrong step in DS1::insertTail(value, step)\n";
         exit(0);
     }
+    if(done) {
+        PNode* tmp = dataStructurePointer->head;
+        while(tmp != nullptr) {
+            recordVector2(&tmp->center);
+            tmp = tmp->pNext;
+        }
+        dataStructurePointer->reloadPositions();
+    }
     // Check if the progress is done
     return done;
 }
@@ -600,6 +615,14 @@ bool PDSAnimation::insertAfter(int position, int value, int stepRequest, string&
     }
     else if(step == 11) {
         done = forward ? insertAfterStep11(position, value, stepRequest, explanationText) : undoVersion(stepRequest);
+    }
+    if(done) {
+        PNode* tmp = dataStructurePointer->head;
+        while(tmp != nullptr) {
+            recordVector2(&tmp->center);
+            tmp = tmp->pNext;
+        }
+        dataStructurePointer->reloadPositions();
     }
     return done;
 }

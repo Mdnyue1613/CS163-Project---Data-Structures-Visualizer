@@ -16,6 +16,7 @@ struct PDSAnimation {
     stack<pair<float *, float>> undoFloatStack;
     stack<pair<vector<bool> *, vector<bool>>> undoVectorBoolStack;
     stack<pair<PNode **, PNode>> undoDeletePNodePointerStack;
+    stack<pair<Vector2 *, Vector2>> undoVector2Stack;
 
     PDSAnimation(void);
     PDSAnimation(DoublyLinkedList * dataStructurePointer, PTaskManagement * taskManagementPointer);
@@ -41,6 +42,7 @@ struct PDSAnimation {
     void recordInt(int * p);
     void recordFloat(float * p);
     void recordVectorBool(vector<bool> * p);
+    void recordVector2(Vector2 * p);
     // Undo version
     bool undoVersion(int stepRequest);
     void undoBool(void);
@@ -50,6 +52,7 @@ struct PDSAnimation {
     void undoInt(void);
     void undoFloat(void);
     void undoVectorBool(void);
+    void undoVector2(void);
 
     // INSERT HEAD
     bool insertHead(int value, int stepRequest, string& explanationText); // Insert an element at the head of the list, Return true if the progress is done
@@ -110,4 +113,11 @@ struct PDSAnimation {
     bool searchStep1(int value, int stepRequest, string& explanationText); // Step 1
     bool searchStep2(int value, int stepRequest, string& explanationText); // Step 2
     bool searchStep3(int value, int stepRequest, string& explanationText); // Step 3
+
+    // Update animations
+    bool update(PNode* chosen, int value, int stepRequest, string& explanationText); // Update an element at a specified position in the list, Return true if the progress is done
+    bool updateStep0(PNode* chosen, int value, int stepRequest, string& explanationText); // Step 0
+    bool updateStep1(PNode* chosen, int value, int stepRequest, string& explanationText); // Step 1
+    bool updateStep2(PNode* chosen, int value, int stepRequest, string& explanationText); // Step 2
+    bool updateStep3(PNode* chosen, int value, int stepRequest, string& explanationText); // Step 3
 };

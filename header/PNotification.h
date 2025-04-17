@@ -11,9 +11,14 @@ struct PNotification {
     TextBox notification;
     TextBox confirmButton;
     string notificationText;
+    float workspaceX;
+    float workspaceY;
+    float workspaceWidth;
+    float workspaceHeight;
 
     PNotification(void);
 
+    void prepare(void);
     void draw(void);
     void update(void);
 

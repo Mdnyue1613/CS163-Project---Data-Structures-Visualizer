@@ -32,6 +32,7 @@ struct DS1 {
         Insert,
         Remove,
         Search,
+        Update,
         NoTask
     };
 
@@ -58,4 +59,7 @@ struct DS1 {
 
     // Search mode functions
     bool operateSearch(vector<string>& request, int stepRequest, string& explanationText); // Operate searching request: return true when done
+    
+    // Update mode functiond
+    bool operateUpdate(PNode* chosen, vector<string>& request, int stepRequest, string& explanationText); // Operate update request: return true when done
 };

@@ -3,14 +3,12 @@
 PNode::PNode(void) :
     data(-1), pNext(nullptr), pPrev(nullptr), highlight(false), lPrev(), lNext(),
     updatedPosition(false), direction(1), information() {
-    makeLabel();
     makePosition();
 }
 
 PNode::PNode(int data) :
     data(data), pNext(nullptr), pPrev(nullptr), highlight(false), lPrev(), lNext(),
     updatedPosition(false), direction(1), information() {
-    makeLabel();
     makePosition();
 }
 
@@ -26,6 +24,7 @@ void PNode::makeLabel(void) {
 }
 
 void PNode::update(void) {
+    makeLabel();
     updatePosition();
     updateLine();
 }
@@ -89,9 +88,9 @@ void PNode::drawNode(void) {
     const float outerRadius = PConstants::PNode::outerRadius;
     const float characterSize = PConstants::PNode::characterSize;
 
-    const Color innerColor = (highlight ? PConstants::PNode::innerHighlightColor : PConstants::PNode::innerColor);
-    const Color outerColor = (highlight ? PConstants::PNode::outerHighlightColor : PConstants::PNode::outerColor);
-    const Color textColor = (highlight ? PConstants::PNode::textHighlightColor : PConstants::PNode::textColor);
+    const Color innerColor = ((highlight) ? PConstants::PNode::innerHighlightColor : PConstants::PNode::innerColor);
+    const Color outerColor = ((highlight) ? PConstants::PNode::outerHighlightColor : PConstants::PNode::outerColor);
+    const Color textColor = ((highlight) ? PConstants::PNode::textHighlightColor : PConstants::PNode::textColor);
 
     // Draw node
     DrawCircleV(centerFrom, innerRadius, innerColor);
@@ -104,7 +103,7 @@ void PNode::drawNode(void) {
 void PNode::drawText(void) {
     // Prepare information
     information.clear();
-    for(int i = 0; i < 4; i++) {
+    for(int i = 0; i < 5; i++) {
         if(informationState[i]) {
             if(information.size())
                 information += '/';
@@ -147,7 +146,7 @@ void PNode::setInformationState(int i, bool on) {
 }
 
 void PNode::resetInformationState(void) {
-    for(int i = 0; i < 4; i++) {
+    for(int i = 0; i < 5; i++) {
         informationState[i] = false;
     }
 }

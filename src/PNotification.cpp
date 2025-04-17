@@ -2,26 +2,21 @@
 
 PNotification::PNotification(void) {}
 
-void PNotification::draw(void) {
-    // Draw the notification box
-    notification.text = (char *)notificationText.c_str();
+void PNotification::prepare(void) {
+    workspaceX = PConstants::PFunctionArea::pos.x + PConstants::PFunctionArea::size.x;
+    workspaceY = PConstants::PTitleBar::pos.y + PConstants::PTitleBar::size.y;
+    workspaceWidth = GetScreenWidth() - workspaceX;
+    workspaceHeight = GetScreenHeight() - workspaceY;
+
     notification.rec.height = round(GetScreenHeight() / 10);
     notification.fontSize = notification.rec.height / 4;
-    notification.rec.width = MeasureText(notification.text, notification.fontSize) + notification.fontSize * 2;
-    float workspaceX = PConstants::PFunctionArea::pos.x + PConstants::PFunctionArea::size.x;
-    float workspaceY = PConstants::PTitleBar::pos.y + PConstants::PTitleBar::size.y;
-    float workspaceWidth = GetScreenWidth() - workspaceX;
-    float workspaceHeight = GetScreenHeight() - workspaceY;
-    notification.rec.x = round(workspaceX + (workspaceWidth - notification.rec.width) / 2);
     notification.rec.y = round(workspaceY + (workspaceHeight - notification.rec.height) / 2);
     notification.recColor = WHITE;
     notification.thick = 2;
     notification.outlineColor = BLACK;
     notification.textColor = RED;
 
-    confirmButton.rec.width = round(notification.rec.width / 4);
     confirmButton.rec.height = round(notification.rec.height / 3);
-    confirmButton.rec.x = round(notification.rec.x + (notification.rec.width - confirmButton.rec.width)/2);
     confirmButton.rec.y = round(notification.rec.y + notification.rec.height + confirmButton.rec.height);
     confirmButton.recColor = WHITE;
     confirmButton.thick = 2;
@@ -29,6 +24,17 @@ void PNotification::draw(void) {
     confirmButton.text = (char*)(const char*)"OK";
     confirmButton.fontSize = confirmButton.rec.height * 3/5;
     confirmButton.textColor = BLACK;
+}
+
+void PNotification::draw(void) {
+    // Draw the notification box
+    notification.text = (char *)notificationText.c_str();
+    notification.rec.width = MeasureText(notification.text, notification.fontSize) + notification.fontSize * 2;
+    notification.rec.x = round(workspaceX + (workspaceWidth - notification.rec.width) / 2);
+
+    confirmButton.rec.width = round(notification.rec.width / 4);
+    confirmButton.rec.x = round(notification.rec.x + (notification.rec.width - confirmButton.rec.width)/2);
+
     notification.draw();
     confirmButton.draw();
 }
@@ -40,12 +46,13 @@ void PNotification::update(void) {
     // Check if the mouse is over the confirm button
     if (CheckCollisionPointRec(mouse, confirmButton.rec)) {
         confirmButton.recColor = LIGHTGRAY;
-        confirmButton.draw();
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
             confirmButton.recColor = DARKGRAY;
             confirmButton.draw();
             notificationText.clear();
         }
+    }
+    else {
         confirmButton.recColor = WHITE;
     }
 }

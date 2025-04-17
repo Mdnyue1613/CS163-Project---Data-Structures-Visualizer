@@ -7,28 +7,30 @@ PFunctionArea::PFunctionArea(int x, int y, int width, int height) :
     menuInitialize(x, y, width, height),
     menuInsert(x, y, width, height),
     menuRemove(x, y, width, height),
-    menuSearch(x, y, width, height) {
+    menuSearch(x, y, width, height),
+    menuUpdate(x,y , width, height) {
     background = {1.f * x, 1.f * y, 1.f * width, 1.f * height};
     state = PSwitchBox(Vector2{1.f * x + PConstants::PFunctionArea::spaceX, 1.f * y + PConstants::PFunctionArea::spaceY}, 
         Vector2{1.f * width - 2 * PConstants::PFunctionArea::spaceX, PConstants::PFunctionArea::boxHeight}, 
         PConstants::PFunctionArea::boxOutlineThickness, 
         PConstants::PFunctionArea::boxColor, 
         PConstants::PFunctionArea::outlineBoxColor,
-        {"Initialize", "Insert", "Remove", "Search"}, PConstants::PFunctionArea::textSize);
+        {"Initialize", "Insert", "Remove", "Search", "Update"}, PConstants::PFunctionArea::textSize);
 }
 
 PFunctionArea::PFunctionArea(Vector2 pos, Vector2 size) :
     menuInitialize(pos, size),
     menuInsert(pos, size),
     menuRemove(pos, size),
-    menuSearch(pos, size) {
+    menuSearch(pos, size),
+    menuUpdate(pos, size) {
     background = {pos.x, pos.y, size.x, size.y};
     state = PSwitchBox(Vector2{pos.x + PConstants::PFunctionArea::spaceX, pos.y + PConstants::PFunctionArea::spaceY}, 
         Vector2{size.x - 2 * PConstants::PFunctionArea::spaceX, PConstants::PFunctionArea::boxHeight}, 
         PConstants::PFunctionArea::boxOutlineThickness, 
         PConstants::PFunctionArea::boxColor, 
         PConstants::PFunctionArea::outlineBoxColor,
-        {"Initialize", "Insert", "Remove", "Search"}, PConstants::PFunctionArea::textSize);
+        {"Initialize", "Insert", "Remove", "Search", "Update"}, PConstants::PFunctionArea::textSize);
 };
 
 void PFunctionArea::draw(void) {
@@ -54,10 +56,14 @@ void PFunctionArea::draw(void) {
     else if(currentMode == Search) {
         menuSearch.draw();
     }
+    // Update
+    else if(currentMode == Update) {
+        menuUpdate.draw();
+    }
 }
 
 vector<string> PFunctionArea::update(void) {
-    // Store request from the user
+    // Result
     vector<string> res;
 
     // Get current mode
@@ -92,6 +98,14 @@ vector<string> PFunctionArea::update(void) {
         vector<string> ret = menuSearch.update();
         res.push_back("search");
         // search + arguments
+        res.insert(res.end(), ret.begin(), ret.end());
+        return res;
+    }
+    // Update
+    else if(currentMode == Update) {
+        vector<string> ret = menuUpdate.update();
+        res.push_back("update");
+        // update + arguments
         res.insert(res.end(), ret.begin(), ret.end());
         return res;
     }

@@ -69,6 +69,14 @@ bool PDSAnimation::remove(int position, int stepRequest, string& explanationText
     else if(step == 10) {
         done = forward ? removeStep10(position, stepRequest, explanationText) : undoVersion(stepRequest);
     }
+    if(done) {
+        PNode* tmp = dataStructurePointer->head;
+        while(tmp != nullptr) {
+            recordVector2(&tmp->center);
+            tmp = tmp->pNext;
+        }
+        dataStructurePointer->reloadPositions();
+    }
     return done;
 }
 

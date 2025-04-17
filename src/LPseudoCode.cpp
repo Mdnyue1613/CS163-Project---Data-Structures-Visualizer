@@ -2,6 +2,7 @@
 
 LPseudoCode::LPseudoCode():
 backGround({PConstants::PseudoCodeArea::pos.x, PConstants::PseudoCodeArea::pos.y, PConstants::PseudoCodeArea::size.x, PConstants::PseudoCodeArea::size.y}) {
+    this->numLine = 6;
     for(int i = 0; i < numLine; i++) {
         codeLine.push_back({backGround.x, backGround.y + i * (PConstants::PseudoCodeArea::spaceY + fontSize) + PConstants::PseudoCodeArea::spaceY, backGround.width, PConstants::PseudoCodeArea::fontSize});
         codeLineColor.push_back(backGroundColor);
@@ -12,6 +13,16 @@ backGround({PConstants::PseudoCodeArea::pos.x, PConstants::PseudoCodeArea::pos.y
                 "   case 3: this.left.rotateLeft, this.rotateRight",
                 "   case 4: this.right.rotateRight, this.rotateLeft",
                 "   this is balance"};
+}
+
+LPseudoCode::LPseudoCode(const vector<string>& pseudoCode, int numLine):
+backGround({PConstants::PseudoCodeArea::pos.x, PConstants::PseudoCodeArea::pos.y, PConstants::PseudoCodeArea::size.x, PConstants::PseudoCodeArea::size.y}){
+    this->numLine = numLine;
+        for(int i = 0; i < numLine; i++) {
+            codeLine.push_back({backGround.x, backGround.y + i * (PConstants::PseudoCodeArea::spaceY + fontSize) + PConstants::PseudoCodeArea::spaceY, backGround.width, PConstants::PseudoCodeArea::fontSize});
+            codeLineColor.push_back(backGroundColor);
+        }
+    this->pseudoCode = pseudoCode;
 }
 
 void LPseudoCode::update(int line) {

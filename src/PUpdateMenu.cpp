@@ -1,8 +1,8 @@
-#include "../header/PSearchMenu.h"
+#include "../header/PUpdateMenu.h"
 
-PSearchMenu::PSearchMenu(void) {}
+PUpdateMenu::PUpdateMenu(void) {}
 
-PSearchMenu::PSearchMenu(float x, float y, float width, float height) :
+PUpdateMenu::PUpdateMenu(float x, float y, float width, float height) :
     x(x), y(y), width(width), height(height), 
     InputBox({x + PConstants::PFunctionArea::spaceX, y + PConstants::PFunctionArea::boxHeight + 2.f * PConstants::PFunctionArea::spaceY}, 
         {width - 2.f * PConstants::PFunctionArea::spaceX, PConstants::PFunctionArea::boxHeight}, 
@@ -15,7 +15,7 @@ PSearchMenu::PSearchMenu(float x, float y, float width, float height) :
         PConstants::PFunctionArea::boxColor, PConstants::PFunctionArea::GOColor, 
         "GO", PConstants::PFunctionArea::textSize) {}
 
-PSearchMenu::PSearchMenu(Vector2 pos, Vector2 size) :
+PUpdateMenu::PUpdateMenu(Vector2 pos, Vector2 size) :
     x(pos.x), y(pos.y), width(size.x), height(size.y),
     InputBox({x + PConstants::PFunctionArea::spaceX, y + PConstants::PFunctionArea::boxHeight + 2.f * PConstants::PFunctionArea::spaceY}, 
         {width - 2.f * PConstants::PFunctionArea::spaceX, PConstants::PFunctionArea::boxHeight}, 
@@ -28,15 +28,15 @@ PSearchMenu::PSearchMenu(Vector2 pos, Vector2 size) :
         PConstants::PFunctionArea::boxColor, PConstants::PFunctionArea::GOColor, 
         "GO", PConstants::PFunctionArea::textSize) {}
 
-void PSearchMenu::draw(void) {
+void PUpdateMenu::draw(void) {
     InputBox.draw();
     GO.draw();
 }
 
-vector<string> PSearchMenu::update(void) {
+vector<string> PUpdateMenu::update(void) {
     vector<string> res;
 
-    if(InputBox.hasContent() && (GO.isClick() || (InputBox.isChosen && IsKeyPressed(KEY_ENTER)))) {
+    if(InputBox.hasContent() && dataStructurePointer->animationChosen != nullptr && (GO.isClick() || (InputBox.isChosen && IsKeyPressed(KEY_ENTER)))) {
         res.push_back(InputBox.extract());
         return res;
     }
