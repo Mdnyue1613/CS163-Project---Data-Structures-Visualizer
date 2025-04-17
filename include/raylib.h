@@ -208,6 +208,11 @@
 #define CORALRED      CLITERAL(Color){ 247, 90, 90, 255 }
 #define PEACHORANGE   CLITERAL(Color){ 255, 169, 85, 255 }
 #define SPRINGGREEN   CLITERAL(Color){ 0, 255, 156, 255 }
+#define MINTCREAM     CLITERAL(Color){ 205, 255, 216, 255 }
+#define BABYBLUE      CLITERAL(Color){ 148, 185, 255, 255 }
+#define SKYCYAN       CLITERAL(Color){ 93, 224, 230, 255 }
+#define ROYALBLUE     CLITERAL(Color){ 0, 74, 173, 255 }
+
 
 //----------------------------------------------------------------------------------
 // Structures Definition

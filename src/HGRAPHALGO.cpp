@@ -1,5 +1,6 @@
 #include "../header/HGRAPHALGO.h"
 #include "../header/HGRAPH.h"
+#include "../header/GUI.h"
 
 void DijkstraVisualize::chooseMode()
 {
@@ -66,7 +67,7 @@ void DijkstraVisualize::drawDescription()
         for (int i = 0; i < guide.size(); i++)
         {
             float posY = descriptionPos.y + i * (descriptionFontSize + descriptionLineSpacing);
-            DrawText(guide[i].c_str(), descriptionPos.x, posY, descriptionFontSize, BLACK);
+            DrawTextEx(GUI::font, guide[i].c_str(), {descriptionPos.x, posY}, descriptionFontSize, 0, BLACK);
         }
     }
     else 
@@ -74,7 +75,7 @@ void DijkstraVisualize::drawDescription()
         for (int i = 0; i < pseudo.size(); i++)
         {
             float posY = descriptionPos.y + i * (descriptionFontSize + descriptionLineSpacing);
-            DrawText(pseudo[i].c_str(), descriptionPos.x, posY, descriptionFontSize, BLACK);
+            DrawTextEx(GUI::font, pseudo[i].c_str(),{ descriptionPos.x, posY}, descriptionFontSize , 0, BLACK);
         }
     }
 }
@@ -182,24 +183,25 @@ void DijkstraVisualize::initTrackingTable(Graph &G)
     {
         *numColumn = 2;
         *rowHeight = round(G.workspace.height / 25);
-        *fontSize = *rowHeight * 2/5;
+        *fontSize = *rowHeight * 3/5;
         *label = vector <string>{"Vertex", "Distance"};
         (*data).clear();
         (*data).resize(*numColumn, vector <string>(G.numVertex + 1, ""));
         (*colWidth).clear();
         (*colWidth).resize((*label).size(), 0);
 
-        (*colWidth)[0] = MeasureText((*label)[0].c_str(), *fontSize) + *rowHeight - *fontSize;
+        (*colWidth)[0] = MeasureTextEx(GUI::font, (*label)[0].c_str(), *fontSize, 0).x + *rowHeight - MeasureTextEx(GUI::font, (*label)[0].c_str(), *fontSize, 0).y;
         for (int i = 0; i <= G.numVertex; i++)
         {
             (*data)[0][i] = to_string(i);
-            (*colWidth)[0] = max((*colWidth)[0], MeasureText((*data)[0][i].c_str(), *fontSize) + *rowHeight - *fontSize);
+            Vector2 textSize = MeasureTextEx(GUI::font, (*data)[0][i].c_str(), *fontSize, 0);
+            (*colWidth)[0] = max((*colWidth)[0], textSize.x + *rowHeight - textSize.y);
         }
 
-        (*colWidth)[1] = MeasureText((*label)[1].c_str(), *fontSize) + *rowHeight - *fontSize;
+        (*colWidth)[1] = MeasureTextEx(GUI::font, (*label)[1].c_str(), *fontSize, 0).x + *rowHeight - MeasureTextEx(GUI::font, (*label)[1].c_str(), *fontSize, 0).y;
         for (State &state : states)
             for (int i = 0; i <= G.numVertex; i++)
-                (*colWidth)[1] = max((*colWidth)[1], MeasureText(to_string(state.distance[i]).c_str(), *fontSize) + *rowHeight - *fontSize);
+                (*colWidth)[1] = max((*colWidth)[1], MeasureTextEx(GUI::font, to_string(state.distance[i]).c_str(), *fontSize, 0).x + *rowHeight - MeasureTextEx(GUI::font, to_string(state.distance[i]).c_str(), *fontSize, 0).y);
         
         table->width = round((*colWidth)[0] + (*colWidth)[1]);
         table->height = round(min(G.workspace.height, *rowHeight * (G.numVertex + 1 + 1)));
@@ -263,11 +265,11 @@ void DijkstraVisualize::Step0(Graph &G, State &state)
     {
         for (int i = 0; i <= 1; i++)
         {
-            float posX = descriptionPos.x;
+            float posX = descriptionRec.x;
             float posY = descriptionPos.y + i * (descriptionFontSize + descriptionLineSpacing);
             
-            DrawRectangle(posX, posY, MeasureText(pseudo[i].c_str(), descriptionFontSize), descriptionFontSize, CORALRED);
-            DrawText(pseudo[i].c_str(), posX, posY, descriptionFontSize, BLACK);
+            DrawRectangle(posX, posY, descriptionRec.width, descriptionFontSize, CORALRED);
+            DrawTextEx(GUI::font, pseudo[i].c_str(), {descriptionPos.x, posY}, descriptionFontSize, 0, BLACK);
         }
     }
 }
@@ -337,11 +339,11 @@ void DijkstraVisualize::Step1(Graph &G, State &state)
     {
         for (int i = 3; i <= 4; i++)
         {
-            float posX = descriptionPos.x;
+            float posX = descriptionRec.x;
             float posY = descriptionPos.y + i * (descriptionFontSize + descriptionLineSpacing);
             
-            DrawRectangle(posX, posY, MeasureText(pseudo[i].c_str(), descriptionFontSize), descriptionFontSize, CORALRED);
-            DrawText(pseudo[i].c_str(), posX, posY, descriptionFontSize, BLACK);
+            DrawRectangle(posX, posY, descriptionRec.width, descriptionFontSize, CORALRED);
+            DrawTextEx(GUI::font, pseudo[i].c_str(), {descriptionPos.x, posY}, descriptionFontSize, 0, BLACK);
         }
     }
 }
@@ -404,11 +406,11 @@ void DijkstraVisualize::Step2(Graph &G, State &state)
 
     if (descriptionMode == 1)
     {
-        float posX = descriptionPos.x;
+        float posX = descriptionRec.x;
         float posY = descriptionPos.y + 6 * (descriptionFontSize + descriptionLineSpacing);
             
-        DrawRectangle(posX, posY, MeasureText(pseudo[6].c_str(), descriptionFontSize), descriptionFontSize, CORALRED);
-        DrawText(pseudo[6].c_str(), posX, posY, descriptionFontSize, BLACK);
+        DrawRectangle(posX, posY, descriptionRec.width, descriptionFontSize, CORALRED);
+        DrawTextEx(GUI::font, pseudo[6].c_str(), {descriptionPos.x, posY}, descriptionFontSize, 0, BLACK);
     }
 }
 
@@ -493,11 +495,11 @@ void DijkstraVisualize::Step3(Graph &G, State &state)
     {
         for (int i = 7; i <= 8; i++)
         {
-            float posX = descriptionPos.x;
+            float posX = descriptionRec.x;
             float posY = descriptionPos.y + i * (descriptionFontSize + descriptionLineSpacing);
             
-            DrawRectangle(posX, posY, MeasureText(pseudo[i].c_str(), descriptionFontSize), descriptionFontSize, CORALRED);
-            DrawText(pseudo[i].c_str(), posX, posY, descriptionFontSize, BLACK);
+            DrawRectangle(posX, posY, descriptionRec.width, descriptionFontSize, CORALRED);
+            DrawTextEx(GUI::font, pseudo[i].c_str(), {descriptionPos.x, posY}, descriptionFontSize, 0, BLACK);
         }
     }
 }

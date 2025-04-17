@@ -2,17 +2,19 @@
 #include "../header/HOBJECT.h"
 #include "../header/HGRAPH.h"
 #include "../header/HGraphVisualize.h"
+#include "../header/GUI.h"
 
 void TextBox::draw()
 {
     DrawRectangle(rec.x, rec.y, rec.width, rec.height, recColor);
     DrawRectangleLinesEx(rec, thick, outlineColor);
-    DrawText(text, rec.x + (rec.width - MeasureText(text, fontSize))/2, rec.y + (rec.height - fontSize)/2, fontSize, textColor);
+    Vector2 textSize = MeasureTextEx(GUI::font, text, fontSize, 0);
+    DrawTextEx(GUI::font, text, {rec.x + (rec.width - textSize.x) / 2, rec.y + (rec.height - textSize.y) / 2}, fontSize, 0, textColor);
 }
 
-void NavigateButton::draw()
+void ImageButton::draw()
 {
-    DrawTextureEx(img, Vector2{rec.x, rec.y}, rotation, scale, color);
+    DrawTextureEx(img, Vector2{rec.x, rec.y}, rotation, scale, WHITE);
 }
 
 void InputBox::draw()
@@ -20,9 +22,10 @@ void InputBox::draw()
     DrawRectangle(box.rec.x, box.rec.y, box.rec.width, box.rec.height, box.recColor);
     DrawRectangleLinesEx(box.rec, box.thick, box.outlineColor);
 
-    if (userInput[0].empty())
+    if (userInput.size() == 1 && userInput[0].empty())
     {
-        DrawText(box.text, box.rec.x + (box.rec.width - MeasureText(box.text, box.fontSize))/2, box.rec.y + (box.rec.height - box.fontSize)/2, box.fontSize, box.textColor);
+        Vector2 textSize = MeasureTextEx(GUI::font, box.text, box.fontSize, 0);
+        DrawTextEx(GUI::font, box.text, {box.rec.x + (box.rec.width - textSize.x) / 2, box.rec.y + (box.rec.height - textSize.y) / 2}, box.fontSize, 0, box.textColor);
     }
     else
     {
@@ -32,7 +35,7 @@ void InputBox::draw()
             if (i < userInput.size() && !userInput[i].empty() && firstChar < userInput[i].size())
             {
                 int length = findDisplayedLength(userInput[i], firstChar);
-                DrawText(userInput[i].substr(firstChar, length).c_str(), textPos.x, textPos.y + (i - firstLine) * (fontSize + lineSpacing), fontSize, inputColor);
+                DrawTextEx(GUI::font, userInput[i].substr(firstChar, length).c_str(), {textPos.x, textPos.y + (i - firstLine) * (fontSize + lineSpacing)}, fontSize, 0, inputColor);
             }
     }
     
@@ -41,7 +44,7 @@ void InputBox::draw()
         Vector2 textPos = Vector2{box.rec.x + lineSpacing, box.rec.y + lineSpacing};
 
         Vector2 start;
-        start.x = textPos.x + (cursorPos.second == 0 ? 0 : MeasureText(userInput[cursorPos.first].substr(firstChar, cursorPos.second - firstChar).c_str(), fontSize));
+        start.x = textPos.x + (cursorPos.second == 0 ? 0 : MeasureTextEx(GUI::font, userInput[cursorPos.first].substr(firstChar, cursorPos.second - firstChar).c_str(), fontSize, 0).x);
         start.y = textPos.y + (cursorPos.first - firstLine) * (fontSize + lineSpacing);
         Vector2 end = Vector2{start.x, start.y + fontSize};
         DrawLineEx(start, end, box.thick, RED);
@@ -92,7 +95,7 @@ int InputBox::findDisplayedLength(string &s, int start)
     while (l <= r)
     {
         int mid = (l+r) >> 1;
-        int length = MeasureText(s.substr(start, mid - start + 1).c_str(), fontSize);
+        int length = MeasureTextEx(GUI::font, s.substr(start, mid - start + 1).c_str(), fontSize, 0).x;
         if (length <= maxLenPerLine)
         {
             ans = mid;
@@ -111,7 +114,7 @@ int InputBox::findFirstChar(string &s, int end)
     while (l <= r)
     {
         int mid = (l+r) >> 1;
-        int length = MeasureText(s.substr(mid, end - mid + 1).c_str(), fontSize);
+        int length = MeasureTextEx(GUI::font, s.substr(mid, end - mid + 1).c_str(), fontSize, 0).x;
         if (length <= maxLenPerLine)
         {
             ans = mid;
@@ -124,16 +127,18 @@ int InputBox::findFirstChar(string &s, int end)
 
 void InputBox::ENTER()
 {
-    if (IsKeyPressed(KEY_ENTER)) 
+    if (IsKeyPressed(KEY_ENTER) || (IsKeyDown(KEY_ENTER) && GetTime() - startPress >= periodHold)) 
     {    
-        userInput[cursorPos.first].insert(cursorPos.second, "\n");
-        userInput.push_back("");
+        int lenSubStr = userInput[cursorPos.first].size() - cursorPos.second;
+        userInput.insert(userInput.begin() + cursorPos.first + 1, userInput[cursorPos.first].substr(cursorPos.second, lenSubStr));
+        userInput[cursorPos.first].erase(cursorPos.second, lenSubStr);
         cursorPos.first++;
         cursorPos.second = 0;
         
         firstChar = 0;
-        if (cursorPos.first - firstLine + 1 > displayedLines)
-            firstLine++;
+        firstLine = max(cursorPos.first - displayedLines + 1, 0);
+
+        startPress = GetTime();
     }   
 }
 
@@ -141,24 +146,32 @@ void InputBox::BACKSPACE()
 {
     if (IsKeyPressed(KEY_BACKSPACE) || (IsKeyDown(KEY_BACKSPACE) && GetTime() - startPress >= periodHold))
     {
-        if (cursorPos.second == 0 && cursorPos.first > 0)
-        {
-            userInput.pop_back();
-            cursorPos.first--;
-            cursorPos.second = userInput[cursorPos.first].size();
-            
-            if (firstLine > 0)
-                firstLine--;
-        }
         if (cursorPos.second > 0)
         {
-            userInput[cursorPos.first].erase(cursorPos.second - 1, 1);
+            userInput[cursorPos.first].erase(userInput[cursorPos.first].begin() + cursorPos.second - 1);
             cursorPos.second--;
+        }
+        else
+        {
+            if (cursorPos.first > 0)
+            {
+                int newCursor = userInput[cursorPos.first - 1].size();
+                userInput[cursorPos.first - 1] += userInput[cursorPos.first];
+                userInput.erase(userInput.begin() + cursorPos.first);
+                cursorPos.first--;
+                cursorPos.second = newCursor;
+            }
+            else 
+            {
+                if (userInput[cursorPos.first].size() == 0 && userInput.size() > 1)
+                {
+                    userInput.erase(userInput.begin());
+                }
+            }
         }
 
         firstChar = findFirstChar(userInput[cursorPos.first], cursorPos.second - 1);
-        if (cursorPos.first < firstLine)
-            firstLine--;
+        firstLine = max(cursorPos.first - displayedLines + 1, 0);
         
         startPress = GetTime();
     }   
@@ -441,13 +454,14 @@ void ControlPanel::draw()
 
 void ControlPanel::drawSpeed(Rectangle bar, float margin, float fontSize)
 {
-    DrawText((const char*)"Speed:", bar.x - margin - MeasureText((const char*)"Speed:", fontSize), bar.y - (fontSize - bar.height)/2, fontSize, BLACK);
+    Vector2 textSize = MeasureTextEx(GUI::font, (const char*)"Speed:", fontSize, 0);
+    DrawTextEx(GUI::font, (const char*)"Speed:", {bar.x - margin - textSize.x, bar.y - (textSize.y - bar.height)/2}, fontSize, 0, BLACK);
     
     Vector2 pos = {
-        bar.x + (bar.width - MeasureText(TextFormat("%.2fx", speed), fontSize))/2,
+        bar.x + (bar.width - MeasureTextEx(GUI::font, TextFormat("%.2fx", speed), fontSize, 0).x) / 2,
         bar.y - fontSize
     };
-    DrawText(TextFormat("%.2fx", speed), pos.x, pos.y, fontSize, BLACK);
+    DrawTextEx(GUI::font, TextFormat("%.2fx", speed), pos, fontSize, 0, BLACK);
 }
 
 void ControlPanel::activateSpeedSilder(float &duration, int current, vector <State> &states)
@@ -609,7 +623,8 @@ void ScrollingTable::draw()
     float tmp = 0;
     for (int i = 0; i < numColumn; i++)
     {
-        DrawText(label[i].c_str(), table.x + tmp + (colWidth[i] - MeasureText(label[i].c_str(), fontSize))/2, table.y + (rowHeight - fontSize)/2, fontSize, BLACK);
+        Vector2 textSize = MeasureTextEx(GUI::font, label[i].c_str(), fontSize, 0);
+        DrawTextEx(GUI::font, label[i].c_str(), {table.x + tmp + (colWidth[i] - textSize.x)/2, table.y + (rowHeight - textSize.y)/2}, fontSize, 0, BLACK);
         tmp += colWidth[i];
     }
     
@@ -626,7 +641,8 @@ void ScrollingTable::draw()
             else DrawRectangle(scrollPoint.x + tmp, scrollPoint.y + j * rowHeight, colWidth[i], rowHeight, (Color){117, 189, 241, 240});
 
             string text = data[i][j];
-            DrawText(text.c_str(), scrollPoint.x + tmp + (colWidth[i] - MeasureText(text.c_str(), fontSize))/2, scrollPoint.y + rowHeight*j + (rowHeight - fontSize)/2, fontSize, BLACK);
+            Vector2 textSize = MeasureTextEx(GUI::font, text.c_str(), fontSize, 0);
+            DrawTextEx(GUI::font, text.c_str(), {scrollPoint.x + tmp + (colWidth[i] - textSize.x)/2, scrollPoint.y + rowHeight*j + (rowHeight - textSize.y)/2}, fontSize, 0, BLACK);
         }
 
         tmp += colWidth[i];

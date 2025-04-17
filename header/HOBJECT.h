@@ -20,13 +20,12 @@ struct TextBox
     void draw();
 };
 
-struct NavigateButton
+struct ImageButton
 {
     Texture2D img;
     Rectangle rec;
     float scale;
     float rotation;
-    Color color;
     void draw();
 };
 

@@ -22,8 +22,8 @@ struct GraphGUI
     static vector <const char*> listFunction;
     static TextBox undirectedButton;
     static TextBox directedButton;
-    static NavigateButton leftNavigationButton;
-    static NavigateButton rightNavigationButton;
+    static ImageButton leftNavigationButton;
+    static ImageButton rightNavigationButton;
     static TextBox functionTitle;
     static TextBox chooseFileButton;
     static TextBox randomButton;
@@ -44,6 +44,7 @@ struct GraphGUI
     static void GraphVisualize();
 
     static void InitObject();
+    static void UnInit();
     static void InitBackGround();
     static void InitCustomizeGraphTypeFunction();
     static void InitTitleNavigationFunction();

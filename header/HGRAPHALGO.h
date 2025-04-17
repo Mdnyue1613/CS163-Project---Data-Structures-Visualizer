@@ -16,6 +16,7 @@ struct DijkstraVisualize
     float descriptionFontSize;
     float descriptionLineSpacing;
     Vector2 descriptionPos;
+    Rectangle descriptionRec;
     float duration;
     bool mode;
     int startVertex;

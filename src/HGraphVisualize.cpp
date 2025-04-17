@@ -13,8 +13,8 @@ int GraphGUI::currentFunction = 0;
 vector <const char*> GraphGUI::listFunction = {"Initialize", "Add", "Delete", "Dijkstra"};
 TextBox GraphGUI::undirectedButton;
 TextBox GraphGUI::directedButton;
-NavigateButton GraphGUI::leftNavigationButton;
-NavigateButton GraphGUI::rightNavigationButton;
+ImageButton GraphGUI::leftNavigationButton;
+ImageButton GraphGUI::rightNavigationButton;
 TextBox GraphGUI::functionTitle;
 TextBox GraphGUI::chooseFileButton;
 TextBox GraphGUI::randomButton;
@@ -36,24 +36,25 @@ void GraphGUI::GraphVisualize()
 {
     InitObject();   
 
-    while (GUI::isOpenDS4)
+    while (GUI::isOpenDS[3])
     {
         BeginDrawing();
         DrawBackGround();
         G.DrawGraph();
         DrawFunction();
-
+        
         GUI::BACK();
+        GUI::CustomColorMode();
+
         EndDrawing();
         if(WindowShouldClose()) 
         {
-            GUI::isOpenDS4 = 0;
+            GUI::isOpenDS[3] = 0;
             break;
         }
     }
     
-    UnloadTexture(leftNavigationButton.img);
-    UnloadTexture(rightNavigationButton.img);
+    UnInit();
 }
 
 void GraphGUI::InitObject()
@@ -78,11 +79,11 @@ void GraphGUI::InitObject()
     guideTitle.thick = 2;
     guideTitle.outlineColor = BLACK;
     guideTitle.text = (const char*)"User Manual";
-    guideTitle.fontSize = guideTitle.rec.height * 2/3;
+    guideTitle.fontSize = guideTitle.rec.height * 3/4;
     guideTitle.textColor = BLACK;
     guidePos = {explainBG.rec.x + margin*3, explainBG.rec.y + margin*3};
-    guideFontSize = 17;
-    guideLineSpacing = 7;
+    guideFontSize = guideTitle.fontSize * 4/5;
+    guideLineSpacing = 5;
 
     InitShortedPathFunction();
     
@@ -95,6 +96,12 @@ void GraphGUI::InitObject()
     };
 }
 
+void GraphGUI::UnInit()
+{
+    UnloadTexture(leftNavigationButton.img);
+    UnloadTexture(rightNavigationButton.img);
+}
+
 void GraphGUI::InitBackGround()
 {
     header.rec = Rectangle{0, 0, (float)GetScreenWidth(), (float)GetScreenHeight()/10};
@@ -102,7 +109,7 @@ void GraphGUI::InitBackGround()
     header.thick = 4;
     header.outlineColor = BLACK;
     header.text = (const char*)"Graph";
-    header.fontSize = header.rec.height * 3/5;
+    header.fontSize = header.rec.height * 4/5;
     header.textColor = BLACK;
 
     graphTypeBG.rec = Rectangle{header.thick, header.rec.height + margin, (float)GetScreenWidth()/4, (float)GetScreenHeight()/16};
@@ -149,7 +156,7 @@ void GraphGUI::InitCustomizeGraphTypeFunction()
     undirectedButton.thick = 2;
     undirectedButton.outlineColor = BLACK;
     undirectedButton.text = (const char*)"Undirected";
-    undirectedButton.fontSize = undirectedButton.rec.height * 3/5;
+    undirectedButton.fontSize = undirectedButton.rec.height * 3/4;
     undirectedButton.textColor = BLACK;
 
     directedButton.rec.width = round((graphTypeBG.rec.width - margin*2*3) / 2); 
@@ -160,7 +167,7 @@ void GraphGUI::InitCustomizeGraphTypeFunction()
     directedButton.thick = 2;
     directedButton.outlineColor = BLACK;
     directedButton.text = (const char*)"Directed";
-    directedButton.fontSize = directedButton.rec.height * 3/5;
+    directedButton.fontSize = directedButton.rec.height * 3/4;
     directedButton.textColor = BLACK;
 }
 
@@ -173,26 +180,24 @@ void GraphGUI::InitTitleNavigationFunction()
     functionTitle.recColor = WHITE;
     functionTitle.thick = 2;
     functionTitle.outlineColor = BLACK;
-    functionTitle.fontSize = functionTitle.rec.height * 3/5;
+    functionTitle.fontSize = functionTitle.rec.height * 3/4;
     functionTitle.textColor = BLACK;
 
-    leftNavigationButton.img = LoadTexture("Assets/LeftArrow.png");
+    leftNavigationButton.img = LoadTexture("Assets/Images/LeftArrow.png");
     leftNavigationButton.scale = functionTitle.rec.height / leftNavigationButton.img.height;
     leftNavigationButton.rec.width = leftNavigationButton.img.width * leftNavigationButton.scale;
     leftNavigationButton.rec.height = leftNavigationButton.img.height * leftNavigationButton.scale;
     leftNavigationButton.rec.x = functionTitle.rec.x;
     leftNavigationButton.rec.y = functionTitle.rec.y;
     leftNavigationButton.rotation = 0;
-    leftNavigationButton.color = WHITE;
     
-    rightNavigationButton.img = LoadTexture("Assets/RightArrow.png");
+    rightNavigationButton.img = LoadTexture("Assets/Images/RightArrow.png");
     rightNavigationButton.scale = functionTitle.rec.height / rightNavigationButton.img.height;
     rightNavigationButton.rec.width = rightNavigationButton.img.width * rightNavigationButton.scale;
     rightNavigationButton.rec.height = rightNavigationButton.img.height * rightNavigationButton.scale;
     rightNavigationButton.rec.x = functionTitle.rec.x + functionTitle.rec.width - rightNavigationButton.rec.width;
     rightNavigationButton.rec.y = functionTitle.rec.y;
     rightNavigationButton.rotation = 0;
-    rightNavigationButton.color = WHITE;
 }
 
 void GraphGUI::InitInitializeFunction()
@@ -205,7 +210,7 @@ void GraphGUI::InitInitializeFunction()
     chooseFileButton.thick = 2;
     chooseFileButton.outlineColor = BLACK;
     chooseFileButton.text = (const char*)"From File";
-    chooseFileButton.fontSize = chooseFileButton.rec.height * 3/5;
+    chooseFileButton.fontSize = chooseFileButton.rec.height * 3/4;
     chooseFileButton.textColor = BLACK;
 
     randomButton.rec.width = round((functionBG.rec.width - margin*2*3) / 2); 
@@ -216,7 +221,7 @@ void GraphGUI::InitInitializeFunction()
     randomButton.thick = 2;
     randomButton.outlineColor = BLACK;
     randomButton.text = (const char*)"Random";
-    randomButton.fontSize = randomButton.rec.height * 3/5;
+    randomButton.fontSize = randomButton.rec.height * 3/4;
     randomButton.textColor = BLACK;
 
     inputBox.displayedLines = 3;
@@ -229,7 +234,7 @@ void GraphGUI::InitInitializeFunction()
     inputBox.box.thick = 2;
     inputBox.box.outlineColor = BLACK;
     inputBox.box.text = (const char*)"Enter your data";
-    inputBox.box.fontSize = inputBox.box.rec.height / inputBox.displayedLines * 3/5;
+    inputBox.box.fontSize = inputBox.box.rec.height / inputBox.displayedLines * 3/4;
     inputBox.box.textColor = GRAY;
     inputBox.userInput.resize(1);
     inputBox.fontSize = inputBox.box.fontSize;
@@ -264,7 +269,7 @@ void GraphGUI::InitAddFunction()
     addBox.box.thick = 2;
     addBox.box.outlineColor = BLACK;
     addBox.box.text = (const char*)"Enter your data";
-    addBox.box.fontSize = addBox.box.rec.height / addBox.displayedLines * 3/5;
+    addBox.box.fontSize = addBox.box.rec.height / addBox.displayedLines * 3/4;
     addBox.box.textColor = GRAY;
     addBox.userInput.resize(1);
     addBox.fontSize = addBox.box.fontSize;
@@ -292,7 +297,7 @@ void GraphGUI::InitDeleteFunction()
     deleteBox.box.thick = 2;
     deleteBox.box.outlineColor = BLACK;
     deleteBox.box.text = (const char*)"Enter your data";
-    deleteBox.box.fontSize = deleteBox.box.rec.height / deleteBox.displayedLines * 3/5;
+    deleteBox.box.fontSize = deleteBox.box.rec.height / deleteBox.displayedLines * 3/4;
     deleteBox.box.textColor = GRAY;
     deleteBox.userInput.resize(1);
     deleteBox.fontSize = deleteBox.box.fontSize;
@@ -317,6 +322,7 @@ void GraphGUI::InitShortedPathFunction()
     Dijkstra.descriptionFontSize = guideFontSize;
     Dijkstra.descriptionLineSpacing = guideLineSpacing;
     Dijkstra.descriptionPos = guidePos;
+    Dijkstra.descriptionRec = explainBG.rec;
     Dijkstra.duration = 1.5f;
     Dijkstra.mode = 0;
     Dijkstra.startVertex = -1;
@@ -332,7 +338,7 @@ void GraphGUI::InitShortedPathFunction()
     Dijkstra.autoButton.thick = 2;
     Dijkstra.autoButton.outlineColor = BLACK;
     Dijkstra.autoButton.text = (const char*)"Auto";
-    Dijkstra.autoButton.fontSize = Dijkstra.autoButton.rec.height * 3/5;
+    Dijkstra.autoButton.fontSize = Dijkstra.autoButton.rec.height * 3/4;
     Dijkstra.autoButton.textColor = BLACK;
 
     Dijkstra.stepByStepButton.rec.width = round((functionBG.rec.width - margin*2*3) / 2); 
@@ -343,7 +349,7 @@ void GraphGUI::InitShortedPathFunction()
     Dijkstra.stepByStepButton.thick = 2;
     Dijkstra.stepByStepButton.outlineColor = BLACK;
     Dijkstra.stepByStepButton.text = (const char*)"Step by step";
-    Dijkstra.stepByStepButton.fontSize = Dijkstra.stepByStepButton.rec.height * 3/5;
+    Dijkstra.stepByStepButton.fontSize = Dijkstra.stepByStepButton.rec.height * 3/4;
     Dijkstra.stepByStepButton.textColor = BLACK;
 
     Dijkstra.inputBox.displayedLines = 1;
@@ -356,7 +362,7 @@ void GraphGUI::InitShortedPathFunction()
     Dijkstra.inputBox.box.thick = 2;
     Dijkstra.inputBox.box.outlineColor = BLACK;
     Dijkstra.inputBox.box.text = (const char*)"Enter your data";
-    Dijkstra.inputBox.box.fontSize = Dijkstra.inputBox.box.rec.height / Dijkstra.inputBox.displayedLines * 3/5;
+    Dijkstra.inputBox.box.fontSize = Dijkstra.inputBox.box.rec.height / Dijkstra.inputBox.displayedLines * 3/4;
     Dijkstra.inputBox.box.textColor = GRAY;
     Dijkstra.inputBox.userInput.resize(1);
     Dijkstra.inputBox.fontSize = Dijkstra.inputBox.box.fontSize;
@@ -408,7 +414,7 @@ void GraphGUI::InitShortedPathFunction()
     Dijkstra.controlPanel.statusSlider.minValue = 0;
 
     float fontSize = Dijkstra.autoButton.fontSize;
-    float textLen = MeasureText((const char*)"Speed:", fontSize);
+    float textLen = MeasureTextEx(GUI::font, (const char*)"Speed:", fontSize, 0).x;
     Dijkstra.controlPanel.speedSlider.bar.width = Dijkstra.controlPanel.rec.width - textLen - margin*2;
     Dijkstra.controlPanel.speedSlider.bar.height = Dijkstra.controlPanel.rec.height / 10;
     Dijkstra.controlPanel.speedSlider.bar.x = Dijkstra.controlPanel.rec.x + textLen + margin*2;
@@ -456,6 +462,7 @@ void GraphGUI::DrawBackGround()
     functionBG.draw();
     guideBG.draw();
     explainBG.draw();
+    DrawRectangle(G.workspace.x, G.workspace.y, GetScreenWidth() - G.workspace.x, GetScreenHeight() - G.workspace.y, GUI::BackGroundColor[GUI::ColorMode]);
 }
 
 void GraphGUI::DrawFunction()
@@ -533,8 +540,6 @@ void GraphGUI::DrawNavigationButton()
     Vector2 mouse = GetMousePosition();
     if (!freeze && CheckCollisionPointRec(mouse, leftNavigationButton.rec))
     {
-        leftNavigationButton.color = LIGHTGRAY;
-        leftNavigationButton.draw();
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
         {
             if (G.workspace.width != GetScreenWidth() - (graphTypeBG.rec.x + graphTypeBG.rec.width))
@@ -549,12 +554,9 @@ void GraphGUI::DrawNavigationButton()
             currentFunction--;
             if (currentFunction < 0) currentFunction += listFunction.size();
         }
-        leftNavigationButton.color = WHITE;
     }
     else if (!freeze && CheckCollisionPointRec(mouse, rightNavigationButton.rec))
     {
-        rightNavigationButton.color = LIGHTGRAY;
-        rightNavigationButton.draw();
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
         {
             if (G.workspace.width != GetScreenWidth() - (graphTypeBG.rec.x + graphTypeBG.rec.width))
@@ -569,7 +571,6 @@ void GraphGUI::DrawNavigationButton()
             currentFunction++;
             if (currentFunction == listFunction.size()) currentFunction = 0;
         }
-        rightNavigationButton.color = WHITE; 
     }
 }
 
@@ -581,7 +582,7 @@ void GraphGUI::DrawGuide(vector <string> &guide)
         float posX = guidePos.x;
         float posY = guidePos.y + i * (guideFontSize + guideLineSpacing);
             
-        DrawText(guide[i].c_str(), posX, posY, guideFontSize, BLACK);
+        DrawTextEx(GUI::font, guide[i].c_str(), {posX, posY}, guideFontSize, 0, BLACK);
     }
 }
 
@@ -637,7 +638,7 @@ void GraphGUI::DrawInitializeFunction()
         GoButton.rec.y = round(inputBox.box.rec.y + inputBox.box.rec.height + margin*2);
         GoButton.rec.width = round((functionBG.rec.width - margin*2*2)); 
         GoButton.rec.height = round(functionBG.rec.height / 8);
-        GoButton.fontSize = GoButton.rec.height * 3/5;
+        GoButton.fontSize = GoButton.rec.height * 3/4;
     }
     GoButton.draw();
     if (!freeze && CheckCollisionPointRec(mouse, GoButton.rec))
@@ -680,7 +681,7 @@ void GraphGUI::DrawAddFunction()
         GoButton.rec.y = round(addBox.box.rec.y + addBox.box.rec.height + margin*2);
         GoButton.rec.width = round((functionBG.rec.width - margin*2*2)); 
         GoButton.rec.height = round(functionBG.rec.height / 8);
-        GoButton.fontSize = GoButton.rec.height * 3/5;
+        GoButton.fontSize = GoButton.rec.height * 3/4;
     }
 
     addBox.draw();
@@ -728,7 +729,7 @@ void GraphGUI::DrawDeleteFunction()
         GoButton.rec.y = round(deleteBox.box.rec.y + deleteBox.box.rec.height + margin*2);
         GoButton.rec.width = round((functionBG.rec.width - margin*2*2)); 
         GoButton.rec.height = round(functionBG.rec.height / 8);
-        GoButton.fontSize = GoButton.rec.height * 3/5;
+        GoButton.fontSize = GoButton.rec.height * 3/4;
     }
 
     deleteBox.draw();
@@ -822,7 +823,7 @@ void GraphGUI::DrawShortedPathFunction()
     GoButton.rec.y = round(Dijkstra.controlPanel.rec.y + Dijkstra.controlPanel.rec.height + margin*2);
     GoButton.rec.width = round((functionBG.rec.width - margin*2*2)); 
     GoButton.rec.height = round(functionBG.rec.height / 8);
-    GoButton.fontSize = GoButton.rec.height * 3/5;
+    GoButton.fontSize = GoButton.rec.height * 3/4;
     
     GoButton.draw();
     Vector2 mouse = GetMousePosition();
@@ -887,7 +888,7 @@ void GraphGUI::Notify(const char *message)
     notification.fontSize = notification.rec.height / 4;
     if (strlen(message) > 0)
         notification.text = message;
-    notification.rec.width = MeasureText(notification.text, notification.fontSize) + notification.fontSize * 2;
+    notification.rec.width = MeasureTextEx(GUI::font, notification.text, notification.fontSize, 0).x + MeasureTextEx(GUI::font, notification.text, notification.fontSize, 0).y * 2;
     notification.rec.x = round(G.workspace.x + (G.workspace.width - notification.rec.width) / 2);
     notification.rec.y = round(G.workspace.y + (G.workspace.height - notification.rec.height) / 2);
     notification.recColor = WHITE;
@@ -904,7 +905,7 @@ void GraphGUI::Notify(const char *message)
     confirmButton.thick = 2;
     confirmButton.outlineColor = BLACK;
     confirmButton.text = (const char*)"OK";
-    confirmButton.fontSize = confirmButton.rec.height * 3/5;
+    confirmButton.fontSize = confirmButton.rec.height * 3/4;
     confirmButton.textColor = BLACK;
 
     notification.draw();

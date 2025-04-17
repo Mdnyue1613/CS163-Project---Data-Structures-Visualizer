@@ -1,6 +1,7 @@
 #include "../header/HGRAPH.h"
 #include "../header/HOBJECT.h"
 #include "../header/HGraphVisualize.h"
+#include "../header/GUI.h"
 
 void Graph::Initialize()
 {
@@ -26,24 +27,25 @@ void Graph::DrawGraph()
     for (int i = 0; i <= numVertex; i++)
         for (Edge &edge : g[i])
             if (edge.real)
-                DrawEdge(vertex[i].position, vertex[edge.to].position, edge.weight, connections[i][edge.to], BLACK);
+                DrawEdge(vertex[i].position, vertex[edge.to].position, edge.weight, connections[i][edge.to], GUI::BackGroundColor[GUI::ColorMode ^ 1]);
     
     for (int i = 0; i <= numVertex; i++)
         if (vertex[i].real) 
         {
             if (vertex[i].isClick) DrawVertex(i, CORALRED);
-            else DrawVertex(i, BLACK);
+            else DrawVertex(i, GUI::BackGroundColor[GUI::ColorMode ^ 1]);
         }
             
 }
 
 void Graph::DrawVertex(int ID, Color color)
 { 
-    DrawCircleV(vertex[ID].position, vertexRadius, WHITE);
+    DrawCircleV(vertex[ID].position, vertexRadius, GUI::BackGroundColor[GUI::ColorMode]);
     DrawRing(vertex[ID].position, vertexRadius, vertexRadius + thick, 0, 360, 30, color);
 
     string text = to_string(ID);
-    DrawText(text.c_str(), vertex[ID].position.x - MeasureText(text.c_str(), fontSize)/2, vertex[ID].position.y - fontSize/2, fontSize, BLACK);
+    Vector2 textSize = MeasureTextEx(GUI::font, text.c_str(), fontSize, 0);
+    DrawTextEx(GUI::font, text.c_str(), {vertex[ID].position.x - textSize.x/2, vertex[ID].position.y - textSize.y/2}, fontSize, 0, GUI::BackGroundColor[GUI::ColorMode ^ 1]);
 }
 
 void Graph::DrawEdge(Vector2 start, Vector2 end, int weight, int connections, Color color)
@@ -76,11 +78,12 @@ void Graph::DrawEdge(Vector2 start, Vector2 end, int weight, int connections, Co
     string text = to_string(weight);
     Vector2 textPos = Vector2Scale(Vector2Add(start, end), 0.5f);
     float wFontSize = fontSize * 8/9;
-    float diag = sqrt(wFontSize * wFontSize + MeasureText(text.c_str(), wFontSize) * MeasureText(text.c_str(), wFontSize));
+    Vector2 textSize = MeasureTextEx(GUI::font, text.c_str(), wFontSize, 0);
+    float diag = sqrt(textSize.y * textSize.y + textSize.x * textSize.x);
     textPos.x += cos(perAngle) * diag;
     textPos.y += sin(perAngle) * diag;
         
-    DrawText(text.c_str(), textPos.x, textPos.y, wFontSize, color);
+    DrawTextEx(GUI::font, text.c_str(), textPos, wFontSize, 0, color);
 }
 
 void Graph::ChangeGraphType()
@@ -122,20 +125,17 @@ void Graph::MoveVertex()
     
     if (u != -1)
     {
+        stable = 0;
         if (IsMouseButtonDown(MOUSE_LEFT_BUTTON))
         {
             displacement = Vector2Subtract(mouse, vertex[u].lastMousePos);
             if (Vector2Length(displacement) > 0) 
                 vertex[u].lastMousePos = mouse;
         }
-        else 
-        {
-            vertex[u].isClick = 0;
-            stable = 0;
-        }
+        else vertex[u].isClick = 0;
 
-        if (Vector2Length(displacement) >= vertexRadius / 3)
-            vertex[u].position = Vector2Add(vertex[u].position, displacement);
+        if (Vector2Length(displacement) > 0)
+            vertex[u].position = Vector2Add(vertex[u].position, Vector2Multiply(displacement, {1.25f, 1.25f}));
         
         vertex[u].position.x = max(vertex[u].position.x, workspace.x +vertexRadius*2);
         vertex[u].position.x = min(vertex[u].position.x, workspace.x + workspace.width - vertexRadius*2);
@@ -150,7 +150,6 @@ void Graph::MoveVertex()
                 if (CheckCollisionPointCircle(mouse, vertex[i].position, vertexRadius) && IsMouseButtonDown(MOUSE_LEFT_BUTTON))
                 {
                     vertex[i].isClick = 1;
-                    stable = 0;
                     vertex[i].lastMousePos = mouse;
                 }
             }
