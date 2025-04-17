@@ -5,6 +5,12 @@
 #include "DS1.h"
 #include "LActionBox.h"
 #include <chrono>
+#include "HGraphVisualize.h"
+#include "BOX.h"
+#include "LInputBox.h"
+#include "AVL.h"
+#include "DS2.h"
+#include <iostream>
 using namespace chrono;
 using namespace std;
 

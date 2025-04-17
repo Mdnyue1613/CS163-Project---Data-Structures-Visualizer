@@ -9,6 +9,7 @@
 #include "PTaskManagement.h"
 #include "PDSAnimation.h"
 #include "PExplanationArea.h"
+#include "PNotification.h"
 #include <string>
 #include <vector>
 #include <random>
@@ -24,6 +25,7 @@ struct DS1 {
     PTaskManagement taskManagement;
     PDSAnimation animationManagement;
     PExplanationArea explanationArea;
+    PNotification notificationBox;
 
     enum taskType {
         Initialize,
@@ -46,7 +48,6 @@ struct DS1 {
 
     // Initialize mode functions
     bool operateInitialize(vector<string>& request, int stepRequest, string& explanationText); // Operate initializing request: return true when done
-    vector<int> stringToVectorInt(string& s);
     void vectorIntInitialize(vector<int>& vi);
 
     // Insert mode functions

@@ -218,9 +218,7 @@ bool PDSAnimation::undoInsertHead0(int value, int stepRequest, string& explanati
     return false;
 }
 bool PDSAnimation::undoInsertHead1(int value, int stepRequest, string& explanationText) {
-    cout << "Called undoInsertHead1( " << value << ", " << stepRequest << ", " << explanationText << ")\n";
     bool condition = taskManagementPointer->getCondition();
-    cout << "Ended undoInsertHead1( " << value << ", " << stepRequest << ", " << explanationText << ")\n";
     if(condition == true) {
         dataStructurePointer->setHighlightHead(false);
         dataStructurePointer->setHeadToNull();
@@ -301,7 +299,6 @@ bool PDSAnimation::insertTail(int value, int stepRequest, string& explanationTex
     if(taskManagementPointer->doneTask() && forward)
         return true;
     int step = taskManagementPointer->getStep();
-    cout << step << ' ';
     // Step 0
     if(step == 0) {
         done = forward ? insertTailStep0(value, stepRequest, explanationText) : false;
@@ -607,7 +604,6 @@ bool PDSAnimation::insertAfter(int position, int value, int stepRequest, string&
     return done;
 }
 bool PDSAnimation::insertAfterStep0(int position, int value, int stepRequest, string& explanationText) {
-    cout << "Insert after step 0 \n";
     // 00. Node* prev = head;
     bool done = (waitRequest == false && taskManagementPointer->getTime() > PConstants::PAnimation::waitTime);
     // Begin algorithm
@@ -647,7 +643,6 @@ bool PDSAnimation::insertAfterStep0(int position, int value, int stepRequest, st
     return false;
 }
 bool PDSAnimation::insertAfterStep1(int position, int value, int stepRequest, string& explanationText) {
-    cout << "Insert after step 1 \n";
     // for(int i = 0; i < position && prev != nullptr; i++)
     bool done = (waitRequest == false && taskManagementPointer->getTime() > PConstants::PAnimation::waitTime);
     // Begin algorithm
@@ -697,7 +692,6 @@ bool PDSAnimation::insertAfterStep1(int position, int value, int stepRequest, st
     return false;
 }
 bool PDSAnimation::insertAfterStep2(int position, int value, int stepRequest, string& explanationText) {
-    cout << "Insert after step 2 \n";
     // 02.     prev = prev->pNext;
     bool done = (waitRequest == false && taskManagementPointer->getTime() > PConstants::PAnimation::waitTime);
     // Begin algorithm
@@ -708,8 +702,10 @@ bool PDSAnimation::insertAfterStep2(int position, int value, int stepRequest, st
             dataStructurePointer->animationPrev = dataStructurePointer->animationPrev->pNext;
             recordInt(&dataStructurePointer->prevPosition);
             dataStructurePointer->prevPosition++;
-            recordBool(&dataStructurePointer->animationPrev->highlight);
-            dataStructurePointer->animationPrev->highlight = true;
+            if(dataStructurePointer->animationPrev != nullptr) {
+                recordBool(&dataStructurePointer->animationPrev->highlight);
+                dataStructurePointer->animationPrev->highlight = true;
+            }
         }
         makeVersion();
     }
@@ -728,23 +724,31 @@ bool PDSAnimation::insertAfterStep2(int position, int value, int stepRequest, st
     if(done) {
         bool condition = taskManagementPointer->getCondition();
         if(condition == true) {
-            recordBool(&dataStructurePointer->animationPrev->highlight);
-            dataStructurePointer->animationPrev->highlight = false;
+            if(dataStructurePointer->animationPrev != nullptr) {
+                recordBool(&dataStructurePointer->animationPrev->highlight);
+                dataStructurePointer->animationPrev->highlight = false;
+            }
             recordFloat(&taskManagementPointer->time);
             recordInt(&taskManagementPointer->step);
             recordBool(&taskManagementPointer->taskDone);
             taskManagementPointer->prevStep();
+            recordVectorBool(&taskManagementPointer->conditionStack);
+            taskManagementPointer->popCondition();
+            // Skip
+            if(stepRequest == skipForward) {
+                return insertAfterStep1(position, value, stepRequest, explanationText);
+            }
         }
         else {
             recordFloat(&taskManagementPointer->time);
             recordInt(&taskManagementPointer->step);
             taskManagementPointer->nextStep();
-        }
-        recordVectorBool(&taskManagementPointer->conditionStack);
-        taskManagementPointer->popCondition();
-        // Skip
-        if(stepRequest == skipForward) {
-            return insertAfterStep3(position, value, stepRequest, explanationText);
+            recordVectorBool(&taskManagementPointer->conditionStack);
+            taskManagementPointer->popCondition();
+            // Skip
+            if(stepRequest == skipForward) {
+                return insertAfterStep3(position, value, stepRequest, explanationText);
+            }
         }
     }
     // Update time
@@ -752,7 +756,6 @@ bool PDSAnimation::insertAfterStep2(int position, int value, int stepRequest, st
     return false;
 }
 bool PDSAnimation::insertAfterStep3(int position, int value, int stepRequest, string& explanationText) {
-    cout << "Insert after step 3 \n";
     // 03. if(prev != nullptr):
     bool done = (waitRequest == false && taskManagementPointer->getTime() > PConstants::PAnimation::waitTime);
     // Begin algorithm
@@ -795,7 +798,6 @@ bool PDSAnimation::insertAfterStep3(int position, int value, int stepRequest, st
     return false;
 }
 bool PDSAnimation::insertAfterStep4(int position, int value, int stepRequest, string& explanationText) {
-    cout << "Insert after step 4 \n";
     // 04.     Node* tmp = new Node(x);
     bool done = (waitRequest == false && (taskManagementPointer->getCondition() ? 
             dataStructurePointer->animationTmp != nullptr && dataStructurePointer->animationTmp->center == dataStructurePointer->animationTmp->centerFrom :
@@ -838,7 +840,6 @@ bool PDSAnimation::insertAfterStep4(int position, int value, int stepRequest, st
     return false;
 }
 bool PDSAnimation::insertAfterStep5(int position, int value, int stepRequest, string& explanationText) {
-    cout << "Insert after step 5 \n";
     // 05.     tmp->pNext = prev->pNext;
     bool done = (waitRequest == false && taskManagementPointer->getTime() > PConstants::PAnimation::waitTime);
     // Begin algorithm
@@ -879,7 +880,6 @@ bool PDSAnimation::insertAfterStep5(int position, int value, int stepRequest, st
     return false;
 }
 bool PDSAnimation::insertAfterStep6(int position, int value, int stepRequest, string& explanationText) {
-    cout << "Insert after step 6 \n";
     // 06.     prev->pNext = tmp;
     bool done = (waitRequest == false && taskManagementPointer->getTime() > PConstants::PAnimation::waitTime);
     // Begin algorithm
@@ -921,7 +921,6 @@ bool PDSAnimation::insertAfterStep6(int position, int value, int stepRequest, st
     return false;
 }
 bool PDSAnimation::insertAfterStep7(int position, int value, int stepRequest, string& explanationText) {
-    cout << "Insert after step 7 \n";
     // 07.     tmp->pPrev = prev;
     bool done = (waitRequest == false && taskManagementPointer->getTime() > PConstants::PAnimation::waitTime);
     // Begin algorithm
@@ -963,7 +962,6 @@ bool PDSAnimation::insertAfterStep7(int position, int value, int stepRequest, st
     return false;
 }
 bool PDSAnimation::insertAfterStep8(int position, int value, int stepRequest, string& explanationText) {
-    cout << "Insert after step 8 \n";
     // 08.     if(tmp->pNext != nullptr) 
     bool done = (waitRequest == false && taskManagementPointer->getTime() > PConstants::PAnimation::waitTime);
     // Begin algorithm
@@ -1016,7 +1014,6 @@ bool PDSAnimation::insertAfterStep8(int position, int value, int stepRequest, st
     return false;
 }
 bool PDSAnimation::insertAfterStep9(int position, int value, int stepRequest, string& explanationText) {
-    cout << "Insert after step 9 \n";
     // 09.         tmp->pNext->pPrev = tmp;
     bool done = (waitRequest == false && taskManagementPointer->getTime() > PConstants::PAnimation::waitTime);
     // Begin algorithm
@@ -1068,7 +1065,6 @@ bool PDSAnimation::insertAfterStep9(int position, int value, int stepRequest, st
     return false;
 }
 bool PDSAnimation::insertAfterStep10(int position, int value, int stepRequest, string& explanationText) {
-    cout << "Insert after step 10 \n";
     // 10.     if(prev == tail)
     bool done = (waitRequest == false && taskManagementPointer->getTime() > PConstants::PAnimation::waitTime);
     // Begin algorithm
@@ -1120,7 +1116,6 @@ bool PDSAnimation::insertAfterStep10(int position, int value, int stepRequest, s
     return false;
 }
 bool PDSAnimation::insertAfterStep11(int position, int value, int stepRequest, string& explanationText) {
-    cout << "Insert after step 11 \n";
     // 11.         tail = tmp;
     bool done = (waitRequest == false && taskManagementPointer->getTime() > PConstants::PAnimation::waitTime);
     // Begin algorithm

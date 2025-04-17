@@ -1,16 +1,11 @@
 #include "../header/GUI.h"
-#include "../header/HGraphVisualize.h"
-#include "../header/BOX.h"
-#include "../header/LInputBox.h"
-#include "../header/AVL.h"
-#include "../header/DS2.h"
 
-#include <iostream>
 void GUI::startProgram() {
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     InitWindow(1200, 800, "Hello Raylib");
     linkedListVisualizer.prepare();
     ds3.prepare();
+    GraphGUI::InitializeObject();
     SetTargetFPS(60);
     while(isOpenDS1 || isOpenDS2 || isOpenDS3 || isOpenDS4 || isOpenMenu) {
         drawMenu();
