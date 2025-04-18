@@ -157,15 +157,6 @@ namespace PConstants {
         const Vector2 headPosition = {400, 200};
     };
 
-    namespace DS3 {
-        // Color
-        static Color innerColor = BLUE;
-        static Color innerHighlightColor = YELLOW;
-
-        // Speed
-        static float speed = 1.f;
-    }
-
     namespace PNode {
         // Node radius
         const float innerRadius = 20.f; // Radius of content region

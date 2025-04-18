@@ -1,7 +1,6 @@
 #include "../header/HOBJECT.h"
 #include "../header/HGRAPH.h"
 #include "../header/HGraphVisualize.h"
-#include <iostream>
 
 void TextBox::draw()
 {

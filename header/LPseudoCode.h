@@ -9,7 +9,7 @@ using namespace std;
 
 struct LPseudoCode{
     Rectangle backGround;
-    int numLine;
+    const int numLine = 6;
     vector<Rectangle> codeLine;
     vector<Color> codeLineColor;
     vector<string> pseudoCode;
@@ -28,7 +28,6 @@ struct LPseudoCode{
         textColor = other.textColor;
         fontSize = other.fontSize;
     }
-    LPseudoCode(const vector<string>& PseudoCode, int numLine);
     void update(int line);
     void draw();
 };

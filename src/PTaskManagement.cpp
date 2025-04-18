@@ -4,57 +4,38 @@ PTaskManagement::PTaskManagement(void) : step(0), time(0.f), taskDone(false) {
     task.clear();
 }
 
-bool PTaskManagement::takeRequest(vector<string> request) {
+void PTaskManagement::takeRequest(vector<string> request) {
     if(doneTask() == false)
-        return false;
+        return;
 
     if(request.size() == 1 || request[1] == "nothing") {
-        return false;
+        return;
     }
+
+    cout << "Recieve task ";
+    for(string task : request) {
+        cout << task << ' ';
+    }
+    cout << '\n';
     
     nextTask();
     task = request;
-    return true;
-}
-
-void PTaskManagement::pushRecursionStack(TreeNode** node) {
-    TreeNodeRecursionStack.push_back(node);
-}
-
-void PTaskManagement::popRecursionStack(void) {
-    if((int)TreeNodeRecursionStack.empty()) {
-        cerr << "Error: PTaskManagement::popRecursionStack()\n";
-        exit(1);
-    }
-    TreeNodeRecursionStack.pop_back();
-}
-
-int PTaskManagement::getRecursionStackSize(void) {
-    return TreeNodeRecursionStack.size();
-}
-
-TreeNode** PTaskManagement::getTreeNode(int i) {
-    if(i >= (int)TreeNodeRecursionStack.size()) {
-        cerr << "Error: PTaskManagement::getTreeNode()\n";
-        exit(1);
-    }
-    return TreeNodeRecursionStack[TreeNodeRecursionStack.size() - 1 - i];
 }
 
 void PTaskManagement::takeCondition(bool condition) {
-    conditionStack.push_back(condition);
+    conditionStack.push(condition);
 }
 
-bool PTaskManagement::getCondition(int i) {
-    if(i >= (int)conditionStack.size()) {
-        cerr << "Error: PTaskManagement::getCondition(" << i << ")\n";
+bool PTaskManagement::getCondition(void) {
+    if(conditionStack.empty()) {
+        cerr << "Error: PTaskManagement::getCondition()\n";
         exit(1);
     }
-    return conditionStack[i];
+    return conditionStack.top();
 }
 
 void PTaskManagement::popCondition(void) {
-    conditionStack.pop_back();
+    conditionStack.pop();
 }
 
 int PTaskManagement::getNumCondition(void) {
@@ -66,12 +47,12 @@ int PTaskManagement::getStep(void) {
 }
 
 void PTaskManagement::nextStep(void) {
-    time = 0.f;
+    time = 0;
     step++;
 }
 
 void PTaskManagement::prevStep(void) {
-    time = 0.f;
+    time = 0;
     step--;
     taskDone = false;
 }
@@ -85,7 +66,7 @@ int PTaskManagement::getTaskType(void) {
         return Initilize;
     else if(type == "insert")
         return Insert;
-    else if(type == "remove") 
+    else if(type == "delete") 
         return Delete;
     else if(type == "search")
         return Search;

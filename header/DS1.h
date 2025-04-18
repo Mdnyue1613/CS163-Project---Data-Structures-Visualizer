@@ -9,7 +9,6 @@
 #include "PTaskManagement.h"
 #include "PDSAnimation.h"
 #include "PExplanationArea.h"
-#include "PNotification.h"
 #include <string>
 #include <vector>
 #include <random>
@@ -20,19 +19,17 @@ struct DS1 {
     PTitleBox titleBox;
     PFunctionArea functionArea;
     PStepByStepMenu stepByStepMenu;
-    DoublyLinkedList * doublyLinkedList;
+    DoublyLinkedList doublyLinkedList;
     PRandom randomGenerator;
     PTaskManagement taskManagement;
     PDSAnimation animationManagement;
     PExplanationArea explanationArea;
-    PNotification notificationBox;
 
     enum taskType {
         Initialize,
         Insert,
-        Remove,
+        Delete,
         Search,
-        Update,
         NoTask
     };
 
@@ -49,17 +46,9 @@ struct DS1 {
 
     // Initialize mode functions
     bool operateInitialize(vector<string>& request, int stepRequest, string& explanationText); // Operate initializing request: return true when done
+    vector<int> stringToVectorInt(string& s);
     void vectorIntInitialize(vector<int>& vi);
 
     // Insert mode functions
     bool operateInsert(vector<string>& request, int stepRequest, string& explanationText); // Operate inserting request: return true when done
-
-    // Remove mode functions
-    bool operateRemove(vector<string>& request, int stepRequest, string& explanationText); // Operate removing request: return true when done
-
-    // Search mode functions
-    bool operateSearch(vector<string>& request, int stepRequest, string& explanationText); // Operate searching request: return true when done
-    
-    // Update mode functiond
-    bool operateUpdate(PNode* chosen, vector<string>& request, int stepRequest, string& explanationText); // Operate update request: return true when done
 };

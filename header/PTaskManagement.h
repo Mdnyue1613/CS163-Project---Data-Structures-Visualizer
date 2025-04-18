@@ -5,7 +5,6 @@
 #include<stack>
 #include<string>
 #include<raylib.h>
-#include"LTreeNode.h"
 using namespace std;
 
 struct PTaskManagement {
@@ -18,21 +17,14 @@ struct PTaskManagement {
     int step;
     vector<string> task;
     bool taskDone;
-    vector<bool> conditionStack, undoCondtionStack;
+    stack<bool> conditionStack, undoCondtionStack;
     float time;
-    vector<TreeNode**> TreeNodeRecursionStack;
 
     PTaskManagement(void);
 
-    // Recursion
-    void pushRecursionStack(TreeNode** node); // Push new node into the recursion stack
-    void popRecursionStack(void); // Pop the lastest node in the recursion stack
-    int getRecursionStackSize(void); // Get the size of the recursion stack
-    TreeNode** getTreeNode(int i = 0); // Get the lastest node in the recursion stack
-
     // Condition stack
     void takeCondition(bool condition); // Push new condition into the condition stack
-    bool getCondition(int i = 0); // Get the lastest condition
+    bool getCondition(void); // Get the lastest condition
     void popCondition(void); // Delete the lastest condition
     int getNumCondition(void); // Get the number of conditions
 
@@ -49,7 +41,7 @@ struct PTaskManagement {
         Search,
         NoRequest
     };
-    bool takeRequest(vector<string> request); // Push new request into task queue, return true if pushed a new request
+    void takeRequest(vector<string> request); // Push new request into task queue
     int getTaskType(void); // Get the type of the task
     vector<string> getTask(void); // Get the task
     void endTask(void); // End a task
