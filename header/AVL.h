@@ -108,7 +108,4 @@ struct AVL {
     void updateHeightInPath();
     void insertNodeRunAtOnce(TreeNode *&root, TreeNode *parent, int x);
     void findNode(TreeNode*& root, int x);
-    vector<AVL> vectorInsertAnimation();
-    vector<AVL> vectorDeleteAnimation();
-    vector<AVL> vectorFindAnimation();
 };

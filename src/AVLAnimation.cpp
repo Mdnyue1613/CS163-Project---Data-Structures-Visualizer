@@ -189,15 +189,14 @@ void AVL::insertAnimation() {
         rotationNode = nullptr;
         animationStep = 0;
         selectionNode = nullptr;
+        explanationArea.update("");
+        PseudoCodeArea.update(-1);
         drawTree();
         break;
     }
     drawTree();
 }
 
-vector<AVL> AVL::vectorInsertAnimation() {
-    
-}
 
 void AVL::deleteAnimation() {
     switch (animationStep) {
@@ -398,6 +397,8 @@ void AVL::deleteAnimation() {
         rotationNode = nullptr;
         selectionNode = nullptr;
         animationStep = 0;
+        explanationArea.update("");
+        PseudoCodeArea.update(-1);
         drawTree();
         break;
     }
