@@ -271,33 +271,26 @@ bool AVL::insertAnimationV2(int val, int stepRequest, PTaskManagement * taskMana
     return done;
 }
 bool AVL::insertStep0(int val, int stepRequest, PTaskManagement * taskManagement) {
-    cout << "insertStep0" << endl;
     // 00. insertAVL(Node * & root, int data) :
-    bool done = (waitRequest == false && taskManagement->getRecursionStackSize() > 0 && taskManagement->getTime() > PConstants::PAnimation::waitTime);
+    bool done = (waitRequest == false && taskManagement->getTime() > PConstants::PAnimation::waitTime);
     // Begin algorithm
     if(taskManagement->getTime() == 0.f) {
+        animation.recordVersion();
         if(*taskManagement->getTreeNode() != nullptr) {
             animation.recordColor(&(*taskManagement->getTreeNode())->color);
             (*taskManagement->getTreeNode())->color = PConstants::DS3::innerHighlightColor;
             animation.recordBool(&(*taskManagement->getTreeNode())->isHighlight);
             (*taskManagement->getTreeNode())->isHighlight = true;
         }
-        animation.recordVersion();
     }
     // Explanation
-
+    explanationArea.update("Begin recursion.");
     // Skip
     if(stepRequest == goForward || stepRequest == skipForward) {
         done = true;
     }
     // End algorithm
     if(done) {
-        if(*taskManagement->getTreeNode() != nullptr) {
-            animation.recordColor(&(*taskManagement->getTreeNode())->color);
-            (*taskManagement->getTreeNode())->color = PConstants::DS3::innerColor;
-            animation.recordBool(&(*taskManagement->getTreeNode())->isHighlight);
-            (*taskManagement->getTreeNode())->isHighlight = false;
-        }
         animation.recordFloat(&taskManagement->time);
         animation.recordInt(&taskManagement->step);
         taskManagement->nextStep();
@@ -311,11 +304,11 @@ bool AVL::insertStep0(int val, int stepRequest, PTaskManagement * taskManagement
     return false;
 }
 bool AVL::insertStep1(int val, int stepRequest, PTaskManagement * taskManagement) {
-    cout << "insertStep1" << endl;
     // 01.	if root == nullptr :	root = new Node(value), return
-    bool done = (waitRequest == false && taskManagement->getRecursionStackSize() > 0 && taskManagement->getTime() > PConstants::PAnimation::waitTime);
+    bool done = (waitRequest == false && taskManagement->getTime() > PConstants::PAnimation::waitTime);
     // Begin algorithm
     if(taskManagement->getTime() == 0.f) {
+        animation.recordVersion();
         bool con0 = *taskManagement->getTreeNode() == nullptr;
         animation.recordVectorBool(&taskManagement->conditionStack);
         taskManagement->takeCondition(con0);
@@ -324,31 +317,37 @@ bool AVL::insertStep1(int val, int stepRequest, PTaskManagement * taskManagement
             *taskManagement->getTreeNode() = new TreeNode(val);
             if(taskManagement->getRecursionStackSize() > 1) {
                 (*taskManagement->getTreeNode())->parent = *taskManagement->getTreeNode(1);
+                (*taskManagement->getTreeNode())->isLeft = (*taskManagement->getTreeNode(1))->val > val;
             }
-            animation.recordTreeNodePointerVector(&allNode);
-            allNode.push_back(*taskManagement->getTreeNode());
             // Recording has already been done inside
             updateTreePosition();
+            animation.recordColor(&(*taskManagement->getTreeNode())->color);
+            (*taskManagement->getTreeNode())->color = PConstants::DS3::innerHighlightColor;
+            animation.recordBool(&(*taskManagement->getTreeNode())->isHighlight);
+            (*taskManagement->getTreeNode())->isHighlight = true;
         }
-        animation.recordColor(&(*taskManagement->getTreeNode())->color);
-        (*taskManagement->getTreeNode())->color = PConstants::DS3::innerHighlightColor;
-        animation.recordBool(&(*taskManagement->getTreeNode())->isHighlight);
-        (*taskManagement->getTreeNode())->isHighlight = true;
-        animation.recordVersion();
+        else {
+
+        }
     }
     // Explanation
-
+    if(taskManagement->getCondition(0)) {
+        explanationArea.update("Create new node.");
+    }
+    else {
+        explanationArea.update("Node already exists.");
+    }
     // Skip
     if(stepRequest == goForward || stepRequest == skipForward) {
         done = true;
     }
     // End algorithm
     if(done) {
-        animation.recordColor(&(*taskManagement->getTreeNode())->color);
-        (*taskManagement->getTreeNode())->color = PConstants::DS3::innerColor;
-        animation.recordBool(&(*taskManagement->getTreeNode())->isHighlight);
-        (*taskManagement->getTreeNode())->isHighlight = false;
         if(taskManagement->getCondition(0)) {
+            animation.recordColor(&(*taskManagement->getTreeNode())->color);
+            (*taskManagement->getTreeNode())->color = PConstants::DS3::innerColor;
+            animation.recordBool(&(*taskManagement->getTreeNode())->isHighlight);
+            (*taskManagement->getTreeNode())->isHighlight = false;
             animation.recordTreeNodeRecursion(&taskManagement->TreeNodeRecursionStack);
             taskManagement->popRecursionStack();
             animation.recordVectorBool(&taskManagement->conditionStack);
@@ -384,7 +383,6 @@ bool AVL::insertStep1(int val, int stepRequest, PTaskManagement * taskManagement
     return false;
 }
 bool AVL::insertStep2(int val, int stepRequest, PTaskManagement * taskManagement) {
-    cout << "insertStep2" << endl;
     // 02.	if root->val == data :	return
     bool done = (waitRequest == false && taskManagement->getRecursionStackSize() > 0 && taskManagement->getTime() > PConstants::PAnimation::waitTime);
     // Begin algorithm
@@ -392,10 +390,6 @@ bool AVL::insertStep2(int val, int stepRequest, PTaskManagement * taskManagement
         bool con0 = (*taskManagement->getTreeNode())->val == val;
         animation.recordVectorBool(&taskManagement->conditionStack);
         taskManagement->takeCondition(con0);
-        animation.recordColor(&(*taskManagement->getTreeNode())->color);
-        (*taskManagement->getTreeNode())->color = PConstants::DS3::innerHighlightColor;
-        animation.recordBool(&(*taskManagement->getTreeNode())->isHighlight);
-        (*taskManagement->getTreeNode())->isHighlight = true;
         animation.recordVersion();
     }
     // Explanation
@@ -406,11 +400,11 @@ bool AVL::insertStep2(int val, int stepRequest, PTaskManagement * taskManagement
     }
     // End algorithm
     if(done) {
-        animation.recordColor(&(*taskManagement->getTreeNode())->color);
-        (*taskManagement->getTreeNode())->color = PConstants::DS3::innerColor;
-        animation.recordBool(&(*taskManagement->getTreeNode())->isHighlight);
-        (*taskManagement->getTreeNode())->isHighlight = false;
         if(taskManagement->getCondition(0)) {
+            animation.recordColor(&(*taskManagement->getTreeNode())->color);
+            (*taskManagement->getTreeNode())->color = PConstants::DS3::innerColor;
+            animation.recordBool(&(*taskManagement->getTreeNode())->isHighlight);
+            (*taskManagement->getTreeNode())->isHighlight = false;
             animation.recordVectorBool(&taskManagement->conditionStack);
             taskManagement->popCondition();
             animation.recordTreeNodeRecursion(&taskManagement->TreeNodeRecursionStack);
@@ -446,11 +440,11 @@ bool AVL::insertStep2(int val, int stepRequest, PTaskManagement * taskManagement
     return false;
 }
 bool AVL::insertStep3(int val, int stepRequest, PTaskManagement * taskManagement) {
-    cout << "insertStep3" << endl;
     // 03.	if(root->val < data) : insertAVL(root->right, data)
     bool done = (waitRequest == false && taskManagement->getRecursionStackSize() > 0 && taskManagement->getTime() > PConstants::PAnimation::waitTime);
     // Begin algorithm
     if(taskManagement->getTime() == 0.f) {
+        animation.recordVersion();
         bool con0 = (*taskManagement->getTreeNode())->val < val;
         animation.recordVectorBool(&taskManagement->conditionStack);
         taskManagement->takeCondition(con0);
@@ -458,28 +452,20 @@ bool AVL::insertStep3(int val, int stepRequest, PTaskManagement * taskManagement
             animation.recordTreeNodeRecursion(&taskManagement->TreeNodeRecursionStack);
             taskManagement->pushRecursionStack(&(*taskManagement->getTreeNode())->right);
         }
-        if(*taskManagement->getTreeNode() != nullptr) {
-            animation.recordColor(&(*taskManagement->getTreeNode())->color);
-            (*taskManagement->getTreeNode())->color = PConstants::DS3::innerHighlightColor;
-            animation.recordBool(&(*taskManagement->getTreeNode())->isHighlight);
-            (*taskManagement->getTreeNode())->isHighlight = true;
-        }
-        animation.recordVersion();
     }
     // Explanation
-
+    if(taskManagement->getCondition(0)) {
+        explanationArea.update("root->val < data.\nGo to the right child.");
+    }
+    else {
+        explanationArea.update("root->val is not < data.");
+    }
     // Skip
     if(stepRequest == goForward || stepRequest == skipForward) {
         done = true;
     }
     // End algorithm
     if(done) {
-        if(*taskManagement->getTreeNode() != nullptr) {
-            animation.recordColor(&(*taskManagement->getTreeNode())->color);
-            (*taskManagement->getTreeNode())->color = PConstants::DS3::innerColor;
-            animation.recordBool(&(*taskManagement->getTreeNode())->isHighlight);
-            (*taskManagement->getTreeNode())->isHighlight = false;
-        }
         if(taskManagement->getCondition(0)) {
             animation.recordVectorBool(&taskManagement->conditionStack);
             taskManagement->popCondition();
@@ -509,35 +495,22 @@ bool AVL::insertStep3(int val, int stepRequest, PTaskManagement * taskManagement
     return false;
 }
 bool AVL::insertStep4(int val, int stepRequest, PTaskManagement * taskManagement) {
-    cout << "insertStep4" << endl;
     // 04.	else insertAVL(root->left, data)
     bool done = (waitRequest == false && taskManagement->getRecursionStackSize() > 0 && taskManagement->getTime() > PConstants::PAnimation::waitTime);
     // Begin algorithm
     if(taskManagement->getTime() == 0.f) {
+        animation.recordVersion();
         animation.recordTreeNodeRecursion(&taskManagement->TreeNodeRecursionStack);
         taskManagement->pushRecursionStack(&(*taskManagement->getTreeNode())->left);
-        if(*taskManagement->getTreeNode() != nullptr) {
-            animation.recordColor(&(*taskManagement->getTreeNode())->color);
-            (*taskManagement->getTreeNode())->color = PConstants::DS3::innerHighlightColor;
-            animation.recordBool(&(*taskManagement->getTreeNode())->isHighlight);
-            (*taskManagement->getTreeNode())->isHighlight = true;
-        }
-        animation.recordVersion();
     }
     // Explanation
-
+    explanationArea.update("root->val > data.\nGo to the left child.");
     // Skip
     if(stepRequest == goForward || stepRequest == skipForward) {
         done = true;
     }
     // End algorithm
     if(done) {
-        if(*taskManagement->getTreeNode() != nullptr) {
-            animation.recordColor(&(*taskManagement->getTreeNode())->color);
-            (*taskManagement->getTreeNode())->color = PConstants::DS3::innerColor;
-            animation.recordBool(&(*taskManagement->getTreeNode())->isHighlight);
-            (*taskManagement->getTreeNode())->isHighlight = false;
-        }
         animation.recordFloat(&taskManagement->time);
         animation.recordInt(&taskManagement->step);
         animation.recordBool(&taskManagement->taskDone);
@@ -552,17 +525,16 @@ bool AVL::insertStep4(int val, int stepRequest, PTaskManagement * taskManagement
     return false;
 }
 bool AVL::insertStep5(int val, int stepRequest, PTaskManagement * taskManagement) {
-    cout << "insertStep5" << endl;
     // 05.	root->height = 1 + max(getHeight(root->left), getHeight(root->right));
     bool done = (waitRequest == false && taskManagement->getRecursionStackSize() > 0 && taskManagement->getTime() > PConstants::PAnimation::waitTime);
     // Begin algorithm
     if(taskManagement->getTime() == 0.f) {
+        animation.recordVersion();
         // Recording has been already done inside
         setHeight(*taskManagement->getTreeNode());
-        animation.recordVersion();
     }
     // Explanation
-
+    explanationArea.update("Update height of the node.");
     // Skip
     if(stepRequest == goForward || stepRequest == skipForward) {
         done = true;
@@ -582,28 +554,23 @@ bool AVL::insertStep5(int val, int stepRequest, PTaskManagement * taskManagement
     return false;
 }
 bool AVL::insertStep6(int val, int stepRequest, PTaskManagement * taskManagement) {
-    cout << "insertStep6" << endl;
     // 06.	if getBalance(root) == isLeftHeavierImbalance :
     bool done = (waitRequest == false && taskManagement->getRecursionStackSize() > 0 && taskManagement->getTime() > PConstants::PAnimation::waitTime);
     // Begin algorithm
     if(taskManagement->getTime() == 0.f) {
+        animation.recordVersion();
         bool con0 = getBalance(*taskManagement->getTreeNode()) > 1;
         animation.recordVectorBool(&taskManagement->conditionStack);
         taskManagement->takeCondition(con0);
-        animation.recordVersion();
     }
     // Explanation
-
+    explanationArea.update("Check if the tree is unbalanced to the left.");
     // Skip
     if(stepRequest == goForward || stepRequest == skipForward) {
         done = true;
     }
     // End algorithm
     if(done) {
-        if(taskManagement->getCondition(0) == false) {
-            animation.recordVectorBool(&taskManagement->conditionStack);
-            taskManagement->popCondition();
-        }
         animation.recordFloat(&taskManagement->time);
         animation.recordInt(&taskManagement->step);
         taskManagement->nextStep();
@@ -617,7 +584,6 @@ bool AVL::insertStep6(int val, int stepRequest, PTaskManagement * taskManagement
     return false;
 }
 bool AVL::insertStep7(int val, int stepRequest, PTaskManagement * taskManagement) {
-    cout << "insertStep7" << endl;
     /*
     con0 == true:
         if getBalance(root->left) == isRightHeavier : rotateLeft(root->left)
@@ -627,11 +593,14 @@ bool AVL::insertStep7(int val, int stepRequest, PTaskManagement * taskManagement
     bool done = (waitRequest == false && taskManagement->getRecursionStackSize() > 0 && taskManagement->getTime() > PConstants::PAnimation::waitTime);
     // Begin algorithm
     if(taskManagement->getTime() == 0.f) {
+        animation.recordVersion();
         if(taskManagement->getCondition(0)) {
             bool con1 = getBalance((*taskManagement->getTreeNode())->left) < 0;
             if(con1) {
                 // Recording has been already done inside
-                rotateLeft((*taskManagement->getTreeNode())->left);
+                (*taskManagement->getTreeNode())->left = rotateLeft((*taskManagement->getTreeNode())->left);
+                updateTreePosition();
+                setCurrentPosition(PConstants::DS3::speed);
             }
         }
         else {
@@ -639,10 +608,14 @@ bool AVL::insertStep7(int val, int stepRequest, PTaskManagement * taskManagement
             animation.recordVectorBool(&taskManagement->conditionStack);
             taskManagement->takeCondition(con1);
         }
-        animation.recordVersion();
     }
     // Explanation
-
+    if(taskManagement->getCondition(0)) {
+        explanationArea.update("The tree is unbalanced to the left.\nCheck if the left child is unbalanced to the right.");
+    }
+    else {
+        explanationArea.update("Check if the tree is unbalanced to the right.");
+    }
     // Skip
     if(stepRequest == goForward || stepRequest == skipForward) {
         done = true;
@@ -651,6 +624,10 @@ bool AVL::insertStep7(int val, int stepRequest, PTaskManagement * taskManagement
     if(done) {
         if(taskManagement->getCondition(0) == false) {
             if(taskManagement->getCondition(1) == false) {
+                animation.recordColor(&(*taskManagement->getTreeNode())->color);
+                (*taskManagement->getTreeNode())->color = PConstants::DS3::innerColor;
+                animation.recordBool(&(*taskManagement->getTreeNode())->isHighlight);
+                (*taskManagement->getTreeNode())->isHighlight = false;
                 animation.recordVectorBool(&taskManagement->conditionStack);
                 for(int i = 0; i < 2; i++) taskManagement->popCondition();
                 animation.recordTreeNodeRecursion(&taskManagement->TreeNodeRecursionStack);
@@ -663,10 +640,10 @@ bool AVL::insertStep7(int val, int stepRequest, PTaskManagement * taskManagement
                     animation.recordFloat(&taskManagement->time);
                     animation.recordInt(&taskManagement->step);
                     animation.recordBool(&taskManagement->taskDone);
-                    for(int i = 0; i < 7; i++) taskManagement->prevStep();
+                    for(int i = 0; i < 2; i++) taskManagement->prevStep();
                     // Skip
                     if(stepRequest == skipForward) {
-                        return insertStep0(val, stepRequest, taskManagement);
+                        return insertStep5(val, stepRequest, taskManagement);
                     }
                 }
             }
@@ -684,7 +661,6 @@ bool AVL::insertStep7(int val, int stepRequest, PTaskManagement * taskManagement
     return false;
 }
 bool AVL::insertStep8(int val, int stepRequest, PTaskManagement * taskManagement) {
-    cout << "insertStep8" << endl;
     /*
     con0 == True:
         rotateRight(root)
@@ -694,21 +670,40 @@ bool AVL::insertStep8(int val, int stepRequest, PTaskManagement * taskManagement
     bool done = (waitRequest == false && taskManagement->getRecursionStackSize() > 0 && taskManagement->getTime() > PConstants::PAnimation::waitTime);
     // Begin algorithm
     if(taskManagement->getTime() == 0.f) {
+        animation.recordVersion();
         if(taskManagement->getCondition(0)) {
             // Recording has been already done inside
-            rotateRight(*taskManagement->getTreeNode());
+            TreeNode* parent = (*taskManagement->getTreeNode())->parent;
+            bool left = (*taskManagement->getTreeNode())->isLeft;
+            if(!parent) {
+                TreeRoot = rotateRight(*taskManagement->getTreeNode());
+            }
+            else if(left) {
+                parent->left = rotateRight(*taskManagement->getTreeNode());
+            }
+            else {
+                parent->right = rotateRight(*taskManagement->getTreeNode());
+            }
+            updateTreePosition();
+            setCurrentPosition(PConstants::DS3::speed);
         }
         else {
-            bool con1 = getBalance((*taskManagement->getTreeNode())->right) > 1;
+            bool con1 = getBalance((*taskManagement->getTreeNode())->right) > 0;
             if(con1) {
                 // Recording has been already done inside
-                rotateRight((*taskManagement->getTreeNode())->right);
+                (*taskManagement->getTreeNode())->right = rotateRight((*taskManagement->getTreeNode())->right);
+                updateTreePosition();
+                setCurrentPosition(PConstants::DS3::speed);
             }
         }
-        animation.recordVersion();
     }
     // Explanation
-
+    if(taskManagement->getCondition(0)) {
+        explanationArea.update("The tree is unbalanced to the left.\nRotate right.");
+    }
+    else {
+        explanationArea.update("The tree is unbalanced to the right.\nCheck if the right child is unbalanced to the left.");
+    }
     // Skip
     if(stepRequest == goForward || stepRequest == skipForward) {
         done = true;
@@ -716,6 +711,10 @@ bool AVL::insertStep8(int val, int stepRequest, PTaskManagement * taskManagement
     // End algorithm
     if(done) {
         if(taskManagement->getCondition(0)) {
+            animation.recordColor(&(*taskManagement->getTreeNode())->color);
+            (*taskManagement->getTreeNode())->color = PConstants::DS3::innerColor;
+            animation.recordBool(&(*taskManagement->getTreeNode())->isHighlight);
+            (*taskManagement->getTreeNode())->isHighlight = false;
             animation.recordVectorBool(&taskManagement->conditionStack);
             taskManagement->popCondition();
             animation.recordTreeNodeRecursion(&taskManagement->TreeNodeRecursionStack);
@@ -728,10 +727,10 @@ bool AVL::insertStep8(int val, int stepRequest, PTaskManagement * taskManagement
                 animation.recordFloat(&taskManagement->time);
                 animation.recordInt(&taskManagement->step);
                 animation.recordBool(&taskManagement->taskDone);
-                for(int i = 0; i < 8; i++) taskManagement->prevStep();
+                for(int i = 0; i < 3; i++) taskManagement->prevStep();
                 // Skip
                 if(stepRequest == skipForward) {
-                    return insertStep0(val, stepRequest, taskManagement);
+                    return insertStep5(val, stepRequest, taskManagement);
                 }
             }
         }
@@ -750,23 +749,38 @@ bool AVL::insertStep8(int val, int stepRequest, PTaskManagement * taskManagement
     return false;
 }
 bool AVL::insertStep9(int val, int stepRequest, PTaskManagement * taskManagement) {
-    cout << "insertStep9" << endl;
     // 09.			rotateLeft(root)
     bool done = (waitRequest == false && taskManagement->getRecursionStackSize() > 0 && taskManagement->getTime() > PConstants::PAnimation::waitTime);
     // Begin algorithm
     if(taskManagement->getTime() == 0.f) {
-        // Recording has been already done inside
-        rotateLeft(*taskManagement->getTreeNode());
         animation.recordVersion();
+        // Recording has been already done inside
+        TreeNode* parent = (*taskManagement->getTreeNode())->parent;
+        bool left = (*taskManagement->getTreeNode())->isLeft;
+        if(!parent) {
+            TreeRoot = rotateLeft(*taskManagement->getTreeNode());
+        }
+        else if(left) {
+            parent->left = rotateLeft(*taskManagement->getTreeNode());
+        }
+        else {
+            parent->right = rotateLeft(*taskManagement->getTreeNode());
+        }
+        updateTreePosition();
+        setCurrentPosition(PConstants::DS3::speed);
     }
     // Explanation
-
+    explanationArea.update("The tree is unbalanced to the right.\nRotate left.");
     // Skip
     if(stepRequest == goForward || stepRequest == skipForward) {
         done = true;
     }
     // End algorithm
     if(done) {
+        animation.recordColor(&(*taskManagement->getTreeNode())->color);
+        (*taskManagement->getTreeNode())->color = PConstants::DS3::innerColor;
+        animation.recordBool(&(*taskManagement->getTreeNode())->isHighlight);
+        (*taskManagement->getTreeNode())->isHighlight = false;
         animation.recordVectorBool(&taskManagement->conditionStack);
         for(int i = 0; i < 2; i++) taskManagement->popCondition();
         animation.recordTreeNodeRecursion(&taskManagement->TreeNodeRecursionStack);
@@ -779,10 +793,10 @@ bool AVL::insertStep9(int val, int stepRequest, PTaskManagement * taskManagement
             animation.recordFloat(&taskManagement->time);
             animation.recordInt(&taskManagement->step);
             animation.recordBool(&taskManagement->taskDone);
-            for(int i = 0; i < 9; i++) taskManagement->prevStep();
+            for(int i = 0; i < 4; i++) taskManagement->prevStep();
             // Skip
             if(stepRequest == skipForward) {
-                return insertStep0(val, stepRequest, taskManagement);
+                return insertStep5(val, stepRequest, taskManagement);
             }
         }
     }

@@ -27,6 +27,7 @@ void AVL::setHeight(TreeNode* &root) {
 }
 
 TreeNode* AVL::rotateLeft(TreeNode* &root) {
+    cout << "rotate left" << endl;
     TreeNode* newRoot = root->right;
     TreeNode* newChild = newRoot->left;
 
@@ -65,6 +66,7 @@ TreeNode* AVL::rotateLeft(TreeNode* &root) {
 }
 
 TreeNode * AVL::rotateRight(TreeNode* &root) {
+    cout << "rotate right" << endl;
     TreeNode* newRoot = root->left;
     TreeNode* newChild = newRoot->right;
 

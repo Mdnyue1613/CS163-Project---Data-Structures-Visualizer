@@ -122,6 +122,7 @@ bool DS3::Insert(vector<string>& request, int stepRequest) {
         return Tree.insertAnimationV2(val, stepRequest, &taskManagement);
     }
     else {
+        cout << notificationBox.notificationText << endl;
         return true;
     }
 }
