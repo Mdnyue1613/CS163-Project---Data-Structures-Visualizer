@@ -167,5 +167,6 @@ void DS3::Find(string num) {
         }
     }
     val = stoi(num);
+    Tree.findData = val;
     Tree.findNode(Tree.TreeRoot, val);
 }

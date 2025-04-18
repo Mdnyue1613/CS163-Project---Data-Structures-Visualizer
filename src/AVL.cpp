@@ -16,7 +16,8 @@ void TreeNode::setColor(Color color) {
     this->color = color;
 }
 
-AVL::AVL() {
+AVL::AVL():
+    explanationArea() {
     TreeRoot = nullptr;
     distance_x = 25;
     distance_y = 40;
@@ -79,8 +80,10 @@ TreeNode * AVL::rotateRight(TreeNode* &root) {
 }
 
 void AVL::insertNode(TreeNode *&root, TreeNode *parent, int x) {
+    isInsert = 1;
     for(auto Node : allNode) {
         if(x == Node->val) {
+            NodeInsert = Node;
             return;
         }
     }
