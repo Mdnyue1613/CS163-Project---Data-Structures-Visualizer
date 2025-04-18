@@ -5,26 +5,30 @@ DFunctionArea::DFunctionArea(void) {
 
 DFunctionArea::DFunctionArea(int x, int y, int width, int height) :
     menuInitialize(x, y, width, height),
-    menuInsert(x, y, width, height)  {
+    menuInsert(x, y, width, height),
+    menuRemove(x, y, width, height),
+    menuSearch(x, y, width, height) {
     background = {1.f * x, 1.f * y, 1.f * width, 1.f * height};
     state = PSwitchBox(Vector2{1.f * x + PConstants::PFunctionArea::spaceX, 1.f * y + PConstants::PFunctionArea::spaceY}, 
         Vector2{1.f * width - 2 * PConstants::PFunctionArea::spaceX, PConstants::PFunctionArea::boxHeight}, 
         PConstants::PFunctionArea::boxOutlineThickness, 
         PConstants::PFunctionArea::boxColor, 
         PConstants::PFunctionArea::outlineBoxColor,
-        {"Initialize", "Insert"}, PConstants::PFunctionArea::textSize);
+        {"Initialize", "Insert", "Remove", "Search"}, PConstants::PFunctionArea::textSize);
 }
 
 DFunctionArea::DFunctionArea(Vector2 pos, Vector2 size) :
     menuInitialize(pos, size),
-    menuInsert(pos, size) {
+    menuInsert(pos, size),
+    menuRemove(pos, size),
+    menuSearch(pos, size) {
     background = {pos.x, pos.y, size.x, size.y};
     state = PSwitchBox(Vector2{pos.x + PConstants::PFunctionArea::spaceX, pos.y + PConstants::PFunctionArea::spaceY}, 
         Vector2{size.x - 2 * PConstants::PFunctionArea::spaceX, PConstants::PFunctionArea::boxHeight}, 
         PConstants::PFunctionArea::boxOutlineThickness, 
         PConstants::PFunctionArea::boxColor, 
         PConstants::PFunctionArea::outlineBoxColor,
-        {"Initialize", "Insert"}, PConstants::PFunctionArea::textSize);
+        {"Initialize", "Insert", "Remove", "Search"}, PConstants::PFunctionArea::textSize);
 };
 
 void DFunctionArea::draw(void) {
@@ -41,6 +45,14 @@ void DFunctionArea::draw(void) {
     // Current state: Insert
     else if(currentMode == StateID::Insert) {
         menuInsert.draw();
+    }
+    // Current state: Remove
+    else if(currentMode == StateID::Remove) {
+        menuRemove.draw();
+    }
+    // Current state: Search
+    else if(currentMode == StateID::Search) {
+        menuSearch.draw();
     }
 }
 
@@ -65,6 +77,22 @@ vector<string> DFunctionArea::update(void) {
         res.push_back("insert");
         res.insert(res.end(), ret.begin(), ret.end());
         // Return request: insert + arguments ...
+        return res;
+    }
+    // Current state: Remove
+    else if(currentMode == StateID::Remove) {
+        vector<string> ret = menuRemove.update();
+        res.push_back("remove");
+        res.insert(res.end(), ret.begin(), ret.end());
+
+        return res;
+    }
+    // Current state: Search
+    else if(currentMode == StateID::Search) {
+        vector<string> ret = menuSearch.update();
+        res.push_back("search");
+        res.insert(res.end(), ret.begin(), ret.end());
+        // Return request: search + arguments ...
         return res;
     }
 

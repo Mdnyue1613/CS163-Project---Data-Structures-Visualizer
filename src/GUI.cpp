@@ -9,6 +9,7 @@ void GUI::startProgram() {
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     InitWindow(1200, 800, "Hello Raylib");
     linkedListVisualizer.prepare();
+    hashtableVisualizer.prepare();
     ds3.prepare();
     SetTargetFPS(60);
     while(isOpenDS1 || isOpenDS2 || isOpenDS3 || isOpenDS4 || isOpenMenu) {
@@ -88,12 +89,11 @@ void GUI::drawDS1() {
 }
 
 void GUI::drawDS2() {
-    DS2 hashtable;
     while(GUI::isOpenDS2) {
         BeginDrawing();
         ClearBackground(WHITE);
-        hashtable.update();
-        hashtable.draw();
+        hashtableVisualizer.update();
+        hashtableVisualizer.draw();
         BACK();
         EndDrawing();
         if(WindowShouldClose()) {

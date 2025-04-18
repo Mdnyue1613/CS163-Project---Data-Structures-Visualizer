@@ -3,6 +3,7 @@
 #include <vector>
 #include "DS3.h"
 #include "DS1.h"
+#include "DS2.h"
 #include "LActionBox.h"
 #include <chrono>
 using namespace chrono;
@@ -15,6 +16,7 @@ struct GUI {
     static bool isOpenDS3;
     static bool isOpenDS4;
     static DS1 linkedListVisualizer;
+    static DS2 hashtableVisualizer;
     static DS3 ds3;
     static void startProgram();
     static void drawMenu();

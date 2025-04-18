@@ -19,6 +19,12 @@ DInitializeMenu::DInitializeMenu(int x, int y, int width, int height) :
         PConstants::PFunctionArea::boxColor,
         PConstants::PFunctionArea::outlineBoxColor,
         "Number of nodes", PConstants::PFunctionArea::textSize);
+    TableSizeInputBox = PInputBox(Vector2{1.f * x + PConstants::PFunctionArea::spaceX, 1.f * y + 3 * PConstants::PFunctionArea::boxHeight + 4 * PConstants::PFunctionArea::spaceY},
+        Vector2{1.f * width - 2 * PConstants::PFunctionArea::spaceX, PConstants::PFunctionArea::boxHeight},
+        PConstants::PFunctionArea::boxOutlineThickness, 
+        PConstants::PFunctionArea::boxColor,
+        PConstants::PFunctionArea::outlineBoxColor,
+        "Table size", PConstants::PFunctionArea::textSize);
     InputFileBox = PIconBox(Vector2{1.f * x + PConstants::PFunctionArea::spaceX, 1.f * y + 3 * PConstants::PFunctionArea::boxHeight + 4 * PConstants::PFunctionArea::spaceY},
         Vector2{1.f * width - 2 * PConstants::PFunctionArea::spaceX, PConstants::PFunctionArea::boxHeight},
         PConstants::PFunctionArea::boxOutlineThickness, 
@@ -48,6 +54,12 @@ DInitializeMenu::DInitializeMenu(Vector2 pos, Vector2 size) :
         PConstants::PFunctionArea::boxColor,
         PConstants::PFunctionArea::outlineBoxColor,
         "Number of nodes", PConstants::PFunctionArea::textSize);
+    TableSizeInputBox = PInputBox(Vector2{1.f * x + PConstants::PFunctionArea::spaceX, 1.f * y + 3 * PConstants::PFunctionArea::boxHeight + 4 * PConstants::PFunctionArea::spaceY},
+        Vector2{1.f * width - 2 * PConstants::PFunctionArea::spaceX, PConstants::PFunctionArea::boxHeight},
+        PConstants::PFunctionArea::boxOutlineThickness, 
+        PConstants::PFunctionArea::boxColor,
+        PConstants::PFunctionArea::outlineBoxColor,
+        "Table size", PConstants::PFunctionArea::textSize);
     InputFileBox = PIconBox(Vector2{1.f * x + PConstants::PFunctionArea::spaceX, 1.f * y + 3 * PConstants::PFunctionArea::boxHeight + 4 * PConstants::PFunctionArea::spaceY},
         Vector2{1.f * width - 2 * PConstants::PFunctionArea::spaceX, PConstants::PFunctionArea::boxHeight},
         PConstants::PFunctionArea::boxOutlineThickness, 
@@ -73,6 +85,7 @@ void DInitializeMenu::draw(void) {
     // Mode random initializer
     if(currentMode == Random) {
         InputBox.draw();
+        TableSizeInputBox.draw();
     }
     // Mode input initializer
     else if(currentMode == Input) {
@@ -90,10 +103,11 @@ vector<string> DInitializeMenu::update(void) {
         When the input box has content and user press ENTER or click GO button
             Return request: "random" + content
         */
-        if(InputBox.hasContent() && 
-            (GO.isClick() || (InputBox.isChosen && IsKeyPressed(KEY_ENTER)))) {
-            return {"random", InputBox.extract()};
+        if(InputBox.hasContent() && TableSizeInputBox.hasContent() &&
+            (GO.isClick() || (InputBox.isChosen || TableSizeInputBox.isChosen && IsKeyPressed(KEY_ENTER)))) {
+            return {"random", InputBox.extract(), TableSizeInputBox.extract()};
         }
+         
         // No input + click GO = return "random"
         else if(GO.isClick()) {
             return {"random"};
@@ -101,6 +115,7 @@ vector<string> DInitializeMenu::update(void) {
         // Update InputBox for rendering
         InputBox.changeTitle(inputBoxTitle[Random]);
         InputBox.update();
+        TableSizeInputBox.update();
     }
     // Current mode: Input
     else if(currentMode == ModeID::Input) {

@@ -66,6 +66,7 @@ bool PDSAnimation::undoVersion(int stepRequest) {
     while(true) {
         if(undoStack.empty()) {
             cerr << "Error: PDSAnimation::undoVersion()\n";
+            exit(0);
         }
         string top = undoStack.top();
         if(top == "Begin")

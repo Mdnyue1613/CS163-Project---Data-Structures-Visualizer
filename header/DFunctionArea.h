@@ -3,6 +3,8 @@
 #include "PTitleBox.h"
 #include "DInitializeMenu.h"
 #include "DInsertMenu.h"
+#include "DRemoveMenu.h"
+#include "DSearchMenu.h"
 #include "PConstants.h"
 #include <string>
 #include <vector>
@@ -12,12 +14,16 @@ struct DFunctionArea {
     Rectangle background;
     DInitializeMenu menuInitialize;
     DInsertMenu menuInsert;
+    DRemoveMenu menuRemove;
+    DSearchMenu menuSearch;
     PSwitchBox state;
     int currentMode;
 
     enum StateID {
         Initialize,
-        Insert
+        Insert,
+        Remove,
+        Search
     };
     
     DFunctionArea(void); // initialize
