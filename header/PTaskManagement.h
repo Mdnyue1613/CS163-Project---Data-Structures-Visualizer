@@ -5,6 +5,7 @@
 #include<stack>
 #include<string>
 #include<raylib.h>
+#include"LTreeNode.h"
 using namespace std;
 
 struct PTaskManagement {
@@ -19,8 +20,15 @@ struct PTaskManagement {
     bool taskDone;
     vector<bool> conditionStack, undoCondtionStack;
     float time;
+    vector<TreeNode**> TreeNodeRecursionStack;
 
     PTaskManagement(void);
+
+    // Recursion
+    void pushRecursionStack(TreeNode** node); // Push new node into the recursion stack
+    void popRecursionStack(void); // Pop the lastest node in the recursion stack
+    int getRecursionStackSize(void); // Get the size of the recursion stack
+    TreeNode** getTreeNode(int i = 0); // Get the lastest node in the recursion stack
 
     // Condition stack
     void takeCondition(bool condition); // Push new condition into the condition stack

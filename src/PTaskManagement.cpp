@@ -17,6 +17,30 @@ bool PTaskManagement::takeRequest(vector<string> request) {
     return true;
 }
 
+void PTaskManagement::pushRecursionStack(TreeNode** node) {
+    TreeNodeRecursionStack.push_back(node);
+}
+
+void PTaskManagement::popRecursionStack(void) {
+    if((int)TreeNodeRecursionStack.empty()) {
+        cerr << "Error: PTaskManagement::popRecursionStack()\n";
+        exit(1);
+    }
+    TreeNodeRecursionStack.pop_back();
+}
+
+int PTaskManagement::getRecursionStackSize(void) {
+    return TreeNodeRecursionStack.size();
+}
+
+TreeNode** PTaskManagement::getTreeNode(int i) {
+    if(i >= (int)TreeNodeRecursionStack.size()) {
+        cerr << "Error: PTaskManagement::getTreeNode()\n";
+        exit(1);
+    }
+    return TreeNodeRecursionStack[TreeNodeRecursionStack.size() - 1 - i];
+}
+
 void PTaskManagement::takeCondition(bool condition) {
     conditionStack.push_back(condition);
 }

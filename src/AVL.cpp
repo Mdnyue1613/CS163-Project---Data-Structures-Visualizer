@@ -1,21 +1,5 @@
 #include "../header/AVL.h"
 
-TreeNode::TreeNode(int x) {
-    val = x;
-    left = right = nullptr;
-    height = 1;
-    radius = 20;
-    color = BLUE;
-}
-
-void TreeNode::setRadius(float radius) {
-    this->radius = radius;
-}
-
-void TreeNode::setColor(Color color) {
-    this->color = color;
-}
-
 AVL::AVL():
     explanationArea(),
     PseudoCodeArea() {
@@ -33,6 +17,10 @@ int AVL::getBalance(TreeNode* root) {
 }
 
 void AVL::setHeight(TreeNode* &root) {
+    if(root == nullptr) {
+        cerr << "Error: AVL::setHeight()" << endl;
+        exit(1);
+    }
     int lheight = root->left ? root->left->height : 0;
     int rheight = root->right ? root->right->height : 0;
     root->height = 1 + max(lheight, rheight);
@@ -42,17 +30,34 @@ TreeNode* AVL::rotateLeft(TreeNode* &root) {
     TreeNode* newRoot = root->right;
     TreeNode* newChild = newRoot->left;
 
+    animation.recordTreeNodePointer(&newRoot->parent);
     newRoot->parent = root->parent;
+    animation.recordTreeNodePointer(&root->parent);
     root->parent = newRoot;
-    if(newChild) newChild->parent = root;
+    if(newChild) {
+        animation.recordTreeNodePointer(&newChild->parent);
+        newChild->parent = root;
+    }
 
+    animation.recordTreeNodePointer(&newRoot->left);
     newRoot->left = root;
+    animation.recordTreeNodePointer(&root->right);
     root->right = newChild;
 
-    if(newChild) newChild->isLeft = false;
+    if(newChild) {
+        animation.recordBool(&newChild->isLeft);
+        newChild->isLeft = false;
+    }
+    animation.recordBool(&root->isLeft);
     root->isLeft = true;
-    if (newRoot->parent && newRoot->val < newRoot->parent->val) newRoot->isLeft = true;
-    else if (newRoot->parent && newRoot->val > newRoot->parent->val) newRoot->isLeft = false;
+    if (newRoot->parent && newRoot->val < newRoot->parent->val) {
+        animation.recordBool(&newRoot->isLeft);
+        newRoot->isLeft = true;
+    }
+    else if (newRoot->parent && newRoot->val > newRoot->parent->val) {
+        animation.recordBool(&newRoot->isLeft);
+        newRoot->isLeft = false;
+    }
 
     setHeight(root);
     setHeight(newRoot);
@@ -63,19 +68,39 @@ TreeNode * AVL::rotateRight(TreeNode* &root) {
     TreeNode* newRoot = root->left;
     TreeNode* newChild = newRoot->right;
 
+    animation.recordTreeNodePointer(&newRoot->parent);
     newRoot->parent = root->parent;
+    animation.recordTreeNodePointer(&root->parent);
     root->parent = newRoot;
-    if(newChild) newChild->parent = root;
+    if(newChild) {
+        animation.recordTreeNodePointer(&newChild->parent);
+        newChild->parent = root;
+    }
 
+    animation.recordTreeNodePointer(&newRoot->right);
     newRoot->right = root;
+    animation.recordTreeNodePointer(&root->left);
     root->left = newChild;
 
-    if(newChild) newChild->isLeft = true;
+    if(newChild) {
+        animation.recordBool(&newChild->isLeft);
+        newChild->isLeft = true;
+    }
+
+    animation.recordBool(&root->isLeft);
     root->isLeft = false;
-    if (newRoot->parent && newRoot->val < newRoot->parent->val) newRoot->isLeft = true;
-    else if (newRoot->parent && newRoot->val > newRoot->parent->val) newRoot->isLeft = false;
+    if (newRoot->parent && newRoot->val < newRoot->parent->val) {
+        animation.recordBool(&newRoot->isLeft);
+        newRoot->isLeft = true;
+    }
+    else if (newRoot->parent && newRoot->val > newRoot->parent->val) {
+        animation.recordBool(&newRoot->isLeft);
+        newRoot->isLeft = false;
+    }
     
+    animation.recordInt(&root->height);
     setHeight(root);
+    animation.recordInt(&newRoot->height);
     setHeight(newRoot);
     return newRoot;
 }
@@ -179,6 +204,7 @@ void AVL::vectorIntInit(vector<int> nums) {
 
 void AVL::moveTree(TreeNode *&root, bool direction) {
     if (!root) return;
+    animation.recordFloat(&root->targetPosition.x);
     root->targetPosition.x += (direction ? distance_x : -distance_x);
     moveTree(root->left, direction);
     moveTree(root->right, direction);
@@ -186,9 +212,12 @@ void AVL::moveTree(TreeNode *&root, bool direction) {
 
 void AVL::updateTreePosition() {
     if (!TreeRoot) return;
+    animation.recordTreeNodePointerVector(&allNode);
     allNode.clear();
+    cout << "Clear allNode" << endl;
     queue<TreeNode*> q;
     q.push(TreeRoot);
+    cout << "Push TreeRoot" << endl;
     while (!q.empty()) {
         TreeNode* tmp = q.front();
         q.pop();
@@ -196,9 +225,11 @@ void AVL::updateTreePosition() {
         if(tmp->left) q.push(tmp->left);
         if(tmp->right) q.push(tmp->right);
     }
-
+    cout << "Create new allNode" << endl;
     for (auto& Node : allNode) {
+        cout << Node->val << " ";
         if (Node == TreeRoot) {
+            animation.recordVector2(&Node->targetPosition);
             Node->targetPosition = rootPosition;
         }
         else {
@@ -213,12 +244,14 @@ void AVL::updateTreePosition() {
                     cur = cur->right;
                 }
                 else {
+                    animation.recordVector2(&Node->targetPosition);
                     Node->targetPosition = {Node->parent->targetPosition.x + (Node->isLeft ? -distance_x : distance_x), Node->parent->targetPosition.y + distance_y};
                     break;
                 }
             }
         }
     }
+    cout << "Reload positions" << endl;
     if(NodeDelete && NodeDelete->left == nullptr && NodeDelete->right == nullptr && NodeDelete->parent == nullptr) allNode.push_back(NodeDelete);
 }
 
@@ -238,14 +271,12 @@ void AVL::setCurrentPosition(float speed) {
         float sinAlpha = distance != 0 ? deltaY / distance : 1;
         float horizontalSpeed = speed + (float)0.5 * deltaX / distance_x;
         float vericalSpeed = speed + (float)0.5 * deltaY / distance_y;
-        animation.recordFloat(&Node->position.x);
         if(Node->position.x < Node->targetPosition.x) {
             Node->position.x = min(Node->position.x + 1.f * cosAlpha * horizontalSpeed, Node->targetPosition.x);
         }
         else {
             Node->position.x = max(Node->position.x - 1.f * cosAlpha * horizontalSpeed, Node->targetPosition.x);
         }
-        animation.recordFloat(&Node->position.y);
         if(Node->position.y < Node->targetPosition.y) {
             Node->position.y = min(Node->targetPosition.y, Node->position.y + 1.f * sinAlpha * vericalSpeed);
         }
@@ -259,7 +290,6 @@ void AVL::setCurrentPosition(float speed) {
         else count++;
     }
     if(count >= allNode.size()) {
-        animation.recordInt(&animationStep);
         animationStep++;
     }
 }
@@ -273,17 +303,22 @@ void AVL::rotateNode(TreeNode*& root) {
         // imbalance to the left
             if (root->left && getBalance(root->left) < 0) {
                 // left-right problem
+                animation.recordTreeNodePointer(&root->left);
                 root->left = rotateLeft(root->left);
             }
             if(!p) {
+                animation.recordTreeNodePointer(&root);
                 root = rotateRight(root);
+                animation.recordTreeNodePointer(&TreeRoot);
                 TreeRoot = root;
             }
             else {
                 if (root->isLeft) {
+                    animation.recordTreeNodePointer(&p->left);
                     p->left = rotateRight(root);
                 }
                 else {
+                    animation.recordTreeNodePointer(&p->right);
                     p->right = rotateRight(root);
                 }
             }
@@ -292,17 +327,22 @@ void AVL::rotateNode(TreeNode*& root) {
             // imbalance to the right
             if (root->right && getBalance(root->right) > 0) {
                 // right-left problem
+                animation.recordTreeNodePointer(&root->right);
                 root->right = rotateRight(root->right);
             }
             if (!p) {
+                animation.recordTreeNodePointer(&root);
                 root = rotateLeft(root);
+                animation.recordTreeNodePointer(&TreeRoot);
                 TreeRoot = root;
             }
             else {
                 if (root->isLeft) {
+                    animation.recordTreeNodePointer(&p->left);
                     p->left = rotateLeft(root);
                 }
                 else {
+                    animation.recordTreeNodePointer(&p->right);
                     p->right = rotateLeft(root);
                 }
             }
@@ -311,13 +351,15 @@ void AVL::rotateNode(TreeNode*& root) {
 
 void AVL::checkRotateChildNode() {
     if(rotationNode) {
-        animation.recordTreeNodePointer(&childRotateNode);
-        animation.recordBool(&isNeedToRotateChild);
         if(getBalance(rotationNode) > 1 && getBalance(rotationNode->left) < 0) {
+            animation.recordTreeNodePointer(&childRotateNode);
+            animation.recordBool(&isNeedToRotateChild);
             childRotateNode = rotationNode->left;
             isNeedToRotateChild = true;
         }
         else if (getBalance(rotationNode) < -1 && getBalance(rotationNode->right) > 0) {
+            animation.recordTreeNodePointer(&childRotateNode);
+            animation.recordBool(&isNeedToRotateChild);
             childRotateNode = rotationNode->right;
             isNeedToRotateChild = true;
         }
@@ -327,12 +369,15 @@ void AVL::checkRotateChildNode() {
 void AVL::rotateChildNode() {
     if(childRotateNode) {
         if (getBalance(childRotateNode) < 0) {
+            animation.recordTreeNodePointer(&rotationNode->left);
             rotationNode->left = rotateLeft(childRotateNode);
         }
         else if (getBalance(childRotateNode) > 0) {
+            animation.recordTreeNodePointer(&rotationNode->right);
             rotationNode->right = rotateRight(childRotateNode);
         }
         updateTreePosition();
+        animation.recordTreeNodePointer(&childRotateNode);
         childRotateNode = nullptr;
     }
 }

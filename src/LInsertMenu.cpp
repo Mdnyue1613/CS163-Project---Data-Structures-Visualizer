@@ -31,7 +31,7 @@ vector<string> LInsertMenu::draw(bool active) {
     inputBox.draw();
     GO.draw();
     if((GO.isClick() || IsKeyPressed(KEY_ENTER)) && active && inputBox.hasContent()) {
-        return {"Insert", inputBox.extract()};
+        return {inputBox.extract()};
     }
     else return {"nothing"};
 }

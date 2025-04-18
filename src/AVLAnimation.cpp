@@ -43,7 +43,7 @@ void AVL::draw() {
     }
 
     else if (isInsert == 1) {
-        insertAnimation();
+        // insertAnimation();
     }
 
     else if (isDelete == 1) {
@@ -205,134 +205,594 @@ void AVL::insertAnimation() {
     drawTree();
 }
 
-void AVL::insertAnimationV2() {
+bool AVL::insertAnimationV2(int val, int stepRequest, PTaskManagement * taskManagement) {
     /*
-    * 0: highlight node in path
-    * 1: appear node
-    * 2: check rotation
-    * 3: check child node rotation, if need to rotate child node, rotate child node
-    * 4: roatae node which is need to rotate
-    * 5: update height in path
-    * 6: check rotation again and update height in path
-    * 7: done algorithm
+    00. insertAVL(Node * & root, int data) :
+    01.	if root == nullptr :	root = new Node(value), return
+    02.	if root->val == data :	return
+    03.	else if(root->val < data) : insertAVL(root->right, data)
+    04.	else insertAVL(root->left, data)
+    05.	root->height = 1 + max(getHeight(root->left), getHeight(root->right));
+    06.	if getBalance(root) == isLeftHeavierImbalance :
+    07.		if getBalance(root->left) == isRightHeavier : rotateLeft(root->left)
+    08.		rotateRight(root)
+        else 
+    07.     if getBalance(root) == isRightHeavierImbalance :
+    08.			if getBalance(root->right) == isLeftHeavier : rotateRight(root->right)
+    09.			rotateLeft(root)
     */
-    switch (animationStep) {
-    case 0:
+    // Direction
+    bool forward = stepRequest != goBackward && stepRequest != skipBackward;
+    if(taskManagement->doneTask() && forward) {
+        return true;
+    }
+    // Wait request
+    if(stepRequest == play) {
+        waitRequest = false;
+    }
+    else if(stepRequest == skipBackward || stepRequest == goBackward || stepRequest == goForward || stepRequest == skipForward) {
+        waitRequest = true;
+    }
+    if(taskManagement->getRecursionStackSize() == 0) {
+        taskManagement->pushRecursionStack(&TreeRoot);
+    }
+    int step = taskManagement->getStep();
+    bool done = false;
+    if(step == 0) {
+        done = forward ? insertStep0(val, stepRequest, taskManagement) : false;
+    }
+    else if(step == 1) {
+        done = forward ? insertStep1(val, stepRequest, taskManagement) : animation.undoVersion(stepRequest);
+    }
+    else if(step == 2) {
+        done = forward ? insertStep2(val, stepRequest, taskManagement) : animation.undoVersion(stepRequest);
+    }
+    else if(step == 3) {
+        done = forward ? insertStep3(val, stepRequest, taskManagement) : animation.undoVersion(stepRequest);
+    }
+    else if(step == 4) {
+        done = forward ? insertStep4(val, stepRequest, taskManagement) : animation.undoVersion(stepRequest);
+    }
+    else if(step == 5) {
+        done = forward ? insertStep5(val, stepRequest, taskManagement) : animation.undoVersion(stepRequest);
+    }
+    else if(step == 6) {
+        done = forward ? insertStep6(val, stepRequest, taskManagement) : animation.undoVersion(stepRequest);
+    }
+    else if(step == 7) {
+        done = forward ? insertStep7(val, stepRequest, taskManagement) : animation.undoVersion(stepRequest);
+    }
+    else if(step == 8) {
+        done = forward ? insertStep8(val, stepRequest, taskManagement) : animation.undoVersion(stepRequest);
+    }
+    else if(step == 9) {
+        done = forward ? insertStep9(val, stepRequest, taskManagement) : animation.undoVersion(stepRequest);
+    }
+    return done;
+}
+bool AVL::insertStep0(int val, int stepRequest, PTaskManagement * taskManagement) {
+    cout << "insertStep0" << endl;
+    // 00. insertAVL(Node * & root, int data) :
+    bool done = (waitRequest == false && taskManagement->getRecursionStackSize() > 0 && taskManagement->getTime() > PConstants::PAnimation::waitTime);
+    // Begin algorithm
+    if(taskManagement->getTime() == 0.f) {
+        if(*taskManagement->getTreeNode() != nullptr) {
+            animation.recordColor(&(*taskManagement->getTreeNode())->color);
+            (*taskManagement->getTreeNode())->color = PConstants::DS3::innerHighlightColor;
+            animation.recordBool(&(*taskManagement->getTreeNode())->isHighlight);
+            (*taskManagement->getTreeNode())->isHighlight = true;
+        }
         animation.recordVersion();
-        hightLightNode();
-        if(hightLightNodeIndex - 1 >= 0 && NodeInsert) {
-            animation.recordString(&explanationArea.content);
-            if(Path[hightLightNodeIndex - 1]->val < NodeInsert->val) {
-                explanationArea.update("root->val < data, root = root->right");
+    }
+    // Explanation
+
+    // Skip
+    if(stepRequest == goForward || stepRequest == skipForward) {
+        done = true;
+    }
+    // End algorithm
+    if(done) {
+        if(*taskManagement->getTreeNode() != nullptr) {
+            animation.recordColor(&(*taskManagement->getTreeNode())->color);
+            (*taskManagement->getTreeNode())->color = PConstants::DS3::innerColor;
+            animation.recordBool(&(*taskManagement->getTreeNode())->isHighlight);
+            (*taskManagement->getTreeNode())->isHighlight = false;
+        }
+        animation.recordFloat(&taskManagement->time);
+        animation.recordInt(&taskManagement->step);
+        taskManagement->nextStep();
+        // Skip
+        if(stepRequest == skipForward) {
+            return insertStep1(val, stepRequest, taskManagement);
+        }
+    }
+    // Update time
+    else taskManagement->updateTime();
+    return false;
+}
+bool AVL::insertStep1(int val, int stepRequest, PTaskManagement * taskManagement) {
+    cout << "insertStep1" << endl;
+    // 01.	if root == nullptr :	root = new Node(value), return
+    bool done = (waitRequest == false && taskManagement->getRecursionStackSize() > 0 && taskManagement->getTime() > PConstants::PAnimation::waitTime);
+    // Begin algorithm
+    if(taskManagement->getTime() == 0.f) {
+        bool con0 = *taskManagement->getTreeNode() == nullptr;
+        animation.recordVectorBool(&taskManagement->conditionStack);
+        taskManagement->takeCondition(con0);
+        if(con0) {
+            animation.recordCreateNode(taskManagement->getTreeNode());
+            *taskManagement->getTreeNode() = new TreeNode(val);
+            if(taskManagement->getRecursionStackSize() > 1) {
+                (*taskManagement->getTreeNode())->parent = *taskManagement->getTreeNode(1);
             }
-            else if(Path[hightLightNodeIndex - 1]->val > NodeInsert->val) {
-                explanationArea.update("root->val > data, root = root->left");
+            animation.recordTreeNodePointerVector(&allNode);
+            allNode.push_back(*taskManagement->getTreeNode());
+            // Recording has already been done inside
+            updateTreePosition();
+        }
+        animation.recordColor(&(*taskManagement->getTreeNode())->color);
+        (*taskManagement->getTreeNode())->color = PConstants::DS3::innerHighlightColor;
+        animation.recordBool(&(*taskManagement->getTreeNode())->isHighlight);
+        (*taskManagement->getTreeNode())->isHighlight = true;
+        animation.recordVersion();
+    }
+    // Explanation
+
+    // Skip
+    if(stepRequest == goForward || stepRequest == skipForward) {
+        done = true;
+    }
+    // End algorithm
+    if(done) {
+        animation.recordColor(&(*taskManagement->getTreeNode())->color);
+        (*taskManagement->getTreeNode())->color = PConstants::DS3::innerColor;
+        animation.recordBool(&(*taskManagement->getTreeNode())->isHighlight);
+        (*taskManagement->getTreeNode())->isHighlight = false;
+        if(taskManagement->getCondition(0)) {
+            animation.recordTreeNodeRecursion(&taskManagement->TreeNodeRecursionStack);
+            taskManagement->popRecursionStack();
+            animation.recordVectorBool(&taskManagement->conditionStack);
+            taskManagement->popCondition();
+            if(taskManagement->getRecursionStackSize() == 0) {
+                animation.recordBool(&taskManagement->taskDone);
+                return true;
             }
             else {
-                explanationArea.update("root->val == data, root was inserted");
+                animation.recordFloat(&taskManagement->time);
+                animation.recordInt(&taskManagement->step);
+                for(int i = 0; i < 4; i++) taskManagement->nextStep();
+                // Skip
+                if(stepRequest == skipForward) {
+                    return insertStep5(val, stepRequest, taskManagement);
+                }
             }
-        }
-        if(hightLightNodeIndex >= Path.size()) {
-            animation.recordInt(&hightLightNodeIndex);
-            animationStep = 1;
-        }
-        break;
-
-    case 1:
-        animation.recordVersion();
-        if(NodeInsert->radius < 0.001) WaitTime(0.5);
-        if (NodeInsert) {
-            animation.recordString(&explanationArea.content);
-            explanationArea.update("root == NULL, root = new Node");
-
-            setCurrentPosition(1);
-            appearNode();
-            animation.recordInt(&animationStep);
-            animationStep = NodeInsert->radius >= 20.f ? 2 : 1;
-            drawTree();
-        }
-        break;
-
-    case 2: 
-        checkRotation();
-        if(Path.empty() || hightLightNodeIndex < 0 || isNeedToRotate) {
-            animation.recordInt(&animationStep);
-            animationStep = 3;
-        }
-        break;
-    
-    case 3:
-        if (Path.empty() || isNeedToRotate) {
-            WaitTime(0.5);
-        }
-        animation.recordInt(&animationStep);
-        animationStep = 4;
-        drawTree();
-        break;
-    
-    case 4:
-        if(isNeedToRotate == false) {
-            animation.recordInt(&animationStep);
-            animationStep = 6;
         }
         else {
-            checkRotateChildNode();
-            if (isNeedToRotateChild == false) {
-                animation.recordInt(&animationStep);
-                animationStep = 5;
-            }
-            else if (childRotateNode != nullptr && isNeedToRotate == true) {
-                rotateChildNode();
-            }
-        }
-        if(isNeedToRotateChild) {
-            setCurrentPosition(0.5);
-        }
-        drawTree();
-        break;
-    case 5:
-        if(isNeedToRotate == false) {
-            animationStep = 6;
-        }
-        else {
-            if(isNeedToRotate && rotationNode) {
-                rotateNode(rotationNode);
-                rotationNode = nullptr;
-                updateTreePosition();
+            animation.recordVectorBool(&taskManagement->conditionStack);
+            taskManagement->popCondition();
+            animation.recordFloat(&taskManagement->time);
+            animation.recordInt(&taskManagement->step);
+            taskManagement->nextStep();
+            // Skip
+            if(stepRequest == skipForward) {
+                return insertStep2(val, stepRequest, taskManagement);
             }
         }
-        if (isNeedToRotate) {
-            setCurrentPosition(0.5);
-        }
-        drawTree();
-        break;
-
-    case 6:
-        updateHeightInPath();
-        hightLightNodeIndex--;
-        Path.pop_back();
-        if(Path.empty() || hightLightNodeIndex < 0) animationStep = 7;
-        break;
-
-    default:
-        for (auto Node : allNode) {
-            Node->setColor(BLUE); 
-        }
-        isInsert = 0;
-        hightLightNodeIndex = 0;
-        Path.clear();
-        NodeInsert = nullptr;
-        isNeedToRotate = false;
-        rotationNode = nullptr;
-        animationStep = 0;
-        selectionNode = nullptr;
-        drawTree();
-        break;
     }
-    drawTree();
+    // Update time
+    else taskManagement->updateTime();
+    return false;
+}
+bool AVL::insertStep2(int val, int stepRequest, PTaskManagement * taskManagement) {
+    cout << "insertStep2" << endl;
+    // 02.	if root->val == data :	return
+    bool done = (waitRequest == false && taskManagement->getRecursionStackSize() > 0 && taskManagement->getTime() > PConstants::PAnimation::waitTime);
+    // Begin algorithm
+    if(taskManagement->getTime() == 0.f) {
+        bool con0 = (*taskManagement->getTreeNode())->val == val;
+        animation.recordVectorBool(&taskManagement->conditionStack);
+        taskManagement->takeCondition(con0);
+        animation.recordColor(&(*taskManagement->getTreeNode())->color);
+        (*taskManagement->getTreeNode())->color = PConstants::DS3::innerHighlightColor;
+        animation.recordBool(&(*taskManagement->getTreeNode())->isHighlight);
+        (*taskManagement->getTreeNode())->isHighlight = true;
+        animation.recordVersion();
+    }
+    // Explanation
+
+    // Skip
+    if(stepRequest == goForward || stepRequest == skipForward) {
+        done = true;
+    }
+    // End algorithm
+    if(done) {
+        animation.recordColor(&(*taskManagement->getTreeNode())->color);
+        (*taskManagement->getTreeNode())->color = PConstants::DS3::innerColor;
+        animation.recordBool(&(*taskManagement->getTreeNode())->isHighlight);
+        (*taskManagement->getTreeNode())->isHighlight = false;
+        if(taskManagement->getCondition(0)) {
+            animation.recordVectorBool(&taskManagement->conditionStack);
+            taskManagement->popCondition();
+            animation.recordTreeNodeRecursion(&taskManagement->TreeNodeRecursionStack);
+            taskManagement->popRecursionStack();
+            if(taskManagement->getRecursionStackSize() == 0) {
+                animation.recordBool(&taskManagement->taskDone);
+                return true;
+            }
+            else {
+                animation.recordFloat(&taskManagement->time);
+                animation.recordInt(&taskManagement->step);
+                for(int i = 0; i < 3; i++) taskManagement->nextStep();
+                // Skip
+                if(stepRequest == skipForward) {
+                    return insertStep5(val, stepRequest, taskManagement);
+                }
+            }
+        }
+        else {
+            animation.recordVectorBool(&taskManagement->conditionStack);
+            taskManagement->popCondition();
+            animation.recordFloat(&taskManagement->time);
+            animation.recordInt(&taskManagement->step);
+            taskManagement->nextStep();
+            // Skip
+            if(stepRequest == skipForward) {
+                return insertStep3(val, stepRequest, taskManagement);
+            }
+        }
+    }
+    // Update time
+    else taskManagement->updateTime();
+    return false;
+}
+bool AVL::insertStep3(int val, int stepRequest, PTaskManagement * taskManagement) {
+    cout << "insertStep3" << endl;
+    // 03.	if(root->val < data) : insertAVL(root->right, data)
+    bool done = (waitRequest == false && taskManagement->getRecursionStackSize() > 0 && taskManagement->getTime() > PConstants::PAnimation::waitTime);
+    // Begin algorithm
+    if(taskManagement->getTime() == 0.f) {
+        bool con0 = (*taskManagement->getTreeNode())->val < val;
+        animation.recordVectorBool(&taskManagement->conditionStack);
+        taskManagement->takeCondition(con0);
+        if(con0) {
+            animation.recordTreeNodeRecursion(&taskManagement->TreeNodeRecursionStack);
+            taskManagement->pushRecursionStack(&(*taskManagement->getTreeNode())->right);
+        }
+        if(*taskManagement->getTreeNode() != nullptr) {
+            animation.recordColor(&(*taskManagement->getTreeNode())->color);
+            (*taskManagement->getTreeNode())->color = PConstants::DS3::innerHighlightColor;
+            animation.recordBool(&(*taskManagement->getTreeNode())->isHighlight);
+            (*taskManagement->getTreeNode())->isHighlight = true;
+        }
+        animation.recordVersion();
+    }
+    // Explanation
+
+    // Skip
+    if(stepRequest == goForward || stepRequest == skipForward) {
+        done = true;
+    }
+    // End algorithm
+    if(done) {
+        if(*taskManagement->getTreeNode() != nullptr) {
+            animation.recordColor(&(*taskManagement->getTreeNode())->color);
+            (*taskManagement->getTreeNode())->color = PConstants::DS3::innerColor;
+            animation.recordBool(&(*taskManagement->getTreeNode())->isHighlight);
+            (*taskManagement->getTreeNode())->isHighlight = false;
+        }
+        if(taskManagement->getCondition(0)) {
+            animation.recordVectorBool(&taskManagement->conditionStack);
+            taskManagement->popCondition();
+            animation.recordFloat(&taskManagement->time);
+            animation.recordInt(&taskManagement->step);
+            animation.recordBool(&taskManagement->taskDone);
+            for(int i = 0; i < 3; i++) taskManagement->prevStep();
+            // Skip
+            if(stepRequest == skipForward) {
+                return insertStep0(val, stepRequest, taskManagement);
+            }
+        }
+        else {
+            animation.recordVectorBool(&taskManagement->conditionStack);
+            taskManagement->popCondition();
+            animation.recordFloat(&taskManagement->time);
+            animation.recordInt(&taskManagement->step);
+            taskManagement->nextStep();
+            // Skip
+            if(stepRequest == skipForward) {
+                return insertStep4(val, stepRequest, taskManagement);
+            }
+        }
+    }
+    // Update time
+    else taskManagement->updateTime();
+    return false;
+}
+bool AVL::insertStep4(int val, int stepRequest, PTaskManagement * taskManagement) {
+    cout << "insertStep4" << endl;
+    // 04.	else insertAVL(root->left, data)
+    bool done = (waitRequest == false && taskManagement->getRecursionStackSize() > 0 && taskManagement->getTime() > PConstants::PAnimation::waitTime);
+    // Begin algorithm
+    if(taskManagement->getTime() == 0.f) {
+        animation.recordTreeNodeRecursion(&taskManagement->TreeNodeRecursionStack);
+        taskManagement->pushRecursionStack(&(*taskManagement->getTreeNode())->left);
+        if(*taskManagement->getTreeNode() != nullptr) {
+            animation.recordColor(&(*taskManagement->getTreeNode())->color);
+            (*taskManagement->getTreeNode())->color = PConstants::DS3::innerHighlightColor;
+            animation.recordBool(&(*taskManagement->getTreeNode())->isHighlight);
+            (*taskManagement->getTreeNode())->isHighlight = true;
+        }
+        animation.recordVersion();
+    }
+    // Explanation
+
+    // Skip
+    if(stepRequest == goForward || stepRequest == skipForward) {
+        done = true;
+    }
+    // End algorithm
+    if(done) {
+        if(*taskManagement->getTreeNode() != nullptr) {
+            animation.recordColor(&(*taskManagement->getTreeNode())->color);
+            (*taskManagement->getTreeNode())->color = PConstants::DS3::innerColor;
+            animation.recordBool(&(*taskManagement->getTreeNode())->isHighlight);
+            (*taskManagement->getTreeNode())->isHighlight = false;
+        }
+        animation.recordFloat(&taskManagement->time);
+        animation.recordInt(&taskManagement->step);
+        animation.recordBool(&taskManagement->taskDone);
+        for(int i = 0; i < 4; i++) taskManagement->prevStep();
+        // Skip
+        if(stepRequest == skipForward) {
+            return insertStep0(val, stepRequest, taskManagement);
+        }
+    }
+    // Update time
+    else taskManagement->updateTime();
+    return false;
+}
+bool AVL::insertStep5(int val, int stepRequest, PTaskManagement * taskManagement) {
+    cout << "insertStep5" << endl;
+    // 05.	root->height = 1 + max(getHeight(root->left), getHeight(root->right));
+    bool done = (waitRequest == false && taskManagement->getRecursionStackSize() > 0 && taskManagement->getTime() > PConstants::PAnimation::waitTime);
+    // Begin algorithm
+    if(taskManagement->getTime() == 0.f) {
+        // Recording has been already done inside
+        setHeight(*taskManagement->getTreeNode());
+        animation.recordVersion();
+    }
+    // Explanation
+
+    // Skip
+    if(stepRequest == goForward || stepRequest == skipForward) {
+        done = true;
+    }
+    // End algorithm
+    if(done) {
+        animation.recordFloat(&taskManagement->time);
+        animation.recordInt(&taskManagement->step);
+        taskManagement->nextStep();
+        // Skip
+        if(stepRequest == skipForward) {
+            return insertStep6(val, stepRequest, taskManagement);
+        }
+    }
+    // Update time
+    else taskManagement->updateTime();
+    return false;
+}
+bool AVL::insertStep6(int val, int stepRequest, PTaskManagement * taskManagement) {
+    cout << "insertStep6" << endl;
+    // 06.	if getBalance(root) == isLeftHeavierImbalance :
+    bool done = (waitRequest == false && taskManagement->getRecursionStackSize() > 0 && taskManagement->getTime() > PConstants::PAnimation::waitTime);
+    // Begin algorithm
+    if(taskManagement->getTime() == 0.f) {
+        bool con0 = getBalance(*taskManagement->getTreeNode()) > 1;
+        animation.recordVectorBool(&taskManagement->conditionStack);
+        taskManagement->takeCondition(con0);
+        animation.recordVersion();
+    }
+    // Explanation
+
+    // Skip
+    if(stepRequest == goForward || stepRequest == skipForward) {
+        done = true;
+    }
+    // End algorithm
+    if(done) {
+        if(taskManagement->getCondition(0) == false) {
+            animation.recordVectorBool(&taskManagement->conditionStack);
+            taskManagement->popCondition();
+        }
+        animation.recordFloat(&taskManagement->time);
+        animation.recordInt(&taskManagement->step);
+        taskManagement->nextStep();
+        // Skip
+        if(stepRequest == skipForward) {
+            return insertStep7(val, stepRequest, taskManagement);
+        }
+    }
+    // Update time
+    else taskManagement->updateTime();
+    return false;
+}
+bool AVL::insertStep7(int val, int stepRequest, PTaskManagement * taskManagement) {
+    cout << "insertStep7" << endl;
+    /*
+    con0 == true:
+        if getBalance(root->left) == isRightHeavier : rotateLeft(root->left)
+    con0 == false:
+        if getBalance(root) == isRightHeavierImbalance :
+    */
+    bool done = (waitRequest == false && taskManagement->getRecursionStackSize() > 0 && taskManagement->getTime() > PConstants::PAnimation::waitTime);
+    // Begin algorithm
+    if(taskManagement->getTime() == 0.f) {
+        if(taskManagement->getCondition(0)) {
+            bool con1 = getBalance((*taskManagement->getTreeNode())->left) < 0;
+            if(con1) {
+                // Recording has been already done inside
+                rotateLeft((*taskManagement->getTreeNode())->left);
+            }
+        }
+        else {
+            bool con1 = getBalance(*taskManagement->getTreeNode()) < -1;
+            animation.recordVectorBool(&taskManagement->conditionStack);
+            taskManagement->takeCondition(con1);
+        }
+        animation.recordVersion();
+    }
+    // Explanation
+
+    // Skip
+    if(stepRequest == goForward || stepRequest == skipForward) {
+        done = true;
+    }
+    // End algorithm
+    if(done) {
+        if(taskManagement->getCondition(0) == false) {
+            if(taskManagement->getCondition(1) == false) {
+                animation.recordVectorBool(&taskManagement->conditionStack);
+                for(int i = 0; i < 2; i++) taskManagement->popCondition();
+                animation.recordTreeNodeRecursion(&taskManagement->TreeNodeRecursionStack);
+                taskManagement->popRecursionStack();
+                if(taskManagement->getRecursionStackSize() == 0) {
+                    animation.recordBool(&taskManagement->taskDone);
+                    return true;
+                }
+                else {
+                    animation.recordFloat(&taskManagement->time);
+                    animation.recordInt(&taskManagement->step);
+                    animation.recordBool(&taskManagement->taskDone);
+                    for(int i = 0; i < 7; i++) taskManagement->prevStep();
+                    // Skip
+                    if(stepRequest == skipForward) {
+                        return insertStep0(val, stepRequest, taskManagement);
+                    }
+                }
+            }
+        }
+        animation.recordFloat(&taskManagement->time);
+        animation.recordInt(&taskManagement->step);
+        taskManagement->nextStep();
+        // Skip
+        if(stepRequest == skipForward) {
+            return insertStep8(val, stepRequest, taskManagement);
+        }
+    }
+    // Update
+    else taskManagement->updateTime();
+    return false;
+}
+bool AVL::insertStep8(int val, int stepRequest, PTaskManagement * taskManagement) {
+    cout << "insertStep8" << endl;
+    /*
+    con0 == True:
+        rotateRight(root)
+    con0 == False:
+            if getBalance(root->right) == isLeftHeavier : rotateRight(root->right)
+    */
+    bool done = (waitRequest == false && taskManagement->getRecursionStackSize() > 0 && taskManagement->getTime() > PConstants::PAnimation::waitTime);
+    // Begin algorithm
+    if(taskManagement->getTime() == 0.f) {
+        if(taskManagement->getCondition(0)) {
+            // Recording has been already done inside
+            rotateRight(*taskManagement->getTreeNode());
+        }
+        else {
+            bool con1 = getBalance((*taskManagement->getTreeNode())->right) > 1;
+            if(con1) {
+                // Recording has been already done inside
+                rotateRight((*taskManagement->getTreeNode())->right);
+            }
+        }
+        animation.recordVersion();
+    }
+    // Explanation
+
+    // Skip
+    if(stepRequest == goForward || stepRequest == skipForward) {
+        done = true;
+    }
+    // End algorithm
+    if(done) {
+        if(taskManagement->getCondition(0)) {
+            animation.recordVectorBool(&taskManagement->conditionStack);
+            taskManagement->popCondition();
+            animation.recordTreeNodeRecursion(&taskManagement->TreeNodeRecursionStack);
+            taskManagement->popRecursionStack();
+            if(taskManagement->getRecursionStackSize() == 0) {
+                animation.recordBool(&taskManagement->taskDone);
+                return true;
+            }
+            else {
+                animation.recordFloat(&taskManagement->time);
+                animation.recordInt(&taskManagement->step);
+                animation.recordBool(&taskManagement->taskDone);
+                for(int i = 0; i < 8; i++) taskManagement->prevStep();
+                // Skip
+                if(stepRequest == skipForward) {
+                    return insertStep0(val, stepRequest, taskManagement);
+                }
+            }
+        }
+        else {
+            animation.recordFloat(&taskManagement->time);
+            animation.recordInt(&taskManagement->step);
+            taskManagement->nextStep();
+            // Skip
+            if(stepRequest == skipForward) {
+                return insertStep9(val, stepRequest, taskManagement);
+            }
+        }
+    }
+    // Update time
+    else taskManagement->updateTime();
+    return false;
+}
+bool AVL::insertStep9(int val, int stepRequest, PTaskManagement * taskManagement) {
+    cout << "insertStep9" << endl;
+    // 09.			rotateLeft(root)
+    bool done = (waitRequest == false && taskManagement->getRecursionStackSize() > 0 && taskManagement->getTime() > PConstants::PAnimation::waitTime);
+    // Begin algorithm
+    if(taskManagement->getTime() == 0.f) {
+        // Recording has been already done inside
+        rotateLeft(*taskManagement->getTreeNode());
+        animation.recordVersion();
+    }
+    // Explanation
+
+    // Skip
+    if(stepRequest == goForward || stepRequest == skipForward) {
+        done = true;
+    }
+    // End algorithm
+    if(done) {
+        animation.recordVectorBool(&taskManagement->conditionStack);
+        for(int i = 0; i < 2; i++) taskManagement->popCondition();
+        animation.recordTreeNodeRecursion(&taskManagement->TreeNodeRecursionStack);
+        taskManagement->popRecursionStack();
+        if(taskManagement->getRecursionStackSize() == 0) {
+            animation.recordBool(&taskManagement->taskDone);
+            return true;
+        }
+        else {
+            animation.recordFloat(&taskManagement->time);
+            animation.recordInt(&taskManagement->step);
+            animation.recordBool(&taskManagement->taskDone);
+            for(int i = 0; i < 9; i++) taskManagement->prevStep();
+            // Skip
+            if(stepRequest == skipForward) {
+                return insertStep0(val, stepRequest, taskManagement);
+            }
+        }
+    }
+    // Update time
+    else taskManagement->updateTime();
+    return false;   
 }
 
 void AVL::deleteAnimation() {
+    cout << animationStep << ' ' << hightLightNodeIndex << ' ' << Path.size() << '\n';
     switch (animationStep) {
     case 0:
         if (hightLightNodeIndex < Path.size()) {
@@ -523,7 +983,7 @@ void AVL::deleteAnimation() {
         Node->setColor(BLUE);
         Node->isHighlight = false;
     }
-        isInsert = 0;
+        isDelete = 0;
         hightLightNodeIndex = 0;
         Path.clear();
         NodeInsert = nullptr;
@@ -534,6 +994,7 @@ void AVL::deleteAnimation() {
         selectionNode = nullptr;
         explanationArea.update("");
         PseudoCodeArea.update(-1);
+        animationStep = 0;
         drawTree();
         break;
     }
@@ -710,15 +1171,17 @@ void AVL::updateHeightInPath() {
         setHeight(Path[hightLightNodeIndex]);
         int gb = getBalance(Path[hightLightNodeIndex]);
         string s = "root->getBalance == " + to_string(gb) + " , is ok";
+        animation.recordString(&explanationArea.content);
         explanationArea.update(s);
+        animation.recordVectorColor(&PseudoCodeArea.codeLineColor);
         PseudoCodeArea.update(5);
+        animation.recordColor(&Path[hightLightNodeIndex]->color);
         Path[hightLightNodeIndex]->setColor(BLUE);
         WaitTime(0.5);
     }
 }
 
 void AVL::pushAnimation() {
-
     // animation.recordInt(&this->animationStep);
     // animation.animationStepVector.push_back(this->animationStep);
     // animation.recordInt(&this->hightLightNodeIndex);
@@ -757,167 +1220,167 @@ void AVL::pushAnimation() {
 }
 
 void AVL::popAnimation() {
-    if(animation.animationStepVector.size() > 0) {
-        animation.animationStepVector.pop_back();
-    }
-    if(animation.hightLightNodeIndexVector.size() > 0) {
-        animation.hightLightNodeIndexVector.pop_back();
-    }
-    if(animation.isNeedToRotateVector.size() > 0) {
-        animation.isNeedToRotateVector.pop_back();
-    }
-    if(animation.isNeedToRotateChildVector.size() > 0) {
-        animation.isNeedToRotateChildVector.pop_back();
-    }
-    if(animation.isInsertVector.size() > 0) {
-        animation.isInsertVector.pop_back();
-    }
-    if(animation.isDeleteVector.size() > 0) {
-        animation.isDeleteVector.pop_back();
-    }
-    if(animation.isFindVector.size() > 0) {
-        animation.isFindVector.pop_back();
-    }
-    if(animation.isInitVector.size() > 0) {
-        animation.isInitVector.pop_back();
-    }
-    if(animation.isNeedToFindAnotherDeleteNodeVector.size() > 0) {
-        animation.isNeedToFindAnotherDeleteNodeVector.pop_back();
-    }
-    if(animation.NodeDeleteVector.size() > 0) {
-        animation.NodeDeleteVector.pop_back();
-    }
-    if(animation.selectionNodeVector.size() > 0) {
-        animation.selectionNodeVector.pop_back();
-    }
-    if(animation.findDataVector.size() > 0) {
-        animation.findDataVector.pop_back();
-    }
-    if(animation.PseudoCodeAreaColorLineVector.size() > 0) {
-        animation.PseudoCodeAreaColorLineVector.pop_back();
-    }
-    if(animation.explanationAreaVector.size() > 0) {
-        animation.explanationAreaVector.pop_back();
-    }
-    if(animation.indexOfDeleteNodeInPathVector.size() > 0) {
-        animation.indexOfDeleteNodeInPathVector.pop_back();
-    }
-    if(animation.allNodeVector.size() > 0) {
-        animation.allNodeVector.pop_back();
-    }
-    if(animation.PathVector.size() > 0) {
-        animation.PathVector.pop_back();
-    }
-    if(animation.NodeInsertVector.size() > 0) {
-        animation.NodeInsertVector.pop_back();
-    }
-    if(animation.rotationNodeVector.size() > 0) {
-        animation.rotationNodeVector.pop_back();
-    }
-    if(animation.childRotateNodeVector.size() > 0) {
-        animation.childRotateNodeVector.pop_back();
-    }
-    if(animation.TreeRootVector.size() > 0) {
-        animation.TreeRootVector.pop_back();
-    }
-    if(animation.newDeleteNodeVector.size() > 0) {
-        animation.newDeleteNodeVector.pop_back();
-    }
+    // if(animation.animationStepVector.size() > 0) {
+    //     animation.animationStepVector.pop_back();
+    // }
+    // if(animation.hightLightNodeIndexVector.size() > 0) {
+    //     animation.hightLightNodeIndexVector.pop_back();
+    // }
+    // if(animation.isNeedToRotateVector.size() > 0) {
+    //     animation.isNeedToRotateVector.pop_back();
+    // }
+    // if(animation.isNeedToRotateChildVector.size() > 0) {
+    //     animation.isNeedToRotateChildVector.pop_back();
+    // }
+    // if(animation.isInsertVector.size() > 0) {
+    //     animation.isInsertVector.pop_back();
+    // }
+    // if(animation.isDeleteVector.size() > 0) {
+    //     animation.isDeleteVector.pop_back();
+    // }
+    // if(animation.isFindVector.size() > 0) {
+    //     animation.isFindVector.pop_back();
+    // }
+    // if(animation.isInitVector.size() > 0) {
+    //     animation.isInitVector.pop_back();
+    // }
+    // if(animation.isNeedToFindAnotherDeleteNodeVector.size() > 0) {
+    //     animation.isNeedToFindAnotherDeleteNodeVector.pop_back();
+    // }
+    // if(animation.NodeDeleteVector.size() > 0) {
+    //     animation.NodeDeleteVector.pop_back();
+    // }
+    // if(animation.selectionNodeVector.size() > 0) {
+    //     animation.selectionNodeVector.pop_back();
+    // }
+    // if(animation.findDataVector.size() > 0) {
+    //     animation.findDataVector.pop_back();
+    // }
+    // if(animation.PseudoCodeAreaColorLineVector.size() > 0) {
+    //     animation.PseudoCodeAreaColorLineVector.pop_back();
+    // }
+    // if(animation.explanationAreaVector.size() > 0) {
+    //     animation.explanationAreaVector.pop_back();
+    // }
+    // if(animation.indexOfDeleteNodeInPathVector.size() > 0) {
+    //     animation.indexOfDeleteNodeInPathVector.pop_back();
+    // }
+    // if(animation.allNodeVector.size() > 0) {
+    //     animation.allNodeVector.pop_back();
+    // }
+    // if(animation.PathVector.size() > 0) {
+    //     animation.PathVector.pop_back();
+    // }
+    // if(animation.NodeInsertVector.size() > 0) {
+    //     animation.NodeInsertVector.pop_back();
+    // }
+    // if(animation.rotationNodeVector.size() > 0) {
+    //     animation.rotationNodeVector.pop_back();
+    // }
+    // if(animation.childRotateNodeVector.size() > 0) {
+    //     animation.childRotateNodeVector.pop_back();
+    // }
+    // if(animation.TreeRootVector.size() > 0) {
+    //     animation.TreeRootVector.pop_back();
+    // }
+    // if(animation.newDeleteNodeVector.size() > 0) {
+    //     animation.newDeleteNodeVector.pop_back();
+    // }
 }
 
 void AVL::clearAnimation() {
-    animation.animationStepVector.clear();
-    animation.hightLightNodeIndexVector.clear();
-    animation.isNeedToRotateVector.clear();
-    animation.isNeedToRotateChildVector.clear();
-    animation.isInsertVector.clear();
-    animation.isDeleteVector.clear();
-    animation.isFindVector.clear();
-    animation.isInitVector.clear();
-    animation.isNeedToFindAnotherDeleteNodeVector.clear();
-    animation.NodeDeleteVector.clear();
-    animation.selectionNodeVector.clear();
-    animation.findDataVector.clear();
-    animation.PseudoCodeAreaColorLineVector.clear();
-    animation.explanationAreaVector.clear();
-    animation.indexOfDeleteNodeInPathVector.clear();
-    animation.allNodeVector.clear();
-    animation.PathVector.clear();
-    animation.NodeInsertVector.clear();
-    animation.rotationNodeVector.clear();
-    animation.childRotateNodeVector.clear();
-    animation.TreeRootVector.clear();
-    animation.newDeleteNodeVector.clear();
+    // animation.animationStepVector.clear();
+    // animation.hightLightNodeIndexVector.clear();
+    // animation.isNeedToRotateVector.clear();
+    // animation.isNeedToRotateChildVector.clear();
+    // animation.isInsertVector.clear();
+    // animation.isDeleteVector.clear();
+    // animation.isFindVector.clear();
+    // animation.isInitVector.clear();
+    // animation.isNeedToFindAnotherDeleteNodeVector.clear();
+    // animation.NodeDeleteVector.clear();
+    // animation.selectionNodeVector.clear();
+    // animation.findDataVector.clear();
+    // animation.PseudoCodeAreaColorLineVector.clear();
+    // animation.explanationAreaVector.clear();
+    // animation.indexOfDeleteNodeInPathVector.clear();
+    // animation.allNodeVector.clear();
+    // animation.PathVector.clear();
+    // animation.NodeInsertVector.clear();
+    // animation.rotationNodeVector.clear();
+    // animation.childRotateNodeVector.clear();
+    // animation.TreeRootVector.clear();
+    // animation.newDeleteNodeVector.clear();
 }
 
 void AVL::assignAnimation(int animationState) {
-    if(animationState >= 0 && animationState < animation.animationStepVector.size()) {
-        this->animationStep = animation.animationStepVector[animationState];
-    }
-    if(animationState >= 0 && animationState < animation.hightLightNodeIndexVector.size()) {
-        this->hightLightNodeIndex = animation.hightLightNodeIndexVector[animationState];
-    }
-    if(animationState >= 0 && animationState < animation.isNeedToRotateVector.size()) {
-        this->isNeedToRotate = animation.isNeedToRotateVector[animationState];
-    }
-    if(animationState >= 0 && animationState < animation.isNeedToRotateChildVector.size()) {
-        this->isNeedToRotateChild = animation.isNeedToRotateChildVector[animationState];
-    }
-    if(animationState >= 0 && animationState < animation.isInsertVector.size()) {
-        this->isInsert = animation.isInsertVector[animationState];
-    }
-    if(animationState >= 0 && animationState < animation.isDeleteVector.size()) {
-        this->isDelete = animation.isDeleteVector[animationState];
-    }
-    if(animationState >= 0 && animationState < animation.isFindVector.size()) {
-        this->isFind = animation.isFindVector[animationState];
-    }
-    if(animationState >= 0 && animationState < animation.isInitVector.size()) {
-        this->isInit = animation.isInitVector[animationState];
-    }
-    if(animationState >= 0 && animationState < animation.isNeedToFindAnotherDeleteNodeVector.size()) {
-        this->isNeedToFindAnotherDeleteNode = animation.isNeedToFindAnotherDeleteNodeVector[animationState];
-    }
-    if(animationState >= 0 && animationState < animation.findDataVector.size()) {
-        this->findData = animation.findDataVector[animationState];
-    }
-    if(animationState >= 0 && animationState < animation.PseudoCodeAreaColorLineVector.size()) {
-        this->PseudoCodeArea.codeLineColor = animation.PseudoCodeAreaColorLineVector[animationState];
-    }
-    if(animationState >= 0 && animationState < animation.explanationAreaVector.size()) {
-        this->explanationArea.content = animation.explanationAreaVector[animationState];
-    }
-    if(animationState >= 0 && animationState < animation.indexOfDeleteNodeInPathVector.size()) {
-        this->indexOfDeleteNodeInPath = animation.indexOfDeleteNodeInPathVector[animationState];
-    }
-    if(animationState >= 0 && animationState < animation.allNodeVector.size()) {
-        this->allNode = animation.allNodeVector[animationState];
-    }
-    if(animationState >= 0 && animationState < animation.PathVector.size()) {
-        this->Path = animation.PathVector[animationState];
-    }
+    // if(animationState >= 0 && animationState < animation.animationStepVector.size()) {
+    //     this->animationStep = animation.animationStepVector[animationState];
+    // }
+    // if(animationState >= 0 && animationState < animation.hightLightNodeIndexVector.size()) {
+    //     this->hightLightNodeIndex = animation.hightLightNodeIndexVector[animationState];
+    // }
+    // if(animationState >= 0 && animationState < animation.isNeedToRotateVector.size()) {
+    //     this->isNeedToRotate = animation.isNeedToRotateVector[animationState];
+    // }
+    // if(animationState >= 0 && animationState < animation.isNeedToRotateChildVector.size()) {
+    //     this->isNeedToRotateChild = animation.isNeedToRotateChildVector[animationState];
+    // }
+    // if(animationState >= 0 && animationState < animation.isInsertVector.size()) {
+    //     this->isInsert = animation.isInsertVector[animationState];
+    // }
+    // if(animationState >= 0 && animationState < animation.isDeleteVector.size()) {
+    //     this->isDelete = animation.isDeleteVector[animationState];
+    // }
+    // if(animationState >= 0 && animationState < animation.isFindVector.size()) {
+    //     this->isFind = animation.isFindVector[animationState];
+    // }
+    // if(animationState >= 0 && animationState < animation.isInitVector.size()) {
+    //     this->isInit = animation.isInitVector[animationState];
+    // }
+    // if(animationState >= 0 && animationState < animation.isNeedToFindAnotherDeleteNodeVector.size()) {
+    //     this->isNeedToFindAnotherDeleteNode = animation.isNeedToFindAnotherDeleteNodeVector[animationState];
+    // }
+    // if(animationState >= 0 && animationState < animation.findDataVector.size()) {
+    //     this->findData = animation.findDataVector[animationState];
+    // }
+    // if(animationState >= 0 && animationState < animation.PseudoCodeAreaColorLineVector.size()) {
+    //     this->PseudoCodeArea.codeLineColor = animation.PseudoCodeAreaColorLineVector[animationState];
+    // }
+    // if(animationState >= 0 && animationState < animation.explanationAreaVector.size()) {
+    //     this->explanationArea.content = animation.explanationAreaVector[animationState];
+    // }
+    // if(animationState >= 0 && animationState < animation.indexOfDeleteNodeInPathVector.size()) {
+    //     this->indexOfDeleteNodeInPath = animation.indexOfDeleteNodeInPathVector[animationState];
+    // }
+    // if(animationState >= 0 && animationState < animation.allNodeVector.size()) {
+    //     this->allNode = animation.allNodeVector[animationState];
+    // }
+    // if(animationState >= 0 && animationState < animation.PathVector.size()) {
+    //     this->Path = animation.PathVector[animationState];
+    // }
     
-    if(animationState >= 0 && animationState < animation.NodeDeleteVector.size()) {
-        this->NodeDelete = animation.NodeDeleteVector[animationState];
-    }
-    if(animationState >= 0 && animationState < animation.selectionNodeVector.size()) {
-        this->selectionNode = animation.selectionNodeVector[animationState];
-    }
-    if(animationState >= 0 && animationState < animation.NodeInsertVector.size()) {
-        this->NodeInsert = animation.NodeInsertVector[animationState];
-    }
-    if(animationState >= 0 && animationState < animation.rotationNodeVector.size()) {
-        this->rotationNode = animation.rotationNodeVector[animationState];
-    }
-    if(animationState >= 0 && animationState < animation.childRotateNodeVector.size()) {
-        this->childRotateNode = animation.childRotateNodeVector[animationState];
-    }
-    if(animationState >= 0 && animationState < animation.TreeRootVector.size()) {
-        this->TreeRoot = animation.TreeRootVector[animationState];
-    }
-    if(animationState >= 0 && animationState < animation.newDeleteNodeVector.size()) {
-        this->newDeleteNode = animation.newDeleteNodeVector[animationState];
-    }
+    // if(animationState >= 0 && animationState < animation.NodeDeleteVector.size()) {
+    //     this->NodeDelete = animation.NodeDeleteVector[animationState];
+    // }
+    // if(animationState >= 0 && animationState < animation.selectionNodeVector.size()) {
+    //     this->selectionNode = animation.selectionNodeVector[animationState];
+    // }
+    // if(animationState >= 0 && animationState < animation.NodeInsertVector.size()) {
+    //     this->NodeInsert = animation.NodeInsertVector[animationState];
+    // }
+    // if(animationState >= 0 && animationState < animation.rotationNodeVector.size()) {
+    //     this->rotationNode = animation.rotationNodeVector[animationState];
+    // }
+    // if(animationState >= 0 && animationState < animation.childRotateNodeVector.size()) {
+    //     this->childRotateNode = animation.childRotateNodeVector[animationState];
+    // }
+    // if(animationState >= 0 && animationState < animation.TreeRootVector.size()) {
+    //     this->TreeRoot = animation.TreeRootVector[animationState];
+    // }
+    // if(animationState >= 0 && animationState < animation.newDeleteNodeVector.size()) {
+    //     this->newDeleteNode = animation.newDeleteNodeVector[animationState];
+    // }
 }
 
 void AVL::runAllInsertStepBeforeAnimation() {

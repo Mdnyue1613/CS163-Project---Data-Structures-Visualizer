@@ -7,12 +7,16 @@
 #include "LInputBox.h"
 #include "LFunctionArea.h"
 #include "PStepByStepMenu.h"
+#include "PTaskManagement.h"
+#include "PNotification.h"
 #include<sstream>
 
 struct DS3 {
     PTitleBox titleBox;
     LFunctionArea functionArea;
     PStepByStepMenu stepByStepMenu;
+    PTaskManagement taskManagement;
+    PNotification notificationBox;
     
     AVL Tree;
     bool isAnimation;
@@ -20,7 +24,7 @@ struct DS3 {
     void draw();
     void RandomInitialize(string num);
     void vectorIntInitialize(vector<int> nums);
-    void Insert(string num);
+    bool Insert(vector<string>& request, int stepRequest); // Return true if the task is done
     void insertAnimation();
     void Delete(string num);
     void Find(string num);

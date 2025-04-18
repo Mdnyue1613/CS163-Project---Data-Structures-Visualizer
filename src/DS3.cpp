@@ -19,35 +19,47 @@ void DS3::draw() {
     // Draw the title of Data Structure 1
     titleBox.draw();
     // Draw the function area and take request from user
-    vector<string> request = functionArea.draw(isAnimation == false);
+    if(taskManagement.takeRequest(functionArea.draw(isAnimation == false))) {
+        Tree.animation.reset();
+    }
+
+    vector<string> request = taskManagement.getTask();
     // Draw the step by step menu
     stepByStepMenu.draw();
     int stepByStepRequest = stepByStepMenu.getRequest();
 
     // Operate request
-    if(request[0] == "initialize" && request[1] == "random") {
-        Tree.isInit = 1;
-        if(request.size() == 2)
-            RandomInitialize("");
-        else if(request.size() == 3)
-            RandomInitialize(request[2]);
-    }
-    else if (request[0] == "initialize" && request[1] == "data") {
-        if (request.size() == 3) {
-            vector<int> nums = stringToVectorInt(request[2]);
-            if (nums.size() > 0) {
-                Tree.isInit = 1;
-                vectorIntInitialize(nums);
+    // Initialize request
+    if(request[0] == "initialize" && taskManagement.doneTask() == false) {
+        if(request[1] == "random") {
+            Tree.isInit = 1;
+            if(request.size() == 2)
+                RandomInitialize("");
+            else if(request.size() == 3)
+                RandomInitialize(request[2]);
+        }
+        else if (request[1] == "data") {
+            if (request.size() == 3) {
+                vector<int> nums = stringToVectorInt(request[2]);
+                if (nums.size() > 0) {
+                    Tree.isInit = 1;
+                    vectorIntInitialize(nums);
+                }
             }
         }
+        taskManagement.endTask();
     }
-    else if(request[0] == "insert" && request[1] == "Insert") {
-        if(request.size() == 3) {
-            Tree.isInsert = 1;
-            Insert(request[2]);
+    // Insert request
+    else if(request[0] == "insert") {
+        Tree.isInsert = 1;
+        if(Insert(request, stepByStepRequest)) {
+            taskManagement.endTask();
+            Tree.isInsert = 0;
+            Tree.animationStep = 0;
         }
     }
-    else if(request[0] == "delete") {
+    // Delete request
+    else if(request[0] == "delete" && taskManagement.doneTask() == false) {
         if (request[1] == "delete") {
             if (request.size() == 3) {
                 if(Tree.selectionNode) {
@@ -61,8 +73,10 @@ void DS3::draw() {
         else if (request[1] == "clear") {
             Tree.removeAll();
         }
+        taskManagement.endTask();
     }
-    else if(request[0] == "find" && request[1] == "find") {
+    // Find request
+    else if(request[0] == "find" && request[1] == "find" && taskManagement.doneTask() == false) {
         if(request.size() == 3) {
             if(Tree.selectionNode) request[2] = to_string(Tree.selectionNode->val);
             if(request[2] != "") {
@@ -70,6 +84,7 @@ void DS3::draw() {
                 Find(request[2]);
             }
         }
+        taskManagement.endTask();
     }
     isAnimation = (Tree.isInit || Tree.isInsert || Tree.isDelete || Tree.isFind);
     // Draw Data Structure
@@ -77,6 +92,8 @@ void DS3::draw() {
         updateSelectionNode();
     }
     Tree.draw();
+    Tree.setCurrentPosition(PConstants::DS3::speed);
+    Tree.drawTree();
 }
 void DS3::RandomInitialize(string num) {
     int val;
@@ -99,23 +116,13 @@ void DS3::RandomInitialize(string num) {
     Tree.random(val);
 }
 
-void DS3::Insert(string num) {
-    int val;
-    for (auto c : num) {
-        if (c < '0' || c  > '9') {
-            Tree.isDelete = 0;
-            return;
-        }
-    }
-    val = stoi(num);
-    Tree.clearAnimation();
-    Tree.insertNode(Tree.TreeRoot, nullptr, val);
-    if(Tree.TreeRoot && Tree.isInsert) {
-        Tree.runAllInsertStepBeforeAnimation();
-        Tree.assignAnimation(0);
+bool DS3::Insert(vector<string>& request, int stepRequest) {
+    int val = notificationBox.getOneNum(request[1], -100, 100);
+    if(notificationBox.notificationText == "Valid") {
+        return Tree.insertAnimationV2(val, stepRequest, &taskManagement);
     }
     else {
-        Tree.isInsert = 0;
+        return true;
     }
 }
 

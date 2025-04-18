@@ -14,24 +14,12 @@
 #include <iostream>
 #include"PExplanationArea.h"
 #include"LPseudoCode.h"
+#include"PTaskManagement.h"
+#include"LTreeNode.h"
+#include"PNotification.h"
+
 using namespace std;
 
-struct TreeNode{
-    int val;
-    int height;
-    bool isLeft;
-    bool isHighlight = 0;
-    Vector2 position;
-    Vector2 targetPosition;
-    float radius;
-    Color color;
-
-    TreeNode *left, *right, *parent;
-
-    TreeNode(int x);
-    void setRadius(float radius);
-    void setColor(Color color);
-};
 /*  data structure to copy the AVL when animaion is running:
     TreeRootVector: store all root state of tree
     rotationNodeVector: store all rotation node of all animation step
@@ -57,22 +45,6 @@ struct TreeNode{
     hightLightNodeIndexVector: store all highlight node in animation
 */
 struct AVLAnimation {
-    vector<TreeNode*> TreeRootVector;
-    vector<TreeNode*> rotationNodeVector;
-    vector<TreeNode*> childRotateNodeVector;
-    vector<TreeNode*> NodeInsertVector;
-    vector<TreeNode*> NodeDeleteVector;
-    vector<TreeNode*> selectionNodeVector;
-    vector<vector<TreeNode*>> allNodeVector;
-    vector<vector<TreeNode*>> PathVector;
-    vector<int> indexOfDeleteNodeInPathVector;
-    vector<int> findDataVector;
-    vector<bool> isInsertVector, isDeleteVector, isFindVector, isInitVector, isNeedToFindAnotherDeleteNodeVector, isNeedToRotateVector, isNeedToRotateChildVector;
-    vector<vector<Color>> PseudoCodeAreaColorLineVector;
-    vector<string> explanationAreaVector;
-    vector<int> animationStepVector, hightLightNodeIndexVector;
-    vector<TreeNode*> newDeleteNodeVector;
-
     // Stacks
     vector<string> recordVersionStack;
     vector<pair<int *, int>> recordIntStack;
@@ -82,6 +54,11 @@ struct AVLAnimation {
     vector<pair<Color *, Color>> recordColorStack;
     vector<pair<float *, float>> recordFloatStack;
     vector<pair<TreeNode**, TreeNode*>> recordTreeNodePointerStack;
+    vector<pair<vector<TreeNode*>*, vector<TreeNode*>>> recordTreeNodePointerVectorStack;
+    vector<pair<Vector2*, Vector2>> recordVector2Stack;
+    vector<TreeNode**> recordCreateNodeStack;
+    vector<pair<vector<TreeNode**>*, vector<TreeNode**>>> recordTreeNodeRecursionStack;
+    vector<pair<vector<bool>*, vector<bool>>> recordVectorBoolStack;
 
     // ID
     enum requestID {
@@ -93,6 +70,9 @@ struct AVLAnimation {
         noRequest
     };
 
+    // Reset
+    void reset(void);
+
     // Record
     void recordVersion(void);
     void recordInt(int *p);
@@ -102,9 +82,14 @@ struct AVLAnimation {
     void recordColor(Color *p);
     void recordFloat(float *p);
     void recordTreeNodePointer(TreeNode **p);
+    void recordTreeNodePointerVector(vector<TreeNode*> *p);
+    void recordVector2(Vector2 *p);
+    void recordCreateNode(TreeNode **p);
+    void recordTreeNodeRecursion(vector<TreeNode**> *p);
+    void recordVectorBool(vector<bool> *p);
 
     // Undo
-    void undoVersion(int stepRequest);
+    bool undoVersion(int stepRequest);
     void undoInt(void);
     void undoBool(void);
     void undoString(void);
@@ -112,6 +97,11 @@ struct AVLAnimation {
     void undoColor(void);
     void undoFloat(void);
     void undoTreeNodePointer(void);
+    void undoTreeNodePointerVector(void);
+    void undoVector2(void);
+    void undoCreateNode(void);
+    void undoTreeNodeRecursion(void);
+    void undoVectorBool(void);
 };
 
 struct AVL {
@@ -136,6 +126,19 @@ struct AVL {
     PExplanationArea explanationArea;
     LPseudoCode PseudoCodeArea;
     AVLAnimation animation;
+    PTaskManagement taskManagement;
+    PNotification notificationBox;
+    bool waitRequest = true;
+
+    enum requestID {
+        noRequest,
+        skipBackward,
+        goBackward,
+        play,
+        goForward,
+        skipForward
+    };
+
     AVL();
     int getBalance(TreeNode *root);
     void setHeight(TreeNode *&root);
@@ -153,7 +156,17 @@ struct AVL {
     void setTreeSize(TreeNode*& root, float raidus);
     void initializeAnimation();
     void insertAnimation();
-    void insertAnimationV2();
+    bool insertAnimationV2(int val, int stepRequest, PTaskManagement * taskManagement);
+    bool insertStep0(int val, int stepRequest, PTaskManagement * taskManagement);
+    bool insertStep1(int val, int stepRequest, PTaskManagement * taskManagement);
+    bool insertStep2(int val, int stepRequest, PTaskManagement * taskManagement);
+    bool insertStep3(int val, int stepRequest, PTaskManagement * taskManagement);
+    bool insertStep4(int val, int stepRequest, PTaskManagement * taskManagement);
+    bool insertStep5(int val, int stepRequest, PTaskManagement * taskManagement);
+    bool insertStep6(int val, int stepRequest, PTaskManagement * taskManagement);
+    bool insertStep7(int val, int stepRequest, PTaskManagement * taskManagement);
+    bool insertStep8(int val, int stepRequest, PTaskManagement * taskManagement);
+    bool insertStep9(int val, int stepRequest, PTaskManagement * taskManagement);
     void deleteAnimation();
     void findAnimation();
     void drawTree();
