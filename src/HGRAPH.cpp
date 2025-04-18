@@ -8,9 +8,13 @@ void Graph::Initialize()
     numVertex = 0;
     numEdge = 0;
     type = 0;
-    g.resize(0);
-    vertex.resize(0);
-    connections.resize(0);
+    g.clear();
+    g.push_back(vector <Edge>());
+    vertex.clear();
+    vertex.push_back(Vertex());
+    vertex[0].real = 0;
+    connections.clear();
+    connections.push_back(vector <int> (1, 0));
     vertexRadius = 20;
     fontSize = vertexRadius;
     thick = 3;
@@ -592,7 +596,7 @@ void Graph::LoadEdgeList(vector <ii_i> &edges)
         vertex[i].isClick = 0;
 }
 
-void Graph::Add(vector <string> &userInput)
+void Graph::Add(vector <string> &userInput) 
 {
     bool success1, success2, success3;
     int cursor;
@@ -629,17 +633,25 @@ void Graph::AddVertex(int u)
     {
         g.push_back(vector <Edge>());
         vertex.push_back(Vertex());
+        connections.push_back(vector <int> (max(numVertex, u) + 1, 0));
+    }
+
+    numVertex = max(numVertex, u);
+    for (int i = 0; i <= numVertex; i++)
+    {
+        int tmp = numVertex + 1 - connections[i].size();
+        for (int j = 1; j <= tmp; j++)
+            connections[i].push_back(0);
     }
 
     if (!vertex[u].real)
     {
         realNumVertex++;
         vertex[u].real = 1;
-        vertex[u].position.x = GetScreenWidth() + vertexRadius;
-        vertex[u].position.y = GetScreenHeight() + vertexRadius;
+        vertex[u].position.x = GetScreenWidth() + vertexRadius + Rand(0, 100);
+        vertex[u].position.y = GetScreenHeight() + vertexRadius + Rand(0, 100);
+        vertex[u].isClick = 0;
     }
-
-    numVertex = max(numVertex, u);
 }
 
 void Graph::AddEdge(int u, int v, int w)
@@ -654,6 +666,8 @@ void Graph::AddEdge(int u, int v, int w)
         {
             g[u].push_back(Edge(1, v, w));
             g[v].push_back(Edge(0, u, w));
+            connections[u][v]++;
+            connections[v][u]++;
             numEdge++;
         }
         else
@@ -663,6 +677,8 @@ void Graph::AddEdge(int u, int v, int w)
             {
                 g[u].push_back(Edge(1, v, w));
                 g[v].push_back(Edge(0, u, w));
+                connections[u][v]++;
+                connections[v][u]++;
                 numEdge++;
             }
             else
@@ -742,17 +758,22 @@ void Graph::DeleteVertex(int u)
         realNumVertex--;
         g.pop_back();
         vertex.pop_back();
+        connections.pop_back();
     }
     else
     {
         realNumVertex--;
         g[u].clear();
         vertex[u] = Vertex();
+        for (int i = 0; i <= numVertex; i++)
+            connections[u][i] = connections[i][u] = 0;
     }
 }
 
 void Graph::DeleteEdge(int u, int v, int w)
 {
+    if (u > numVertex || v > numVertex) return;
+
     int count = 0;
     for (int i = 0; i < g[u].size(); i++)
         if (g[u][i].to != v || g[u][i].weight != w)
@@ -770,7 +791,7 @@ void Graph::DeleteEdge(int u, int v, int w)
     
     count = 0;
     for (int i = 0; i < g[v].size(); i++)
-        if (g[v][i].to != u && g[v][i].weight != w)
+        if (g[v][i].to != u || g[v][i].weight != w)
         {
             g[v][i - count] = g[v][i];
         }
@@ -780,6 +801,8 @@ void Graph::DeleteEdge(int u, int v, int w)
     {
         g[v].pop_back();
         count--;
+        connections[u][v]--;
+        connections[v][u]--;
     }
 }
 

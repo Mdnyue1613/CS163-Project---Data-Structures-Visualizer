@@ -790,7 +790,6 @@ void GraphGUI::DrawShortedPathFunction()
     if (!freeze) Dijkstra.chooseMode();
 
     Dijkstra.inputBox.draw();
-    ZoomInputArea(Dijkstra.inputBox);
     if (!freeze) Dijkstra.inputBox.activate();
 
     Dijkstra.controlPanel.draw();
