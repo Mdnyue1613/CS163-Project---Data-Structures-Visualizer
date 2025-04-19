@@ -8,7 +8,7 @@ struct PBOX
     int outlineThickness;
 
     PBOX(void); // initialize
-    PBOX(int x, int y, int width, int height, int outThickness, Color inColor, Color outColor); // initialize with parameters
+    PBOX(float x, float y, float width, float height, int outThickness, Color inColor, Color outColor); // initialize with parameters
     PBOX(Vector2 pos, Vector2 size, int outThickness, Color inColor, Color outColor); // initialize with Vecter2 parementers
     bool isMove();
     bool isClick();

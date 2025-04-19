@@ -3,7 +3,7 @@
 
 PBOX::PBOX(void) {
 }
-PBOX::PBOX(int x, int y, int width, int height, int outThickness, Color inColor, Color outColor) {
+PBOX::PBOX(float x, float y, float width, float height, int outThickness, Color inColor, Color outColor) {
     rec.x = x;
     rec.y = y;
     rec.width = width;

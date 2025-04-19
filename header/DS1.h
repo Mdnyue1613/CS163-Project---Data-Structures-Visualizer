@@ -10,6 +10,7 @@
 #include "PExplanationArea.h"
 #include "PNotification.h"
 #include "LPseudoCode.h"
+#include "PSlider.h"
 #include <string>
 #include <vector>
 #include <random>
@@ -27,6 +28,7 @@ struct DS1 {
     PExplanationArea explanationArea;
     PNotification notificationBox;
     LPseudoCode pseudoCode;
+    PSlider speedSlider;
 
     enum taskType {
         Initialize,

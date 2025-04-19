@@ -19,8 +19,8 @@ struct PConstants {
         static Vector2 pos;
         // Size
         static Vector2 size;
-        static int boxHeight;
-        static int boxWidth;
+        static float boxHeight;
+        static float boxWidth;
         static float boxHalfWidth;
         static int boxOutlineThickness;
         // Text size
@@ -167,4 +167,14 @@ struct PConstants {
         static float waitTime;
     };
 
+    struct PSlider {
+        // Pos
+        static Vector2 pos;
+        // Size
+        static Vector2 size;
+        // Color
+        static Color barColor;
+        static Color thumbColor;
+        static Color thumbHighlightColor;
+    };
 };
