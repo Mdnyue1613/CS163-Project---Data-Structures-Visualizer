@@ -1,4 +1,5 @@
 #include "../header/DoublyLinkedList.h"
+#include "../header/PConstants.h"
 
 DoublyLinkedList::DoublyLinkedList(void) {
     // Data structure
@@ -9,6 +10,8 @@ DoublyLinkedList::DoublyLinkedList(void) {
     animationTmp = nullptr;
     // prev
     animationPrev = nullptr;
+    // chosen node
+    animationChosen = nullptr;
     prevPosition = 0;
 }
 
@@ -25,9 +28,9 @@ DoublyLinkedList::~DoublyLinkedList(void) {
     }
 }
 
-void DoublyLinkedList::update(void) {
+void DoublyLinkedList::update(bool doneTask) {
     // Update data structure before rendering
-    updateDataStructure();
+    updateDataStructure(doneTask);
 
     // Update animation before rendering
     updateAnimation();
@@ -36,29 +39,26 @@ void DoublyLinkedList::update(void) {
     updateInformation();
 }
 
-void DoublyLinkedList::updateDataStructure(void) {
+void DoublyLinkedList::updateDataStructure(bool doneTask) {
     PNode* tmp = head;
     while(tmp != nullptr) {
         tmp->update();
-        tmp->resetInformationState();
+        if(doneTask && tmp != animationChosen && CheckCollisionPointCircle(GetMousePosition(), tmp->centerFrom, PConstants::PNode::outerRadius) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+            animationChosen = tmp;
+        }
+        else if(doneTask && tmp == animationChosen && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+            animationChosen = nullptr;
+        }
         tmp = tmp->pNext;
-    }
-    if(head != nullptr) {
-        head->setInformationState(Head, true);
-    }
-    if(tail != nullptr) {
-        tail->setInformationState(Tail, true);
     }
 }
 
 void DoublyLinkedList::updateAnimation(void) {
     if(animationTmp != nullptr) {
         animationTmp->update();
-        animationTmp->setInformationState(Tmp, true);
     }
     if(animationPrev != nullptr) {
         animationPrev->update();
-        animationPrev->setInformationState(Prev, true);
     }
 }
 
@@ -74,6 +74,9 @@ void DoublyLinkedList::updateInformation(void) {
     }
     if(animationPrev != nullptr) {
         animationPrev->resetInformationState();
+    }
+    if(animationChosen != nullptr) {
+        animationChosen->resetInformationState();
     }
     // Update information text
     if(head != nullptr) {
@@ -98,22 +101,28 @@ void DoublyLinkedList::quickUpdateAnimationTmp(void) {
     animationTmp->quickUpdate();
 }
 
-void DoublyLinkedList::draw(void) {
-    drawDataStructure();
+void DoublyLinkedList::draw(bool doneTask) {
+    drawDataStructure(doneTask);
     drawAnimation();
 }
 
-void DoublyLinkedList::drawDataStructure(void) {
+void DoublyLinkedList::drawDataStructure(bool doneTask) {
     PNode* tmp = head;
     while(tmp) {
         tmp->drawLine();
         tmp = tmp->pNext;
     }
     tmp = head;
+    if(doneTask && animationChosen != nullptr) {
+        animationChosen->highlight = true;
+    }
     while(tmp) {
         tmp->drawNode();
         tmp->drawText();
         tmp = tmp->pNext;
+    }
+    if(doneTask && animationChosen != nullptr) {
+        animationChosen->highlight = false;
     }
 }
 
@@ -253,7 +262,7 @@ void DoublyLinkedList::reloadPositions(void) {
         }
 
         // If there is an animationTmp node, shift the node 'tmp' forward
-        if(animationTmp != nullptr && tmp->center == animationTmp->center) {
+        if(animationTmp != nullptr && animationTmp != tmp && tmp->center == animationTmp->center) {
             nextNodePosition(animationTmp, tmp);
         }
 

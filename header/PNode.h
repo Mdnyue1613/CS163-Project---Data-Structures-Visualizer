@@ -5,7 +5,6 @@
 #include <cstring>
 #include "PNodeLine.h"
 #include "PRandom.h"
-#include "PConstants.h"
 using namespace std;
 
 struct PNode {
@@ -27,8 +26,8 @@ struct PNode {
     int labelLength;
 
     // Information
-    const string informationName[4] = { "head", "tail", "tmp", "prev" };
-    bool informationState[4] = {false, false, false, false};
+    const string informationName[5] = { "head", "tail", "tmp", "prev", "chosen" };
+    bool informationState[5] = {false, false, false, false, false};
     string information;
 
     // Hightlight

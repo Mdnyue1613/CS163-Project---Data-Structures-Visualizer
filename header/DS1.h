@@ -3,12 +3,13 @@
 #include "PTitleBox.h"
 #include "PFunctionArea.h"
 #include "DoublyLinkedList.h"
-#include "PConstants.h"
 #include "PRandom.h"
 #include "PStepByStepMenu.h"
 #include "PTaskManagement.h"
 #include "PDSAnimation.h"
 #include "PExplanationArea.h"
+#include "PNotification.h"
+#include "LPseudoCode.h"
 #include <string>
 #include <vector>
 #include <random>
@@ -19,17 +20,20 @@ struct DS1 {
     PTitleBox titleBox;
     PFunctionArea functionArea;
     PStepByStepMenu stepByStepMenu;
-    DoublyLinkedList doublyLinkedList;
+    DoublyLinkedList * doublyLinkedList;
     PRandom randomGenerator;
     PTaskManagement taskManagement;
     PDSAnimation animationManagement;
     PExplanationArea explanationArea;
+    PNotification notificationBox;
+    LPseudoCode pseudoCode;
 
     enum taskType {
         Initialize,
         Insert,
-        Delete,
+        Remove,
         Search,
+        Update,
         NoTask
     };
 
@@ -42,13 +46,21 @@ struct DS1 {
     void update(void); // update
 
     // Draw
-    void draw(void); // draw
+    void draw(bool lightMode); // draw
 
     // Initialize mode functions
     bool operateInitialize(vector<string>& request, int stepRequest, string& explanationText); // Operate initializing request: return true when done
-    vector<int> stringToVectorInt(string& s);
     void vectorIntInitialize(vector<int>& vi);
 
     // Insert mode functions
     bool operateInsert(vector<string>& request, int stepRequest, string& explanationText); // Operate inserting request: return true when done
+
+    // Remove mode functions
+    bool operateRemove(vector<string>& request, int stepRequest, string& explanationText); // Operate removing request: return true when done
+
+    // Search mode functions
+    bool operateSearch(vector<string>& request, int stepRequest, string& explanationText); // Operate searching request: return true when done
+    
+    // Update mode functiond
+    bool operateUpdate(PNode* chosen, vector<string>& request, int stepRequest, string& explanationText); // Operate update request: return true when done
 };

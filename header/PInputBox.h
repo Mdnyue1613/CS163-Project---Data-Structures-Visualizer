@@ -2,7 +2,6 @@
 #include <raylib.h>
 #include <cmath>
 #include "PTitleBox.h"
-#include "PConstants.h"
 
 struct PInputBox : public PTitleBox {
     /*
