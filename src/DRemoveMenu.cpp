@@ -1,5 +1,4 @@
 #include "../header/DRemoveMenu.h"
-
 DRemoveMenu::DRemoveMenu(void) {}
 
 DRemoveMenu::DRemoveMenu(float x, float y, float width, float height) :

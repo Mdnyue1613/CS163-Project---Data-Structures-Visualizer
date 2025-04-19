@@ -8,22 +8,25 @@ struct AnimatedSquare {
     int x, y;
     int value;
     int id;
-    bool appearing;
     float scale;
-    int tableSize;
-    int elementCount;
     Color outlineColor = BLACK;
     bool highlightSearch;
     bool highlight;
     bool visited; // true if the square is visited
-    bool deleted; // true if the square is deleted
-    AnimatedSquare() : x(0), y(0), value(-1), scale(1.0f), appearing(false), highlight(false), highlightSearch(false), visited(false), deleted(false) {} // Default constructor
+    bool deleted;
+    bool isOn; // true if the square is on the mouse
+    bool isChoosen; // true if the square is chosen
+    
+    AnimatedSquare() : x(0), y(0), value(-1), scale(0.5f), 
+    highlight(false), highlightSearch(false), visited(false), deleted(false), isOn(false), isChoosen(false){} // Default constructor
 
     AnimatedSquare(int _x, int _y, int _value);
     
-    void update();
     void draw();
     void setPosition(int x, int y);
+    bool isMove();
+    bool isClick();
+    void update();
 };
 
 struct Hashtable{

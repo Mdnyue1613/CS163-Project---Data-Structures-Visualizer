@@ -13,21 +13,9 @@ using namespace std;
 
 struct DInsertMenu {
     int x, y, width, height;
-    PSwitchBox Mode;
     PInputBox InputBox;
-    PIconBox InputFileBox;
     PTitleBox GO;
-    int currentMode;
 
-    enum ModeID {
-        Single,
-        List
-    };
-
-    string inputBoxTitle[2] = {
-        "Value",
-        "Enter a list"
-    };
 
     DInsertMenu(void); // Empty initialize
     ~DInsertMenu(void); // Delete used memories

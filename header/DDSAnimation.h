@@ -68,4 +68,7 @@ struct DDSAnimation
     bool searchStep2(int value, int stepRequest, string& explanationText); // Step 2
     bool searchStep3(int value, int stepRequest, string& explanationText); // Step 3
     bool searchStep4(int value, int stepRequest, string& explanationText); // Step 4
+
+
+
 };

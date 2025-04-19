@@ -7,6 +7,7 @@
 #include "PRandom.h"
 #include "PTaskManagement.h"
 #include "PStepByStepMenu.h"
+#include "PExplanationArea.h"
 #include "DDSAnimation.h"
 #include <string>
 #include <vector>
@@ -22,13 +23,14 @@ struct DS2 {
     PTaskManagement taskManagement;
     PStepByStepMenu stepByStepMenu;
     DDSAnimation animationManager;
+    PExplanationArea explanationArea;
 
     string statusMessage;
     float statusMessageTimer;
     
     DS2(void); // initialize
     ~DS2(void); // destructor
-    void draw(void); // draw
+    void draw(bool darkMode); // draw
     bool operateInitialize(vector<string>& request);
     bool operateInsert(vector<string>& request, int stepRequest, string& explanationText);
     bool operateRemove(vector<string>& request, int stepRequest, string& explanationText);

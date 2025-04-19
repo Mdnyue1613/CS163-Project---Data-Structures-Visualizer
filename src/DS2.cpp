@@ -4,10 +4,12 @@ DS2::DS2(void) :
     stepByStepMenu(PConstants::PStepByStepMenu::pos, PConstants::PStepByStepMenu::size),
     titleBox(PConstants::PTitleBar::pos, PConstants::PTitleBar::size, PConstants::PTitleBar::outlineThickness, PConstants::PTitleBar::boxColor, PConstants::PTitleBar::outlineColor, "HASH TABLE LINEAR PROBING", PConstants::PTitleBar::textSize),
     hashtable(),
+    explanationArea(),
     animationManager() {
         animationManager.dataStructurePointer = &hashtable;
         animationManager.taskManagementPointer = &taskManagement;
     }
+
 
 DS2::~DS2(void) {
     UnloadTexture(icon);
@@ -24,9 +26,50 @@ void DS2::prepare(void) {
     stepByStepMenu.prepare();
 }
 
-void DS2::draw(void) {
-      // Draw the title of Data Structure 1
+void DS2::draw(bool darkMode) {
+    if(darkMode == false) {
+        PConstants::DS1::backgroundColor = WHITE;
+
+        PConstants::PNode::innerColor = WHITE;
+        PConstants::PNode::outerColor = BLACK;
+        PConstants::PNode::textColor = BLACK;
+        PConstants::PNode::informationTextColor = BLACK;
+
+        PConstants::PNode::innerHighlightColor = {255, 138, 39, 255};
+        PConstants::PNode::outerHighlightColor = {255, 138, 39, 255};
+        PConstants::PNode::textHighlightColor = WHITE;
+
+        PConstants::PNodeLine::color = BLACK;
+        PConstants::PNodeLine::highlightColor = {255, 138, 39, 255};
+    }
+    else {
+        PConstants::DS1::backgroundColor = BLACK;
+
+        PConstants::PNode::innerColor = {58, 58, 58, 255};
+        PConstants::PNode::outerColor = {65, 71, 79, 255};
+        PConstants::PNode::textColor = {204, 204, 204, 255};
+        PConstants::PNode::informationTextColor = {204, 204, 204, 255};
+
+        PConstants::PNode::innerHighlightColor = {155, 89, 182, 255};
+        PConstants::PNode::outerHighlightColor = {224, 255, 255, 255};
+        PConstants::PNode::textHighlightColor = WHITE;
+
+        PConstants::PNodeLine::color = {65, 71, 79, 255};
+        PConstants::PNodeLine::highlightColor = {224, 255, 255, 255};
+    }
+    // Draw background
+    float workSpaceX = PConstants::PFunctionArea::pos.x;
+    float workSpaceY = PConstants::PTitleBar::size.y;
+    float workSpaceWidth = GetScreenWidth() - workSpaceX;
+    float workSpaceHeight = GetScreenHeight() - workSpaceY;
+    Color backgroundColor = PConstants::DS1::backgroundColor;
+    DrawRectangle(workSpaceX, workSpaceY, workSpaceWidth, workSpaceHeight, backgroundColor);
+
+      // Draw the title of Data Structure 2
       titleBox.draw();
+
+      // Draw explanation area
+      explanationArea.draw();
 
       // Draw the function area
       functionArea.draw();
@@ -154,7 +197,7 @@ vector<int> DS2::stringToVectorInt(string& s) {
 
 bool DS2::operateInsert(vector<string>& request, int stepRequest, string& explanationText) {
     bool done = true;
-    int val = stoi(request[2]);
+    int val = stoi(request[1]);
     done = animationManager.insert(val, stepRequest, explanationText);
     return done;
 }
