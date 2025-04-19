@@ -19,7 +19,8 @@ void TreeNode::setColor(Color color) {
 
 AVL::AVL():
     explanationArea(),
-    PseudoCodeArea() {
+    PseudoCodeArea(),
+    speedSlider(PConstants::PSlider::pos, PConstants::PSlider::size) {
     PseudoCodeArea.setPseudoCode({"check balance factor:", 
         "   case 1: this.rotateRight", 
         "   case 2: this.rotateLeft", 
