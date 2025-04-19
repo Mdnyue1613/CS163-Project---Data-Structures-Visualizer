@@ -4,16 +4,23 @@
 #include "DS3.h"
 #include "DS1.h"
 #include "LActionBox.h"
+#include "HOBJECT.h"
 #include <chrono>
 using namespace chrono;
 using namespace std;
 
 struct GUI {
     static bool isOpenMenu;
-    static bool isOpenDS1;
-    static bool isOpenDS2;
-    static bool isOpenDS3;
-    static bool isOpenDS4;
+    static vector <bool> isOpenDS;
+    static Font font;
+    static bool ColorMode;
+    static ImageButton BackButton;
+    static vector <ImageButton> ColorModeButton;
+    static vector <Texture2D> BackGround;
+    static vector <Color> BackGroundColor;
+    static vector <ImageButton> Menu;
+    static TextBox TopicBox;
+    static vector <TextBox> Title;
     static DS1 linkedListVisualizer;
     static DS3 ds3;
     static void startProgram();
@@ -23,5 +30,7 @@ struct GUI {
     static void drawDS3();
     static void drawDS4();
     static void BACK();
-    static bool isBackButtonOn;
+    static void CustomColorMode();
+    static void Init();
+    static void UnInit();
 };
