@@ -2,7 +2,6 @@
 #include <raylib.h>
 #include <cmath>
 #include "PTitleBox.h"
-#include "PConstants.h"
 
 struct PInputBox : public PTitleBox {
     /*
@@ -36,7 +35,6 @@ struct PInputBox : public PTitleBox {
 
     // Draw
     void draw(void);
-    void drawInputSymbol(void);
 
     bool hasContent(void);
     string extract(void);

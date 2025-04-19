@@ -5,58 +5,29 @@
 #include <random>
 #include <algorithm>
 #include <cstring>
-#include "PConstants.h"
 #include "PRandom.h"
+#include "PNode.h"
 using namespace std;
 
-struct DoublyLinkedList {
-    struct Node {
-        // const int innerRadius = 26;
-        // const int outerRadius = 30;
-        // const int characterSize = 20;
-        // const int lineThickness = 4;
-        // const int arrowWidth = 6;
-        // const int arrowHeight = 8;
-        // Data
-        int data;
-        Node *pNext, *pPrev;
-
-        // Position
-        Vector2 centerFrom, center; // Centers of the circle
-
-        // Line
-        Vector2 arrowHeadStart1, arrowHeadStart2, arrowHeadStart3; // Coordinates of the arrow head 1
-        Vector2 arrowHeadEnd1, arrowHeadEnd2, arrowHeadEnd3; // Coordinates of the arrow head 2
-
-        // Direction
-        int direction;
-
-        // Content
-        char label[5];
-        int labelLength;
-
-        // Initialize
-        Node(void);
-        Node(int data, Node *pPrev, Node* pNext);
-        void makeLabel(void); // initialize the label of the node
-        void makePosition(bool isNew); // initialize the position of the node or shift after insertion
-
-        // Update
-        void update(void); // update node's attributes
-        void updatePosition(void); // update node's position
-        void updateLine(void); // update line connecting with the previous node (if exists): arrowHeadStart1, arrowHeadStart2, arrowHeadStart3, arrowHeadEnd1, arrowHeadEnd2, arrowHead3
-
-        // Draw
-        void drawLine(void); // draw line (if exists)
-        void drawNode(void); // draw node and content
-
-        // Set
-        void setPosition(Vector2 pos);
-    };
-    
+struct DoublyLinkedList {    
     // Data structure
     int n;
-    Node *head, *tail;
+    enum nodeType {
+        Head,
+        Tail,
+        Tmp,
+        Prev,
+        Chosen
+    };
+    PNode *head, *tail;
+    // Animation
+    // Tmp
+    PNode *animationTmp;
+    // Prev
+    PNode *animationPrev;
+    // Chosen node
+    PNode *animationChosen;
+    int prevPosition;
 
     // Constructor
     DoublyLinkedList(void);
@@ -65,12 +36,22 @@ struct DoublyLinkedList {
     ~DoublyLinkedList(void);
 
     // Update
-    void update(void);
+    void update(bool doneTask);
+    void updateDataStructure(bool doneTask); // Update the data structure
+    void updateAnimation(void);
+    void updateInformation(void);
+    void quickUpdateAnimation(void); // Skip animation
+    void quickUpdateAnimationTmp(void); // Skip animation of animation tmp
 
     // Draw
-    void draw(void); // draw the entire list
-    void drawDataStructure(void); // Draw data structures
-    void drawHeadAndTailText(void); // Draw text indicating head and tail node
+    void draw(bool doneTask); // draw all
+    void drawDataStructure(bool doneTask); // Draw data structures
+    void drawAnimation(void); // draw animations
+    void drawAnimationTmp(void);
+
+    // Num node
+    int getNumNode(void); // Get the number of nodes
+    void addNumNode(int x); // Add x to the number of nodes
 
     // Instantaneous functions
     void removeAll(void); // remove all nodes
@@ -81,4 +62,57 @@ struct DoublyLinkedList {
     void insertHead(int x); // insert a new node at the head
     void insertTail(int x); // insert a new node at the tail
     void insertAfter(int p, int x); // insert a new node after node with index p (0-indexed)
+        // ...
+    PNode* getIthNode(int i); // Get the pointer to the i-th node
+    void reloadPositions(void); // Reload all positions
+    void nextNodePosition(PNode *& node, PNode *& next); // Determine the next node's position, input: node's position, output: next's position
+
+    // Manipulating head
+    bool createdHead(void); // Return true if head is created
+    void setHighlightHead(bool on); // Set the highlight state of the head node
+    void assignAnimationTmpToHead(void); // head = animationTmp
+    void assignAnimationTmpToHeadPrev(void); // head->pPrev = animationTmp
+    void setHighlightHeadPrevLink(bool on); // set the highlight state of the previous link of the head node
+    void setHeadToNull(void); // head = nullptr
+    void setHeadPrevLinkToNull(void); // head->pPrev = nullptr
+
+    // Manipulating tail
+    void assignAnimationTmpToTail(void); // tail = animationTmp
+    void assignAnimationTmpToTailNext(void); // tail->pNext = animationTmp
+    void setHighlightTail(bool on);
+    void setHighlightTailNextLink(bool on); // set the highlight state of the next link of the tail node
+    void setTailToNull(void); // tail = nullptr
+
+    // Manipulating animationTmp
+    bool createdAnimationTmp(void); // Return true if createdAnimationTmp
+    bool animationTmpIsUpdated(void); // Return true if animationTmp is updated
+    void setHighlightAnimationTmp(bool on); // Set the highlight state the the animationTmp node
+    void setAnimationTmpToNull(void); // animationTmp = nullptr
+    void assignHeadToAnimationTmpNext(void); // animationTmp->pNext = head
+    void setHighlightAnimationTmpNextLink(bool on); // Set the highlight state of the next link of animationTmp
+    void assignTailToAnimationTmpPrev(void); // animationTmp->pPrev = tail
+    void assignAnimationPrevToAnimationTmpPrev(void); // animationTmp->pPrev = animationPrev
+    void setHighlightAnimationTmpPrevLink(bool on); // Set the highlight state of the previous link of animationTmp
+    void assignAnimationPrevNextToAnimationTmpNext(void); // animationTmp->pNext = animationPrev->pNext
+    void assignAnimationTmpToAnimationTmpNextPrev(void); // animationTmp->pNext->pPrev = animationTmp
+    void setHighlightAnimationTmpNextPrevLink(bool on); // Set the highlight state of the previous link of animationTmp->pNext
+    void deleteAnimationTmp(void); // Delete animationTmp
+    void setAnimationTmpNextLinkToNull(void); // animationTmp->pNext = nullptr
+
+    // Manipulating animationPrev
+    void assignHeadToAnimationPrev(void); // animationPrev = head
+    bool traversePrevDone(int position); // return true if travel prePosition == target position
+    void traversePrev(int position); // traverse prev forward
+    void setHighlightAnimationPrev(bool on); // set the highlight state of the animation prev
+    bool createdAnimationPrev(void); // return animationPrev != nullptr
+    void setAnimationPrevToNull(void); // animationPrev = nullptr
+    void assignAnimationTmpToAnimationPrevNext(void); // animationPrev->pPnext = animationTmp
+    void setHighlightAnimationPrevNextLink(bool on); // set the highlight state of the animationPrev's next link
+    void setHighlightAnimationPrevPrevLink(bool on); // set the highlight state of the animationPrev's prev link
+    bool isAnimationPrevTail(void); // return animationPrev == tail
+
+    // Animation
+    void createANewNode(int x); // Create a new node with value x
+    void createNodeBefore(int i, int x); // Create a node with value x and position before the i-th's node
+    void createNodeAfter(int i, int x); // Create a node with value x and position after the i-th's node
 };

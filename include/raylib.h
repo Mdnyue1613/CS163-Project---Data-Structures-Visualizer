@@ -200,6 +200,20 @@
 #define MAGENTA    CLITERAL(Color){ 255, 0, 255, 255 }     // Magenta
 #define RAYWHITE   CLITERAL(Color){ 245, 245, 245, 255 }   // My own White (raylib logo)
 
+#define SEASHELL      CLITERAL(Color){ 248, 240, 240, 255 }
+#define MINTGREEN     CLITERAL(Color){ 151, 219, 174, 255 }
+#define MAYABLUE      CLITERAL(Color){ 117, 189, 241, 255 }
+#define TURQUOISE     CLITERAL(Color){ 120, 209, 210, 255 }
+#define PASTELGREEN   CLITERAL(Color){ 205, 228, 173, 255 }
+#define CORALRED      CLITERAL(Color){ 247, 90, 90, 255 }
+#define PEACHORANGE   CLITERAL(Color){ 255, 169, 85, 255 }
+#define SPRINGGREEN   CLITERAL(Color){ 0, 255, 156, 255 }
+#define MINTCREAM     CLITERAL(Color){ 205, 255, 216, 255 }
+#define BABYBLUE      CLITERAL(Color){ 148, 185, 255, 255 }
+#define SKYCYAN       CLITERAL(Color){ 93, 224, 230, 255 }
+#define ROYALBLUE     CLITERAL(Color){ 0, 74, 173, 255 }
+
+
 //----------------------------------------------------------------------------------
 // Structures Definition
 //----------------------------------------------------------------------------------

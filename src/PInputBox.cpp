@@ -1,4 +1,5 @@
 #include "../header/PInputBox.h"
+#include "../header/PConstants.h"
 
 PInputBox::BlinkingCursor::BlinkingCursor(void) {}
 
@@ -61,7 +62,7 @@ void PInputBox::update(void) {
 }
 
 void PInputBox::draw(void) {
-    update();
+    // update();
 
     PBOX::draw();
     if(text.empty()) {

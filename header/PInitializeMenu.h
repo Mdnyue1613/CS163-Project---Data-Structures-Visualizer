@@ -4,7 +4,6 @@
 #include "PSwitchBox.h"
 #include "PInputBox.h"
 #include "PIconBox.h"
-#include "PConstants.h"
 #include "tinyfiledialogs.h"
 #include <string>
 #include <vector>

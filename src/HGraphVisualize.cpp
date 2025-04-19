@@ -10,11 +10,11 @@ int GraphGUI::margin = 5;
 bool GraphGUI::freeze = 0;
 TextBox GraphGUI::notification;
 int GraphGUI::currentFunction = 0;
-vector <const char*> GraphGUI::listFunction = {"Initialize", "Add", "Delete", "Shorted Path"};
+vector <const char*> GraphGUI::listFunction = {"Initialize", "Add", "Delete", "Dijkstra"};
 TextBox GraphGUI::undirectedButton;
 TextBox GraphGUI::directedButton;
-NavigateButton GraphGUI::leftNavigationButton;
-NavigateButton GraphGUI::rightNavigationButton;
+ImageButton GraphGUI::leftNavigationButton;
+ImageButton GraphGUI::rightNavigationButton;
 TextBox GraphGUI::functionTitle;
 TextBox GraphGUI::chooseFileButton;
 TextBox GraphGUI::randomButton;
@@ -22,75 +22,132 @@ InputBox GraphGUI::inputBox;
 InputBox GraphGUI::addBox;
 InputBox GraphGUI::deleteBox;
 TextBox GraphGUI::GoButton;
+TextBox GraphGUI::guideTitle;
+Vector2 GraphGUI::guidePos;
+float GraphGUI::guideFontSize;
+float GraphGUI::guideLineSpacing;
+vector <string> GraphGUI::guideInitialize;
+vector <string> GraphGUI::guideAdd;
+vector <string> GraphGUI::guideDelete;
 Graph GraphGUI::G;
+DijkstraVisualize GraphGUI::Dijkstra;
 
 void GraphGUI::GraphVisualize()
 {
-    InitializeObject();   
+    InitObject();   
 
-    while (GUI::isOpenDS4)
+    while (GUI::isOpenDS[3])
     {
         BeginDrawing();
         DrawBackGround();
         G.DrawGraph();
         DrawFunction();
-
+        
         GUI::BACK();
+        GUI::CustomColorMode();
+
         EndDrawing();
         if(WindowShouldClose()) 
         {
-            GUI::isOpenDS4 = 0;
+            GUI::isOpenDS[3] = 0;
             break;
         }
     }
     
+    UnInit();
+}
+
+void GraphGUI::InitObject()
+{
+    InitBackGround();
+    InitCustomizeGraphTypeFunction();
+    InitTitleNavigationFunction();
+    InitInitializeFunction();
+    InitAddFunction();
+    InitDeleteFunction();
+
+    GoButton.recColor = WHITE;
+    GoButton.thick = 2;
+    GoButton.outlineColor = BLACK;
+    GoButton.text = (const char*)"GO!";
+    GoButton.textColor = RED;
+
+    guideTitle.rec = undirectedButton.rec;
+    guideTitle.rec.y = guideBG.rec.y + (guideBG.rec.height - guideTitle.rec.height)/2;
+    guideTitle.rec.width = guideBG.rec.width - margin*2*2;
+    guideTitle.recColor = WHITE;
+    guideTitle.thick = 2;
+    guideTitle.outlineColor = BLACK;
+    guideTitle.text = (const char*)"User Manual";
+    guideTitle.fontSize = guideTitle.rec.height * 3/4;
+    guideTitle.textColor = BLACK;
+    guidePos = {explainBG.rec.x + margin*3, explainBG.rec.y + margin*3};
+    guideFontSize = guideTitle.fontSize * 4/5;
+    guideLineSpacing = 5;
+
+    InitShortedPathFunction();
+    
+    G.Initialize();
+    G.workspace = Rectangle{
+        graphTypeBG.rec.x + graphTypeBG.rec.width, 
+        header.rec.y + header.rec.height, 
+        GetScreenWidth() - (graphTypeBG.rec.x + graphTypeBG.rec.width), 
+        GetScreenHeight() - (header.rec.y + header.rec.height)
+    };
+}
+
+void GraphGUI::UnInit()
+{
     UnloadTexture(leftNavigationButton.img);
     UnloadTexture(rightNavigationButton.img);
 }
 
-void GraphGUI::InitializeObject()
+void GraphGUI::InitBackGround()
 {
     header.rec = Rectangle{0, 0, (float)GetScreenWidth(), (float)GetScreenHeight()/10};
-    header.recColor = Color({248, 240, 240, 255});
+    header.recColor = SEASHELL;
     header.thick = 4;
     header.outlineColor = BLACK;
-    header.text = (char*)(const char*)"Graph";
-    header.fontSize = header.rec.height * 3/5;
+    header.text = (const char*)"Graph";
+    header.fontSize = header.rec.height * 4/5;
     header.textColor = BLACK;
 
     graphTypeBG.rec = Rectangle{header.thick, header.rec.height + margin, (float)GetScreenWidth()/4, (float)GetScreenHeight()/16};
-    graphTypeBG.recColor = Color({151, 219, 174, 255});
+    graphTypeBG.recColor = MINTGREEN;
     graphTypeBG.thick = 0;
     graphTypeBG.outlineColor = BLACK;
-    graphTypeBG.text = (char*)(const char*)"";
+    graphTypeBG.text = (const char*)"";
     graphTypeBG.fontSize = 0;
     graphTypeBG.textColor = BLACK;
 
     functionBG.rec = Rectangle{header.thick, graphTypeBG.rec.y + graphTypeBG.rec.height + margin, (float)GetScreenWidth()/4, (float)GetScreenHeight()/3};
-    functionBG.recColor = Color({117, 189, 241, 255});
+    functionBG.recColor = MAYABLUE;
     functionBG.thick = 0;
     functionBG.outlineColor = BLACK;
-    functionBG.text = (char*)(const char*)"";
+    functionBG.text = (const char*)"";
     functionBG.fontSize = 0;
     functionBG.textColor = BLACK;
     functionBG.draw();
 
     guideBG.rec = Rectangle{header.thick, functionBG.rec.y + functionBG.rec.height + margin, (float)GetScreenWidth()/4, (float)GetScreenHeight()/16};
-    guideBG.recColor = Color({120, 209, 210, 255});
+    guideBG.recColor = TURQUOISE;
     guideBG.thick = 0;
     guideBG.outlineColor = BLACK;
-    guideBG.text = (char*)(const char*)"";
+    guideBG.text = (const char*)"";
     guideBG.fontSize = 0;
     guideBG.textColor = BLACK;
 
     explainBG.rec = Rectangle{header.thick, guideBG.rec.y + guideBG.rec.height + margin, (float)GetScreenWidth()/4, (float)GetScreenHeight() - guideBG.rec.x - guideBG.rec.height};
-    explainBG.recColor = Color({205, 228, 173, 255});
+    explainBG.recColor = PASTELGREEN;
     explainBG.thick = 0;
     explainBG.outlineColor = BLACK;
-    explainBG.text = (char*)(const char*)"";
+    explainBG.text = (const char*)"";
     explainBG.fontSize = 0;
     explainBG.textColor = BLACK;
+}
 
+void GraphGUI::InitCustomizeGraphTypeFunction()
+{
     undirectedButton.rec.width = round((graphTypeBG.rec.width - margin*2*3) / 2); 
     undirectedButton.rec.height = round(graphTypeBG.rec.height * 2/3);
     undirectedButton.rec.x = round(graphTypeBG.rec.x + margin*2);
@@ -98,8 +155,8 @@ void GraphGUI::InitializeObject()
     undirectedButton.recColor = GRAY;
     undirectedButton.thick = 2;
     undirectedButton.outlineColor = BLACK;
-    undirectedButton.text = (char*)(const char*)"Undirected";
-    undirectedButton.fontSize = undirectedButton.rec.height * 3/5;
+    undirectedButton.text = (const char*)"Undirected";
+    undirectedButton.fontSize = undirectedButton.rec.height * 3/4;
     undirectedButton.textColor = BLACK;
 
     directedButton.rec.width = round((graphTypeBG.rec.width - margin*2*3) / 2); 
@@ -109,10 +166,13 @@ void GraphGUI::InitializeObject()
     directedButton.recColor = WHITE;
     directedButton.thick = 2;
     directedButton.outlineColor = BLACK;
-    directedButton.text = (char*)(const char*)"Directed";
-    directedButton.fontSize = directedButton.rec.height * 3/5;
+    directedButton.text = (const char*)"Directed";
+    directedButton.fontSize = directedButton.rec.height * 3/4;
     directedButton.textColor = BLACK;
+}
 
+void GraphGUI::InitTitleNavigationFunction()
+{
     functionTitle.rec.width = round(functionBG.rec.width - margin*2);
     functionTitle.rec.height = round(functionBG.rec.height / 7);
     functionTitle.rec.x = round(functionBG.rec.x + (functionBG.rec.width - functionTitle.rec.width)/2);
@@ -120,27 +180,28 @@ void GraphGUI::InitializeObject()
     functionTitle.recColor = WHITE;
     functionTitle.thick = 2;
     functionTitle.outlineColor = BLACK;
-    functionTitle.fontSize = functionTitle.rec.height * 3/5;
+    functionTitle.fontSize = functionTitle.rec.height * 3/4;
     functionTitle.textColor = BLACK;
 
-    leftNavigationButton.img = LoadTexture("Assets/LeftArrow.png");
+    leftNavigationButton.img = LoadTexture("Assets/Images/LeftArrow.png");
     leftNavigationButton.scale = functionTitle.rec.height / leftNavigationButton.img.height;
     leftNavigationButton.rec.width = leftNavigationButton.img.width * leftNavigationButton.scale;
     leftNavigationButton.rec.height = leftNavigationButton.img.height * leftNavigationButton.scale;
     leftNavigationButton.rec.x = functionTitle.rec.x;
     leftNavigationButton.rec.y = functionTitle.rec.y;
     leftNavigationButton.rotation = 0;
-    leftNavigationButton.color = WHITE;
     
-    rightNavigationButton.img = LoadTexture("Assets/RightArrow.png");
+    rightNavigationButton.img = LoadTexture("Assets/Images/RightArrow.png");
     rightNavigationButton.scale = functionTitle.rec.height / rightNavigationButton.img.height;
     rightNavigationButton.rec.width = rightNavigationButton.img.width * rightNavigationButton.scale;
     rightNavigationButton.rec.height = rightNavigationButton.img.height * rightNavigationButton.scale;
     rightNavigationButton.rec.x = functionTitle.rec.x + functionTitle.rec.width - rightNavigationButton.rec.width;
     rightNavigationButton.rec.y = functionTitle.rec.y;
     rightNavigationButton.rotation = 0;
-    rightNavigationButton.color = WHITE;
+}
 
+void GraphGUI::InitInitializeFunction()
+{
     chooseFileButton.rec.width = round((functionBG.rec.width - margin*2*3) / 2); 
     chooseFileButton.rec.height = round(functionBG.rec.height / 8);
     chooseFileButton.rec.x = round(functionBG.rec.x + margin*2);
@@ -148,8 +209,8 @@ void GraphGUI::InitializeObject()
     chooseFileButton.recColor = WHITE;
     chooseFileButton.thick = 2;
     chooseFileButton.outlineColor = BLACK;
-    chooseFileButton.text = (char*)(const char*)"From File";
-    chooseFileButton.fontSize = chooseFileButton.rec.height * 3/5;
+    chooseFileButton.text = (const char*)"From File";
+    chooseFileButton.fontSize = chooseFileButton.rec.height * 3/4;
     chooseFileButton.textColor = BLACK;
 
     randomButton.rec.width = round((functionBG.rec.width - margin*2*3) / 2); 
@@ -159,8 +220,8 @@ void GraphGUI::InitializeObject()
     randomButton.recColor = WHITE;
     randomButton.thick = 2;
     randomButton.outlineColor = BLACK;
-    randomButton.text = (char*)(const char*)"Random";
-    randomButton.fontSize = randomButton.rec.height * 3/5;
+    randomButton.text = (const char*)"Random";
+    randomButton.fontSize = randomButton.rec.height * 3/4;
     randomButton.textColor = BLACK;
 
     inputBox.displayedLines = 3;
@@ -172,8 +233,8 @@ void GraphGUI::InitializeObject()
     inputBox.box.recColor = WHITE;
     inputBox.box.thick = 2;
     inputBox.box.outlineColor = BLACK;
-    inputBox.box.text = (char*)(const char*)"Enter your data";
-    inputBox.box.fontSize = inputBox.box.rec.height/3 * 3/5;
+    inputBox.box.text = (const char*)"Enter your data";
+    inputBox.box.fontSize = inputBox.box.rec.height / inputBox.displayedLines * 3/4;
     inputBox.box.textColor = GRAY;
     inputBox.userInput.resize(1);
     inputBox.fontSize = inputBox.box.fontSize;
@@ -181,6 +242,23 @@ void GraphGUI::InitializeObject()
     inputBox.maxLenPerLine = inputBox.box.rec.width - inputBox.lineSpacing*2;
     inputBox.inputColor = BLACK;
 
+    guideInitialize.clear();
+    guideInitialize.push_back("Input format:");
+    guideInitialize.push_back("    1. Adjacency list");
+    guideInitialize.push_back("       n m");
+    guideInitialize.push_back("       u(1) v(1) w(1)");
+    guideInitialize.push_back("          ...");
+    guideInitialize.push_back("       u(m) v(m) w(m)");
+    guideInitialize.push_back("");
+    guideInitialize.push_back("    2. Adjacency matrix");
+    guideInitialize.push_back("       n");
+    guideInitialize.push_back("       a(1,1) a(1,2) ... a(1,n)");
+    guideInitialize.push_back("                     ...");
+    guideInitialize.push_back("       a(n,1) a(n,2) ... a(n,n)");
+}
+
+void GraphGUI::InitAddFunction()
+{
     addBox.displayedLines = 3;
     addBox.defaultPos.width = round((functionBG.rec.width - margin*2*2)); 
     addBox.defaultPos.height = round(functionBG.rec.height/8 * addBox.displayedLines);
@@ -190,8 +268,8 @@ void GraphGUI::InitializeObject()
     addBox.box.recColor = WHITE;
     addBox.box.thick = 2;
     addBox.box.outlineColor = BLACK;
-    addBox.box.text = (char*)(const char*)"Enter your data";
-    addBox.box.fontSize = addBox.box.rec.height/3 * 3/5;
+    addBox.box.text = (const char*)"Enter your data";
+    addBox.box.fontSize = addBox.box.rec.height / addBox.displayedLines * 3/4;
     addBox.box.textColor = GRAY;
     addBox.userInput.resize(1);
     addBox.fontSize = addBox.box.fontSize;
@@ -199,6 +277,16 @@ void GraphGUI::InitializeObject()
     addBox.maxLenPerLine = addBox.box.rec.width - addBox.lineSpacing*2;
     addBox.inputColor = BLACK;
 
+    guideAdd.clear();
+    guideAdd.push_back("Input format:");
+    guideAdd.push_back("    1. Add vertex: u");
+    guideAdd.push_back("    2. Add edge: u v w");
+    guideAdd.push_back("* You can add several edges or");
+    guideAdd.push_back("  vertices in a single operation");
+}
+
+void GraphGUI::InitDeleteFunction()
+{
     deleteBox.displayedLines = 3;
     deleteBox.defaultPos.width = round((functionBG.rec.width - margin*2*2)); 
     deleteBox.defaultPos.height = round(functionBG.rec.height/8 * deleteBox.displayedLines);
@@ -208,8 +296,8 @@ void GraphGUI::InitializeObject()
     deleteBox.box.recColor = WHITE;
     deleteBox.box.thick = 2;
     deleteBox.box.outlineColor = BLACK;
-    deleteBox.box.text = (char*)(const char*)"Enter your data";
-    deleteBox.box.fontSize = deleteBox.box.rec.height/3 * 3/5;
+    deleteBox.box.text = (const char*)"Enter your data";
+    deleteBox.box.fontSize = deleteBox.box.rec.height / deleteBox.displayedLines * 3/4;
     deleteBox.box.textColor = GRAY;
     deleteBox.userInput.resize(1);
     deleteBox.fontSize = deleteBox.box.fontSize;
@@ -217,19 +305,153 @@ void GraphGUI::InitializeObject()
     deleteBox.maxLenPerLine = deleteBox.box.rec.width - deleteBox.lineSpacing*2;
     deleteBox.inputColor = BLACK;
 
-    GoButton.recColor = WHITE;
-    GoButton.thick = 2;
-    GoButton.outlineColor = BLACK;
-    GoButton.text = (char*)(const char*)"GO!";
-    GoButton.textColor = RED;
+    guideDelete.clear();
+    guideDelete.push_back("Input format:");
+    guideDelete.push_back("    1. Delete vertex: u");
+    guideDelete.push_back("    2. Delete edge: u v w");
+    guideDelete.push_back("* You can delete several edges");
+    guideDelete.push_back("  or vertices in a single operation");
+}
 
-    G.Initialize();
-    G.workspace = Rectangle{
-        graphTypeBG.rec.x + graphTypeBG.rec.width, 
-        header.rec.y + header.rec.height, 
-        GetScreenWidth() - (graphTypeBG.rec.x + graphTypeBG.rec.width), 
-        GetScreenHeight() - (header.rec.y + header.rec.height)
+void GraphGUI::InitShortedPathFunction()
+{
+    Dijkstra.isDone = 0;
+    Dijkstra.isStop = 0;
+    Dijkstra.isStatusSilderWork = 0;
+    Dijkstra.descriptionMode = 0;
+    Dijkstra.descriptionFontSize = guideFontSize;
+    Dijkstra.descriptionLineSpacing = guideLineSpacing;
+    Dijkstra.descriptionPos = guidePos;
+    Dijkstra.descriptionRec = explainBG.rec;
+    Dijkstra.duration = 1.5f;
+    Dijkstra.mode = 0;
+    Dijkstra.startVertex = -1;
+    Dijkstra.endVertex = -1;
+    Dijkstra.current = -1;
+    Dijkstra.states.clear();
+
+    Dijkstra.autoButton.rec.width = round((functionBG.rec.width - margin*2*3) / 2); 
+    Dijkstra.autoButton.rec.height = round(functionBG.rec.height / 8);
+    Dijkstra.autoButton.rec.x = round(functionBG.rec.x + margin*2);
+    Dijkstra.autoButton.rec.y = round(functionTitle.rec.y + functionTitle.rec.height + margin*2);
+    Dijkstra.autoButton.recColor = GRAY;
+    Dijkstra.autoButton.thick = 2;
+    Dijkstra.autoButton.outlineColor = BLACK;
+    Dijkstra.autoButton.text = (const char*)"Auto";
+    Dijkstra.autoButton.fontSize = Dijkstra.autoButton.rec.height * 3/4;
+    Dijkstra.autoButton.textColor = BLACK;
+
+    Dijkstra.stepByStepButton.rec.width = round((functionBG.rec.width - margin*2*3) / 2); 
+    Dijkstra.stepByStepButton.rec.height = round(functionBG.rec.height / 8);
+    Dijkstra.stepByStepButton.rec.x = round(functionBG.rec.x + Dijkstra.stepByStepButton.rec.width + margin*2*2);
+    Dijkstra.stepByStepButton.rec.y = round(functionTitle.rec.y + functionTitle.rec.height + margin*2);
+    Dijkstra.stepByStepButton.recColor = WHITE;
+    Dijkstra.stepByStepButton.thick = 2;
+    Dijkstra.stepByStepButton.outlineColor = BLACK;
+    Dijkstra.stepByStepButton.text = (const char*)"Step by step";
+    Dijkstra.stepByStepButton.fontSize = Dijkstra.stepByStepButton.rec.height * 3/4;
+    Dijkstra.stepByStepButton.textColor = BLACK;
+
+    Dijkstra.inputBox.displayedLines = 1;
+    Dijkstra.inputBox.defaultPos.width = round((functionBG.rec.width - margin*2*2)); 
+    Dijkstra.inputBox.defaultPos.height = round(functionBG.rec.height/8 * Dijkstra.inputBox.displayedLines);
+    Dijkstra.inputBox.defaultPos.x = round(functionBG.rec.x + margin*2);
+    Dijkstra.inputBox.defaultPos.y = round(functionTitle.rec.y + functionTitle.rec.height + randomButton.rec.height + margin*2*2);
+    Dijkstra.inputBox.box.rec = Dijkstra.inputBox.defaultPos;
+    Dijkstra.inputBox.box.recColor = WHITE;
+    Dijkstra.inputBox.box.thick = 2;
+    Dijkstra.inputBox.box.outlineColor = BLACK;
+    Dijkstra.inputBox.box.text = (const char*)"Enter your data";
+    Dijkstra.inputBox.box.fontSize = Dijkstra.inputBox.box.rec.height / Dijkstra.inputBox.displayedLines * 3/4;
+    Dijkstra.inputBox.box.textColor = GRAY;
+    Dijkstra.inputBox.userInput.resize(1);
+    Dijkstra.inputBox.fontSize = Dijkstra.inputBox.box.fontSize;
+    Dijkstra.inputBox.lineSpacing = (Dijkstra.inputBox.box.rec.height - Dijkstra.inputBox.fontSize * Dijkstra.inputBox.displayedLines) / (Dijkstra.inputBox.displayedLines + 1);
+    Dijkstra.inputBox.maxLenPerLine = Dijkstra.inputBox.box.rec.width - Dijkstra.inputBox.lineSpacing*2;
+    Dijkstra.inputBox.inputColor = BLACK;
+
+    Dijkstra.controlPanel.rec = Rectangle{
+        round(functionBG.rec.x + margin*2),
+        round(Dijkstra.inputBox.box.rec.y + Dijkstra.inputBox.box.rec.height + margin*2),
+        round((functionBG.rec.width - margin*2*2)),
+        round(functionBG.rec.height / 3.5f)
     };
+    float size = Dijkstra.controlPanel.rec.height / 5;
+    float space = margin*3;
+    float tmp = (Dijkstra.controlPanel.rec.width - size*7 - space*4) / 2;
+    Dijkstra.controlPanel.backToStartButton.rec.height = size;
+    Dijkstra.controlPanel.backToStartButton.rec.width = size * 2;
+    Dijkstra.controlPanel.backToStartButton.rec.x = Dijkstra.controlPanel.rec.x + tmp;
+    Dijkstra.controlPanel.backToStartButton.rec.y = Dijkstra.controlPanel.rec.y + Dijkstra.controlPanel.rec.height - size;
+
+    Dijkstra.controlPanel.backButton.rec.height = size;
+    Dijkstra.controlPanel.backButton.rec.width = size;
+    Dijkstra.controlPanel.backButton.rec.x = Dijkstra.controlPanel.rec.x + tmp + size*2 + space;
+    Dijkstra.controlPanel.backButton.rec.y = Dijkstra.controlPanel.rec.y + Dijkstra.controlPanel.rec.height - size;
+
+    Dijkstra.controlPanel.pauseButton.rec.height = size;
+    Dijkstra.controlPanel.pauseButton.rec.width = size;
+    Dijkstra.controlPanel.pauseButton.rec.x = Dijkstra.controlPanel.rec.x + tmp + size*3 + space*2;
+    Dijkstra.controlPanel.pauseButton.rec.y = Dijkstra.controlPanel.rec.y + Dijkstra.controlPanel.rec.height - size;
+
+    Dijkstra.controlPanel.nextButton.rec.height = size;
+    Dijkstra.controlPanel.nextButton.rec.width = size;
+    Dijkstra.controlPanel.nextButton.rec.x = Dijkstra.controlPanel.rec.x + tmp + size*4 + space*3;
+    Dijkstra.controlPanel.nextButton.rec.y = Dijkstra.controlPanel.rec.y + Dijkstra.controlPanel.rec.height - size;
+
+    Dijkstra.controlPanel.skipToEndButton.rec.height = size;
+    Dijkstra.controlPanel.skipToEndButton.rec.width = size*2;
+    Dijkstra.controlPanel.skipToEndButton.rec.x = Dijkstra.controlPanel.rec.x + tmp + size*5 + space*4;
+    Dijkstra.controlPanel.skipToEndButton.rec.y = Dijkstra.controlPanel.rec.y + Dijkstra.controlPanel.rec.height - size;
+
+    Dijkstra.controlPanel.statusSlider.bar.width = Dijkstra.controlPanel.rec.width;
+    Dijkstra.controlPanel.statusSlider.bar.height = Dijkstra.controlPanel.rec.height / 10;
+    Dijkstra.controlPanel.statusSlider.bar.x = Dijkstra.controlPanel.rec.x;
+    Dijkstra.controlPanel.statusSlider.bar.y = Dijkstra.controlPanel.rec.y + Dijkstra.controlPanel.rec.height - Dijkstra.controlPanel.pauseButton.rec.height - margin*2 - Dijkstra.controlPanel.statusSlider.bar.height;
+    Dijkstra.controlPanel.statusSlider.thumb = Dijkstra.controlPanel.statusSlider.bar;
+    Dijkstra.controlPanel.statusSlider.thumb.width = Dijkstra.controlPanel.statusSlider.thumb.height * 2;
+    Dijkstra.controlPanel.statusSlider.isClick = 0;
+    Dijkstra.controlPanel.statusSlider.minValue = 0;
+
+    float fontSize = Dijkstra.autoButton.fontSize;
+    float textLen = MeasureTextEx(GUI::font, (const char*)"Speed:", fontSize, 0).x;
+    Dijkstra.controlPanel.speedSlider.bar.width = Dijkstra.controlPanel.rec.width - textLen - margin*2;
+    Dijkstra.controlPanel.speedSlider.bar.height = Dijkstra.controlPanel.rec.height / 10;
+    Dijkstra.controlPanel.speedSlider.bar.x = Dijkstra.controlPanel.rec.x + textLen + margin*2;
+    Dijkstra.controlPanel.speedSlider.bar.y = Dijkstra.controlPanel.statusSlider.bar.y - margin*2 - (fontSize - Dijkstra.controlPanel.speedSlider.bar.height)/2 - Dijkstra.controlPanel.speedSlider.bar.height;
+    Dijkstra.controlPanel.speedSlider.thumb = Dijkstra.controlPanel.speedSlider.bar;
+    Dijkstra.controlPanel.speedSlider.thumb.width = Dijkstra.controlPanel.speedSlider.thumb.height * 2;
+    Dijkstra.controlPanel.speedSlider.unit = (Dijkstra.controlPanel.speedSlider.bar.width - Dijkstra.controlPanel.speedSlider.thumb.width) / 7;
+    Dijkstra.controlPanel.speedSlider.thumb.x = Dijkstra.controlPanel.speedSlider.bar.x + Dijkstra.controlPanel.speedSlider.unit*3;
+    Dijkstra.controlPanel.speedSlider.isClick = 0;
+    Dijkstra.controlPanel.speedSlider.minValue = 0.25f;
+
+    Dijkstra.controlPanel.speed = 1;
+
+    Dijkstra.guideButton = Dijkstra.autoButton;
+    Dijkstra.guideButton.rec.y = round(guideBG.rec.y + (guideBG.rec.height - Dijkstra.guideButton.rec.height)/2);
+    Dijkstra.guideButton.text = (const char*)"User Manual";
+    Dijkstra.guide.clear();
+    Dijkstra.guide.push_back("Input format:");
+    Dijkstra.guide.push_back("    1. Find shorted path between");
+    Dijkstra.guide.push_back("       two vertices: u v");
+    Dijkstra.guide.push_back("    2. Find shorted path from one");
+    Dijkstra.guide.push_back("       to other vertices: u");
+
+    Dijkstra.pseudoButton = Dijkstra.guideButton;
+    Dijkstra.pseudoButton.rec.x = round(Dijkstra.guideButton.rec.x + Dijkstra.guideButton.rec.width + Dijkstra.guideButton.rec.x - guideBG.rec.x);
+    Dijkstra.pseudoButton.recColor = WHITE;
+    Dijkstra.pseudoButton.text = (const char*)"Pseudocode";
+    Dijkstra.pseudo.clear();
+    Dijkstra.pseudo.push_back("for v : vertices: dist[v] = INF");
+    Dijkstra.pseudo.push_back("dist[start] = 0, PQ.push({0, start})");
+    Dijkstra.pseudo.push_back("while !PQ.empty() && !isFound[end]");
+    Dijkstra.pseudo.push_back("    (u, d) = PQ.top(), PQ.pop()");
+    Dijkstra.pseudo.push_back("    if d > dist[u]: continue");
+    Dijkstra.pseudo.push_back("    for (v, w) : u.edges");
+    Dijkstra.pseudo.push_back("        if dist[v] > dist[u] + w:");
+    Dijkstra.pseudo.push_back("            dist[v] = dist[u] + w");
+    Dijkstra.pseudo.push_back("            PQ.push({dist[v], v})");
 }
 
 void GraphGUI::DrawBackGround()
@@ -240,12 +462,13 @@ void GraphGUI::DrawBackGround()
     functionBG.draw();
     guideBG.draw();
     explainBG.draw();
+    DrawRectangle(G.workspace.x, G.workspace.y, GetScreenWidth() - G.workspace.x, GetScreenHeight() - G.workspace.y, GUI::BackGroundColor[GUI::ColorMode]);
 }
 
 void GraphGUI::DrawFunction()
 {
-    DrawCustomizeGraphType();
-    DrawTitleFunction(listFunction[currentFunction]);
+    DrawCustomizeGraphTypeFunction();
+    DrawTitle(listFunction[currentFunction]);
 
     switch (currentFunction)
     {
@@ -267,10 +490,13 @@ void GraphGUI::DrawFunction()
     }
 }
 
-void GraphGUI::DrawCustomizeGraphType()
+void GraphGUI::DrawCustomizeGraphTypeFunction()
 {
     undirectedButton.draw();
     directedButton.draw();
+
+    if (currentFunction == listFunction.size() - 1)
+        return;
 
     Vector2 mouse = GetMousePosition();
     if (!freeze && CheckCollisionPointRec(mouse, undirectedButton.rec) && G.type == 1)
@@ -299,9 +525,9 @@ void GraphGUI::DrawCustomizeGraphType()
     }
 }
 
-void GraphGUI::DrawTitleFunction(const char* nameFunction)
+void GraphGUI::DrawTitle(const char* nameFunction)
 {
-    functionTitle.text = (char*)nameFunction;
+    functionTitle.text = nameFunction;
     functionTitle.draw();
     DrawNavigationButton();
 }
@@ -314,25 +540,49 @@ void GraphGUI::DrawNavigationButton()
     Vector2 mouse = GetMousePosition();
     if (!freeze && CheckCollisionPointRec(mouse, leftNavigationButton.rec))
     {
-        leftNavigationButton.color = LIGHTGRAY;
-        leftNavigationButton.draw();
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
         {
+            if (G.workspace.width != GetScreenWidth() - (graphTypeBG.rec.x + graphTypeBG.rec.width))
+            {
+                G.workspace.width = GetScreenWidth() - (graphTypeBG.rec.x + graphTypeBG.rec.width);
+                G.stable = 0;
+            }
+
+            if (currentFunction == listFunction.size() - 1)
+                Dijkstra.clear();
+
             currentFunction--;
             if (currentFunction < 0) currentFunction += listFunction.size();
         }
-        leftNavigationButton.color = WHITE;
     }
     else if (!freeze && CheckCollisionPointRec(mouse, rightNavigationButton.rec))
     {
-        rightNavigationButton.color = LIGHTGRAY;
-        rightNavigationButton.draw();
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
         {
+            if (G.workspace.width != GetScreenWidth() - (graphTypeBG.rec.x + graphTypeBG.rec.width))
+            {
+                G.workspace.width = GetScreenWidth() - (graphTypeBG.rec.x + graphTypeBG.rec.width);
+                G.stable = 0;
+            }
+
+            if (currentFunction == listFunction.size() - 1)
+                Dijkstra.clear();
+
             currentFunction++;
             if (currentFunction == listFunction.size()) currentFunction = 0;
         }
-        rightNavigationButton.color = WHITE; 
+    }
+}
+
+void GraphGUI::DrawGuide(vector <string> &guide)
+{
+    guideTitle.draw();
+    for (int i = 0; i < guide.size(); i++)
+    {
+        float posX = guidePos.x;
+        float posY = guidePos.y + i * (guideFontSize + guideLineSpacing);
+            
+        DrawTextEx(GUI::font, guide[i].c_str(), {posX, posY}, guideFontSize, 0, BLACK);
     }
 }
 
@@ -356,6 +606,7 @@ void GraphGUI::DrawInitializeFunction()
             {
                 G.LoadFromFile(selectedFile);
                 G.SynchronizeData(inputBox);
+                Dijkstra.clear();
             }
         }   
         chooseFileButton.recColor = WHITE;
@@ -372,22 +623,23 @@ void GraphGUI::DrawInitializeFunction()
             randomButton.draw();
             G.RandomData();
             G.SynchronizeData(inputBox);
+            Dijkstra.clear();
         }
         randomButton.recColor = WHITE;
     }
-
+    
+    inputBox.draw();
+    ZoomInputArea(inputBox);
+    if (!freeze) inputBox.activate();
+    
     if (inputBox.box.rec.x != G.workspace.x && inputBox.box.rec.y != G.workspace.y)
     {
         GoButton.rec.x = round(functionBG.rec.x + margin*2);
         GoButton.rec.y = round(inputBox.box.rec.y + inputBox.box.rec.height + margin*2);
         GoButton.rec.width = round((functionBG.rec.width - margin*2*2)); 
         GoButton.rec.height = round(functionBG.rec.height / 8);
-        GoButton.fontSize = GoButton.rec.height * 3/5;
+        GoButton.fontSize = GoButton.rec.height * 3/4;
     }
-        
-    inputBox.draw();
-    ZoomInputArea(inputBox);
-    if (!freeze) inputBox.activate();
     GoButton.draw();
     if (!freeze && CheckCollisionPointRec(mouse, GoButton.rec))
     {
@@ -398,6 +650,7 @@ void GraphGUI::DrawInitializeFunction()
             GoButton.recColor = DARKGRAY;
             GoButton.draw();
             G.LoadFromKeyBoard(inputBox.userInput);
+            Dijkstra.clear();
             
             if (!freeze)
             {
@@ -413,6 +666,8 @@ void GraphGUI::DrawInitializeFunction()
         GoButton.recColor = WHITE;
     }
 
+    DrawGuide(guideInitialize);
+
     if (freeze) Notify((char *)(const char*)"");
 }
 
@@ -426,12 +681,13 @@ void GraphGUI::DrawAddFunction()
         GoButton.rec.y = round(addBox.box.rec.y + addBox.box.rec.height + margin*2);
         GoButton.rec.width = round((functionBG.rec.width - margin*2*2)); 
         GoButton.rec.height = round(functionBG.rec.height / 8);
-        GoButton.fontSize = GoButton.rec.height * 3/5;
+        GoButton.fontSize = GoButton.rec.height * 3/4;
     }
 
     addBox.draw();
     ZoomInputArea(addBox);
     if (!freeze) addBox.activate();
+
     GoButton.draw();
     if (!freeze && CheckCollisionPointRec(mouse, GoButton.rec))
     {
@@ -458,6 +714,8 @@ void GraphGUI::DrawAddFunction()
         GoButton.recColor = WHITE;
     }
 
+    DrawGuide(guideAdd);
+
     if (freeze) Notify((char *)(const char*)"");
 }
 
@@ -471,7 +729,7 @@ void GraphGUI::DrawDeleteFunction()
         GoButton.rec.y = round(deleteBox.box.rec.y + deleteBox.box.rec.height + margin*2);
         GoButton.rec.width = round((functionBG.rec.width - margin*2*2)); 
         GoButton.rec.height = round(functionBG.rec.height / 8);
-        GoButton.fontSize = GoButton.rec.height * 3/5;
+        GoButton.fontSize = GoButton.rec.height * 3/4;
     }
 
     deleteBox.draw();
@@ -503,15 +761,125 @@ void GraphGUI::DrawDeleteFunction()
         GoButton.recColor = WHITE;
     }
 
+    DrawGuide(guideDelete);
+
     if (freeze) Notify((char *)(const char*)"");
 }
 
 void GraphGUI::DrawShortedPathFunction()
 {
-    
-}
+    if (Dijkstra.isDone && G.workspace.width == GetScreenWidth() - (graphTypeBG.rec.x + graphTypeBG.rec.width))
+    {
+        G.workspace.width -= Dijkstra.trackingTable.table.width;
+        G.stable = 0;
+    }
 
-void GraphGUI::Notify(char *message)
+    if (Dijkstra.mode == 0)
+    {
+        Dijkstra.autoButton.recColor = GRAY;
+        Dijkstra.stepByStepButton.recColor = WHITE;
+    }
+    else 
+    {
+        Dijkstra.autoButton.recColor = WHITE;
+        Dijkstra.stepByStepButton.recColor = GRAY;
+    }
+
+    Dijkstra.autoButton.draw();
+    Dijkstra.stepByStepButton.draw();
+    if (!freeze) Dijkstra.chooseMode();
+
+    Dijkstra.inputBox.draw();
+    if (!freeze) Dijkstra.inputBox.activate();
+
+    Dijkstra.controlPanel.draw();
+    Dijkstra.controlPanel.drawSpeed(Dijkstra.controlPanel.speedSlider.bar, margin*2, Dijkstra.autoButton.fontSize);
+    if (!freeze)
+    {
+        Dijkstra.controlPanel.activateSpeedSilder(Dijkstra.duration, Dijkstra.current, Dijkstra.states);
+        if (Dijkstra.isDone)
+        {
+            Dijkstra.controlPanel.statusSlider.unit = (Dijkstra.controlPanel.statusSlider.bar.width - Dijkstra.controlPanel.statusSlider.thumb.width) / Dijkstra.states.size();
+            Dijkstra.controlPanel.activateStatusSlider(Dijkstra.current, Dijkstra.states, Dijkstra.duration);
+            Dijkstra.isStatusSilderWork = Dijkstra.controlPanel.statusSlider.isClick;
+
+            if (Dijkstra.mode == 0) Dijkstra.controlPanel.activatePauseButton(Dijkstra.isStop);
+            else Dijkstra.isStop = 0;
+
+            Dijkstra.controlPanel.activateNextButton(Dijkstra.current, Dijkstra.states, Dijkstra.duration);
+            Dijkstra.controlPanel.activateBackButton(Dijkstra.current, Dijkstra.states);
+            Dijkstra.controlPanel.activateSkipToEndButton(Dijkstra.current, Dijkstra.states, Dijkstra.duration);
+            Dijkstra.controlPanel.activateBackToStartButton(Dijkstra.current, Dijkstra.states);
+        }
+    }
+
+    Dijkstra.guideButton.draw();
+    Dijkstra.pseudoButton.draw();
+    Dijkstra.chooseDescription();
+    Dijkstra.drawDescription();
+
+    GoButton.rec.x = round(functionBG.rec.x + margin*2);
+    GoButton.rec.y = round(Dijkstra.controlPanel.rec.y + Dijkstra.controlPanel.rec.height + margin*2);
+    GoButton.rec.width = round((functionBG.rec.width - margin*2*2)); 
+    GoButton.rec.height = round(functionBG.rec.height / 8);
+    GoButton.fontSize = GoButton.rec.height * 3/4;
+    
+    GoButton.draw();
+    Vector2 mouse = GetMousePosition();
+    if (!freeze && CheckCollisionPointRec(mouse, GoButton.rec))
+    {
+        GoButton.recColor = LIGHTGRAY;
+        GoButton.draw();
+        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+        {
+            GoButton.recColor = DARKGRAY;
+            GoButton.draw();
+            Dijkstra.clear();
+            if (!Dijkstra.loadData(Dijkstra.inputBox.userInput, G))
+            {
+                GraphGUI::Notify((const char*)"Please check the format and the data of input!!!");
+            }
+            else 
+            {
+                Dijkstra.run(G);
+                Dijkstra.isDone = 1;
+                G.workspace.width = GetScreenWidth() - (graphTypeBG.rec.x + graphTypeBG.rec.width);
+                Dijkstra.initTrackingTable(G); 
+                G.workspace.width -= Dijkstra.trackingTable.table.width;
+                G.stable = 0;
+            }
+            
+            if (!freeze)
+            {
+                if (Dijkstra.inputBox.box.rec.x == G.workspace.x && Dijkstra.inputBox.box.rec.y == G.workspace.y)
+                {
+                    Dijkstra.inputBox.displayedLines = 1;
+                    Dijkstra.inputBox.box.rec = Dijkstra.inputBox.defaultPos;
+                    Dijkstra.inputBox.maxLenPerLine = Dijkstra.inputBox.box.rec.width - Dijkstra.inputBox.lineSpacing*2;
+                    Dijkstra.inputBox.box.outlineColor = BLACK;
+                }
+            }
+        }
+        GoButton.recColor = WHITE;
+    }
+
+    if (!freeze && Dijkstra.isDone)
+    { 
+        if (Dijkstra.mode == 0 && Dijkstra.controlPanel.statusSlider.isClick == 0 && Dijkstra.states[Dijkstra.current].animationProcess == Dijkstra.duration && !Dijkstra.isStop) 
+            Dijkstra.current++;
+            
+        Dijkstra.current = min(Dijkstra.current, (int)Dijkstra.states.size() - 1);
+        
+        if (Dijkstra.states[Dijkstra.current].startTime == 0)
+            Dijkstra.states[Dijkstra.current].startTime = GetTime();
+        
+        Dijkstra.view(G, Dijkstra.states[Dijkstra.current]);
+    }
+
+    if (freeze) Notify((char *)(const char*)"");
+} 
+
+void GraphGUI::Notify(const char *message)
 {
     freeze = 1;
 
@@ -519,7 +887,7 @@ void GraphGUI::Notify(char *message)
     notification.fontSize = notification.rec.height / 4;
     if (strlen(message) > 0)
         notification.text = message;
-    notification.rec.width = MeasureText(notification.text, notification.fontSize) + notification.fontSize * 2;
+    notification.rec.width = MeasureTextEx(GUI::font, notification.text, notification.fontSize, 0).x + MeasureTextEx(GUI::font, notification.text, notification.fontSize, 0).y * 2;
     notification.rec.x = round(G.workspace.x + (G.workspace.width - notification.rec.width) / 2);
     notification.rec.y = round(G.workspace.y + (G.workspace.height - notification.rec.height) / 2);
     notification.recColor = WHITE;
@@ -535,8 +903,8 @@ void GraphGUI::Notify(char *message)
     confirmButton.recColor = WHITE;
     confirmButton.thick = 2;
     confirmButton.outlineColor = BLACK;
-    confirmButton.text = (char*)(const char*)"OK";
-    confirmButton.fontSize = confirmButton.rec.height * 3/5;
+    confirmButton.text = (const char*)"OK";
+    confirmButton.fontSize = confirmButton.rec.height * 3/4;
     confirmButton.textColor = BLACK;
 
     notification.draw();
@@ -569,7 +937,7 @@ void GraphGUI::ZoomInputArea(InputBox &inputArea)
     DrawZoomInputAreaButton(zoomButton, inputArea, BLACK);
    
     Vector2 mouse = GetMousePosition();
-    if (CheckCollisionPointRec(mouse, zoomButton))
+    if (!freeze && CheckCollisionPointRec(mouse, zoomButton))
     {
         DrawZoomInputAreaButton(zoomButton, inputArea, LIGHTGRAY);
 
@@ -598,7 +966,6 @@ void GraphGUI::ZoomInputArea(InputBox &inputArea)
 void GraphGUI::DrawZoomInputAreaButton(Rectangle &zoomButton, InputBox &inputArea, Color color)
 {
     float length = round(zoomButton.width / 3);
-    DrawRectangle(zoomButton.x, zoomButton.y, zoomButton.width, zoomButton.height, WHITE);
 
     if (inputArea.box.rec.x != G.workspace.x && inputArea.box.rec.y != G.workspace.y)
     {
