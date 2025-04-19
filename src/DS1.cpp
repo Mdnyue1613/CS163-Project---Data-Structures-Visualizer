@@ -9,6 +9,7 @@ DS1::DS1(void) :
     randomGenerator(),
     explanationArea(),
     notificationBox(),
+    speedSlider(PConstants::PSlider::pos, PConstants::PSlider::size),
     pseudoCode() {
         doublyLinkedList = new DoublyLinkedList();
         animationManagement = PDSAnimation(doublyLinkedList, &taskManagement);
@@ -85,6 +86,10 @@ void DS1::update(void) {
     // Update explanation area
     explanationArea.update(explanationText);
 
+    // Update speed slider
+    speedSlider.update();
+    PConstants::PAnimation::waitTime = 0.5f / speedSlider.getPercentage();
+
     // Update linked list
     doublyLinkedList->update(taskManagement.doneTask());
 }
@@ -104,6 +109,9 @@ void DS1::draw(bool darkMode) {
 
         PConstants::PNodeLine::color = BLACK;
         PConstants::PNodeLine::highlightColor = {255, 138, 39, 255};
+        PConstants::PSlider::barColor = SEASHELL;
+        PConstants::PSlider::thumbColor = BLACK;
+        PConstants::PSlider::thumbHighlightColor = DARKGRAY;
     }
     else {
         PConstants::DS1::backgroundColor = BLACK;
@@ -119,6 +127,9 @@ void DS1::draw(bool darkMode) {
 
         PConstants::PNodeLine::color = {65, 71, 79, 255};
         PConstants::PNodeLine::highlightColor = {224, 255, 255, 255};
+        PConstants::PSlider::barColor = {73, 73, 73, 255};
+        PConstants::PSlider::thumbColor = {204, 204, 204, 255};
+        PConstants::PSlider::thumbHighlightColor = {204, 204, 204, 255};
     }
 
     // Draw background
@@ -146,6 +157,9 @@ void DS1::draw(bool darkMode) {
 
     // Draw Data Structure
     doublyLinkedList->draw(taskManagement.doneTask());
+
+    // Draw Speed Slider
+    speedSlider.draw();
 
     // Notification text
     if(notificationBox.notificationText.size() > 0) {
