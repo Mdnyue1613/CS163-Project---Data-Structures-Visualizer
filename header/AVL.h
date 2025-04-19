@@ -38,7 +38,7 @@ struct TreeNode{
         color = other.color;
         left = right = parent = nullptr;
     }
-    TreeNode(int x);
+    TreeNode(int x, Color color);
     void setRadius(float radius);
     void setColor(Color color);
 };
@@ -62,8 +62,15 @@ struct AVL {
     Vector2 rootPosition = {750, 200};
     float distance_x;
     float distance_y;
+    float animationSpeed = 1.f;
     int animationStep = 0;
     int hightLightNodeIndex = 0;
+    Color treeColor = BLUE;
+    Color highlightColor = YELLOW;
+    Color warningColor = RED;
+    Color selectionNodeColor = DARKBLUE;
+    Color choosenNodeColor = GREEN;
+
     PExplanationArea explanationArea;
     LPseudoCode PseudoCodeArea;
     AVL();
@@ -108,4 +115,10 @@ struct AVL {
     void updateHeightInPath();
     void insertNodeRunAtOnce(TreeNode *&root, TreeNode *parent, int x);
     void findNode(TreeNode*& root, int x);
+    void setAnimationSpeed(float speed);
+    void setTreeColor(Color color);
+    void setHighlightColor(Color color);
+    void setWarningColor(Color color);
+    void setSelectionNodeColor(Color color);
+    void setChoosenNodeColor(Color color);
 };

@@ -1,11 +1,11 @@
 #include "../header/AVL.h"
 
-TreeNode::TreeNode(int x) {
+TreeNode::TreeNode(int x, Color color) {
     val = x;
     left = right = nullptr;
     height = 1;
     radius = 20;
-    color = BLUE;
+    this->color = color;
 }
 
 void TreeNode::setRadius(float radius) {
@@ -102,7 +102,7 @@ void AVL::insertNode(TreeNode *&root, TreeNode *parent, int x) {
 
 void AVL::insertNodeNonDuplicate(TreeNode *&root, TreeNode *parent, int x) {
     if (!root) {
-        root = new TreeNode(x);
+        root = new TreeNode(x, treeColor);
         allNode.push_back(root);
         root->parent = parent;
         if (parent == nullptr) {
@@ -118,7 +118,7 @@ void AVL::insertNodeNonDuplicate(TreeNode *&root, TreeNode *parent, int x) {
             }
         }
         root->setRadius(0);
-        root->setColor(GREEN);
+        root->setColor(choosenNodeColor);
         NodeInsert = root;
         animationStep = 0;
         return;
@@ -339,7 +339,7 @@ void AVL::rotateChildNode() {
 
 void AVL::insertNodeWithNoAnimation(TreeNode *&root, TreeNode *parent, int x) {
     if (!root) {
-        root = new TreeNode(x);
+        root = new TreeNode(x, treeColor);
         allNode.push_back(root);
         root->parent = parent;
         if (parent == nullptr) {
