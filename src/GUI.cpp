@@ -128,7 +128,7 @@ void GUI::drawDS2() {
         BeginDrawing();
         ClearBackground(WHITE);
         hashtableVisualizer.update();
-        hashtableVisualizer.draw();
+        hashtableVisualizer.draw(ColorMode);
         BACK();
         CustomColorMode();
         EndDrawing();
