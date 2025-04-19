@@ -1,4 +1,5 @@
 #include"../header/LDeleteMenu.h"
+#include"../header/PConstants.h"
 
 LDeleteMenu::LDeleteMenu() {
     

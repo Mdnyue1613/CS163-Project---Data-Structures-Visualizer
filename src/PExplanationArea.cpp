@@ -1,4 +1,5 @@
 #include "../header/PExplanationArea.h"
+#include "../header/PConstants.h"
 
 PExplanationArea::PExplanationArea(void) :
     background({PConstants::PExplanationArea::pos.x, PConstants::PExplanationArea::pos.y, PConstants::PExplanationArea::size.x, PConstants::PExplanationArea::size.y}) {}

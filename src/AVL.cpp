@@ -1,4 +1,5 @@
 #include "../header/AVL.h"
+#include "../header/PConstants.h"
 
 TreeNode::TreeNode(int x, Color color) {
     val = x;
@@ -168,6 +169,7 @@ void AVL::random(int n) {
 }
 
 void AVL::vectorIntInit(vector<int> nums) {
+    removeAll();
     for (auto num : nums) {
         insertNodeWithNoAnimation(TreeRoot, nullptr, num);
     }

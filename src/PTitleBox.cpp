@@ -3,7 +3,7 @@
 PTitleBox::PTitleBox(void) {
 }
 
-PTitleBox::PTitleBox(int x, int y, int width, int height, int outThickness, Color inColor, Color outColor, string name, int nameSize)
+PTitleBox::PTitleBox(float x, float y, float width, float height, int outThickness, Color inColor, Color outColor, string name, int nameSize)
 : PBOX::PBOX(x, y, width, height, outThickness, inColor, outColor) {
     for(int i = 0; i < (int)name.size(); i++)
         title[i] = name[i];

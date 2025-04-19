@@ -4,8 +4,8 @@
 #include "../header/LInputBox.h"
 #include "../header/AVL.h"
 #include "../header/DS2.h"
-
 #include <iostream>
+
 void GUI::startProgram() {
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     InitWindow(1200, 800, "Hello Raylib");
@@ -13,6 +13,7 @@ void GUI::startProgram() {
 
     Init();
     linkedListVisualizer.prepare();
+    hashtableVisualizer.prepare();
     ds3.prepare();
 
     while(isOpenDS[0] || isOpenDS[1] || isOpenDS[2] || isOpenDS[3] || isOpenMenu) {
@@ -111,7 +112,7 @@ void GUI::drawDS1() {
         // Update the data structure before rendering it
         linkedListVisualizer.update();
         // Render the data structure
-        linkedListVisualizer.draw();
+        linkedListVisualizer.draw(ColorMode);
         BACK();
         CustomColorMode();
         EndDrawing();
@@ -123,11 +124,11 @@ void GUI::drawDS1() {
 }
 
 void GUI::drawDS2() {
-    DS2 Hashtable;
     while (GUI::isOpenDS[1]) {
         BeginDrawing();
         ClearBackground(WHITE);
-        Hashtable.draw();
+        hashtableVisualizer.update();
+        hashtableVisualizer.draw();
         BACK();
         CustomColorMode();
         EndDrawing();
