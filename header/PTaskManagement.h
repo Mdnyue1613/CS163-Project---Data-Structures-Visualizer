@@ -17,14 +17,14 @@ struct PTaskManagement {
     int step;
     vector<string> task;
     bool taskDone;
-    stack<bool> conditionStack, undoCondtionStack;
+    vector<bool> conditionStack, undoCondtionStack;
     float time;
 
     PTaskManagement(void);
 
     // Condition stack
     void takeCondition(bool condition); // Push new condition into the condition stack
-    bool getCondition(void); // Get the lastest condition
+    bool getCondition(int i = 0); // Get the lastest condition
     void popCondition(void); // Delete the lastest condition
     int getNumCondition(void); // Get the number of conditions
 
@@ -41,7 +41,7 @@ struct PTaskManagement {
         Search,
         NoRequest
     };
-    void takeRequest(vector<string> request); // Push new request into task queue
+    bool takeRequest(vector<string> request); // Push new request into task queue, return true if pushed a new request
     int getTaskType(void); // Get the type of the task
     vector<string> getTask(void); // Get the task
     void endTask(void); // End a task

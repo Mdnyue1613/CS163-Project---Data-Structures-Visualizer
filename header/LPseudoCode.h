@@ -29,6 +29,9 @@ struct LPseudoCode{
         fontSize = other.fontSize;
     }
     LPseudoCode(vector<string> pseudoCode, int numLine);
+
     void update(int line);
     void draw();
+
+    void setPseudoCode(vector<string> pseudoCode, int numLine);
 };
