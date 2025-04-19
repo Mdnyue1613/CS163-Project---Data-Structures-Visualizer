@@ -144,9 +144,17 @@ void GUI::drawDS3() {
         BeginDrawing();
         if(ColorMode) {
             ClearBackground(BLACK);
+            PConstants::PNode::informationTextColor = {204, 204, 204, 255};
+            PConstants::PSlider::barColor = {73, 73, 73, 255};
+            PConstants::PSlider::thumbColor = {204, 204, 204, 255};
+            PConstants::PSlider::thumbHighlightColor = {204, 204, 204, 255};    
         }
         else {
             ClearBackground(WHITE);
+            PConstants::PNode::informationTextColor = BLACK;
+            PConstants::PSlider::barColor = SEASHELL;
+            PConstants::PSlider::thumbColor = BLACK;
+            PConstants::PSlider::thumbHighlightColor = DARKGRAY;
         }
         ds3.draw();
         BACK();

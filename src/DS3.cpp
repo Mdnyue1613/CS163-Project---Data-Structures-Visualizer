@@ -81,6 +81,9 @@ void DS3::draw() {
         updateSelectionNode();
     }
     Tree.draw();
+    Tree.speedSlider.draw();
+    Tree.speedSlider.update();
+    Tree.setAnimationSpeed(Tree.speedSlider.getPercentage());
 }
 void DS3::RandomInitialize(string num) {
     int val;

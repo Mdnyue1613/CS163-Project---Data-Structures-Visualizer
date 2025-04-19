@@ -14,6 +14,7 @@
 #include <iostream>
 #include"PExplanationArea.h"
 #include"LPseudoCode.h"
+#include"PSlider.h"
 using namespace std;
 
 struct TreeNode{
@@ -73,6 +74,8 @@ struct AVL {
 
     PExplanationArea explanationArea;
     LPseudoCode PseudoCodeArea;
+    PSlider speedSlider;
+
     AVL();
     int getBalance(TreeNode *root);
     void setHeight(TreeNode *&root);
