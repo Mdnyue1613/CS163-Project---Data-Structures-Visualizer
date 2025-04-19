@@ -1,6 +1,6 @@
 #include "../header/PDSAnimation.h"
 
-bool PDSAnimation::search(int value, int stepRequest, string& explanationText) {
+bool PDSAnimation::search(int value, int stepRequest, string& explanationText, int& codeLine) {
     /*
     00. tmp = head
     01. while(tmp != nullptr) :
@@ -19,16 +19,16 @@ bool PDSAnimation::search(int value, int stepRequest, string& explanationText) {
     else if(stepRequest == skipBackward || stepRequest == goBackward || stepRequest == goForward || stepRequest == skipForward) 
         waitRequest = true;
     if(step == 0) {
-        done = forward ? searchStep0(value, stepRequest, explanationText) : false;
+        done = forward ? searchStep0(value, stepRequest, explanationText, codeLine) : false;
     }
     else if(step == 1) {
-        done = forward ? searchStep1(value, stepRequest, explanationText) : undoVersion(stepRequest);
+        done = forward ? searchStep1(value, stepRequest, explanationText, codeLine) : undoVersion(stepRequest);
     }
     else if(step == 2) {
-        done = forward ? searchStep2(value, stepRequest, explanationText) : undoVersion(stepRequest);
+        done = forward ? searchStep2(value, stepRequest, explanationText, codeLine) : undoVersion(stepRequest);
     }
     else if(step == 3) {
-        done = forward ? searchStep3(value, stepRequest, explanationText) : undoVersion(stepRequest);
+        done = forward ? searchStep3(value, stepRequest, explanationText, codeLine) : undoVersion(stepRequest);
     }
     if(done) {
         PNode* tmp = dataStructurePointer->head;
@@ -40,8 +40,7 @@ bool PDSAnimation::search(int value, int stepRequest, string& explanationText) {
     }
     return done;
 }
-bool PDSAnimation::searchStep0(int value, int stepRequest, string& explanationText) {
-    cout << "searchStep0\n";;
+bool PDSAnimation::searchStep0(int value, int stepRequest, string& explanationText, int& codeLine) {
     // 00. tmp = head
     bool done = (waitRequest == false && taskManagementPointer->getTime() > PConstants::PAnimation::waitTime);
     // Begin algorithm
@@ -54,6 +53,7 @@ bool PDSAnimation::searchStep0(int value, int stepRequest, string& explanationTe
     }
     // Explanation
     explanationText = "tmp points to head.";
+    codeLine = 0;
     // Skip
     if(stepRequest == goForward || stepRequest == skipForward) {
         done = true;
@@ -67,21 +67,18 @@ bool PDSAnimation::searchStep0(int value, int stepRequest, string& explanationTe
         taskManagementPointer->nextStep();
         // Skip
         if(stepRequest == skipForward) {
-            return searchStep1(value, stepRequest, explanationText);
+            return searchStep1(value, stepRequest, explanationText, codeLine);
         }
     }
     // Update time
     else taskManagementPointer->updateTime();
     return false;
 }
-bool PDSAnimation::searchStep1(int value, int stepRequest, string& explanationText) {
-    cout << "searchStep1\n";
+bool PDSAnimation::searchStep1(int value, int stepRequest, string& explanationText, int& codeLine) {
     // 01. while(tmp != nullptr) :
     bool done = (waitRequest == false && taskManagementPointer->getTime() > PConstants::PAnimation::waitTime);
-    cout << taskManagementPointer->getTime() << '\n';
     // Begin algorithm
     if(taskManagementPointer->getTime() == 0.f) {
-        cout << "Begin algorithm\n";
         bool con0 = dataStructurePointer->animationTmp != nullptr;
         recordVectorBool(&taskManagementPointer->conditionStack);
         taskManagementPointer->takeCondition(con0);
@@ -91,7 +88,6 @@ bool PDSAnimation::searchStep1(int value, int stepRequest, string& explanationTe
         }
         makeVersion();
     }
-    cout << taskManagementPointer->conditionStack.size() << '\n';
     // Explanation
     if(taskManagementPointer->getCondition(0)) {
         explanationText = "tmp is not null";
@@ -99,6 +95,7 @@ bool PDSAnimation::searchStep1(int value, int stepRequest, string& explanationTe
     else {
         explanationText = "tmp is null";
     }
+    codeLine = 1;
     // Skip
     if(stepRequest == goForward || stepRequest == skipForward) {
         done = true;
@@ -114,15 +111,14 @@ bool PDSAnimation::searchStep1(int value, int stepRequest, string& explanationTe
         taskManagementPointer->nextStep();
         // Skip
         if(stepRequest == skipForward) {
-            return searchStep2(value, stepRequest, explanationText);
+            return searchStep2(value, stepRequest, explanationText, codeLine);
         }
     }
     // Update time
     else taskManagementPointer->updateTime();
     return false;
 }
-bool PDSAnimation::searchStep2(int value, int stepRequest, string& explanationText) {
-    cout << "searchStep2\n";
+bool PDSAnimation::searchStep2(int value, int stepRequest, string& explanationText, int& codeLine) {
     /* 02.
         True:
             if(tmp->data == value): return tmp
@@ -147,9 +143,11 @@ bool PDSAnimation::searchStep2(int value, int stepRequest, string& explanationTe
             explanationText = "Found the node with input value!";
         else
             explanationText = "This is not the wanted node\nContinue.";
+        codeLine = 2;
     }
     else {
         explanationText = "Couldn't find the node with input value!";
+        codeLine = 4;
     }
     // Skip
     if(stepRequest == goForward || stepRequest == skipForward) {
@@ -175,7 +173,7 @@ bool PDSAnimation::searchStep2(int value, int stepRequest, string& explanationTe
                 taskManagementPointer->nextStep();
                 // Skip
                 if(stepRequest == skipForward) {
-                    return searchStep3(value, stepRequest, explanationText);
+                    return searchStep3(value, stepRequest, explanationText, codeLine);
                 }
             }
         }
@@ -192,8 +190,7 @@ bool PDSAnimation::searchStep2(int value, int stepRequest, string& explanationTe
     else taskManagementPointer->updateTime();
     return false;
 }
-bool PDSAnimation::searchStep3(int value, int stepRequest, string& explanationText) {
-    cout << "searchStep3\n";
+bool PDSAnimation::searchStep3(int value, int stepRequest, string& explanationText, int& codeLine) {
     // 03. tmp = tmp->pNext
     bool done = (waitRequest == false && taskManagementPointer->getTime() > PConstants::PAnimation::waitTime);
     // Begin algorithm
@@ -208,6 +205,7 @@ bool PDSAnimation::searchStep3(int value, int stepRequest, string& explanationTe
     }
     // Explanation
     explanationText = "Traverse tmp.";
+    codeLine = 3;
     // Skip
     if(stepRequest == goForward || stepRequest == skipForward) {
         done = true;
@@ -226,14 +224,15 @@ bool PDSAnimation::searchStep3(int value, int stepRequest, string& explanationTe
         taskManagementPointer->time = 0.f;
         // Skip
         if(stepRequest == skipForward) {
-            return searchStep1(value, stepRequest, explanationText);
+            return searchStep1(value, stepRequest, explanationText, codeLine);
         }
     }
     // Update time
     else taskManagementPointer->updateTime();
     return false;
 }
-bool PDSAnimation::update(PNode* chosen, int value, int stepRequest, string& explanationText) {
+
+bool PDSAnimation::update(PNode* chosen, int value, int stepRequest, string& explanationText, int& codeLine) {
     /*
     00. tmp = head
     01. while(tmp != nullptr) :
@@ -251,16 +250,16 @@ bool PDSAnimation::update(PNode* chosen, int value, int stepRequest, string& exp
     else if(stepRequest == skipBackward || stepRequest == goBackward || stepRequest == goForward || stepRequest == skipForward) 
         waitRequest = true;
     if(step == 0) {
-        done = forward ? updateStep0(chosen, value, stepRequest, explanationText) : false;
+        done = forward ? updateStep0(chosen, value, stepRequest, explanationText, codeLine) : false;
     }
     else if(step == 1) {
-        done = forward ? updateStep1(chosen, value, stepRequest, explanationText) : undoVersion(stepRequest);
+        done = forward ? updateStep1(chosen, value, stepRequest, explanationText, codeLine) : undoVersion(stepRequest);
     }
     else if(step == 2) {
-        done = forward ? updateStep2(chosen, value, stepRequest, explanationText) : undoVersion(stepRequest);
+        done = forward ? updateStep2(chosen, value, stepRequest, explanationText, codeLine) : undoVersion(stepRequest);
     }
     else if(step == 3) {
-        done = forward ? updateStep3(chosen, value, stepRequest, explanationText) : undoVersion(stepRequest);
+        done = forward ? updateStep3(chosen, value, stepRequest, explanationText, codeLine) : undoVersion(stepRequest);
     }
     if(done) {
         PNode* tmp = dataStructurePointer->head;
@@ -272,7 +271,7 @@ bool PDSAnimation::update(PNode* chosen, int value, int stepRequest, string& exp
     }
     return done;
 }
-bool PDSAnimation::updateStep0(PNode* chosen, int value, int stepRequest, string& explanationText) {
+bool PDSAnimation::updateStep0(PNode* chosen, int value, int stepRequest, string& explanationText, int& codeLine) {
     // 00. tmp = head
     bool done = (waitRequest == false && taskManagementPointer->getTime() > PConstants::PAnimation::waitTime);
     // Begin algorithm
@@ -285,6 +284,7 @@ bool PDSAnimation::updateStep0(PNode* chosen, int value, int stepRequest, string
     }
     // Explanation
     explanationText = "tmp points to head.";
+    codeLine = 0;
     // Skip
     if(stepRequest == goForward || stepRequest == skipForward) {
         done = true;
@@ -298,14 +298,14 @@ bool PDSAnimation::updateStep0(PNode* chosen, int value, int stepRequest, string
         taskManagementPointer->nextStep();
         // Skip
         if(stepRequest == skipForward) {
-            return updateStep1(chosen, value, stepRequest, explanationText);
+            return updateStep1(chosen, value, stepRequest, explanationText, codeLine);
         }
     }
     // Update time
     else taskManagementPointer->updateTime();
     return false;
 }
-bool PDSAnimation::updateStep1(PNode* chosen, int value, int stepRequest, string& explanationText) {
+bool PDSAnimation::updateStep1(PNode* chosen, int value, int stepRequest, string& explanationText, int& codeLine) {
     // 01. while(tmp != nullptr) :
     bool done = (waitRequest == false && taskManagementPointer->getTime() > PConstants::PAnimation::waitTime);
     // Begin algorithm
@@ -324,6 +324,7 @@ bool PDSAnimation::updateStep1(PNode* chosen, int value, int stepRequest, string
         explanationText = "tmp is not null.";
     else
         explanationText = "tmp is null.\nExit the loop.";
+    codeLine = 1;
     // Skip
     if(stepRequest == goForward || stepRequest == skipForward) 
         done = true;
@@ -337,7 +338,7 @@ bool PDSAnimation::updateStep1(PNode* chosen, int value, int stepRequest, string
             taskManagementPointer->nextStep();
             // Skip
             if(stepRequest == skipForward) {
-                return updateStep2(chosen, value, stepRequest, explanationText);
+                return updateStep2(chosen, value, stepRequest, explanationText, codeLine);
             }
         }
         else {
@@ -353,8 +354,7 @@ bool PDSAnimation::updateStep1(PNode* chosen, int value, int stepRequest, string
     else taskManagementPointer->updateTime();
     return false;
 }
-
-bool PDSAnimation::updateStep2(PNode* chosen, int value, int stepRequest, string& explanationText) {
+bool PDSAnimation::updateStep2(PNode* chosen, int value, int stepRequest, string& explanationText, int& codeLine) {
     //02.     if(tmp == chosenNode): tmp->data = value, return
     bool done = (waitRequest == false && taskManagementPointer->getTime() > PConstants::PAnimation::waitTime);
     // Begin algorithm
@@ -375,6 +375,7 @@ bool PDSAnimation::updateStep2(PNode* chosen, int value, int stepRequest, string
         explanationText = "Reached the chosen node.\nUpdate its value.";
     else
         explanationText = "Haven't reached the chosen node.";
+    codeLine = 2;
     // Skip
     if(stepRequest == goForward || stepRequest == skipForward) {
         done = true;
@@ -399,7 +400,7 @@ bool PDSAnimation::updateStep2(PNode* chosen, int value, int stepRequest, string
             taskManagementPointer->nextStep();
             // Skip
             if(stepRequest == skipForward) {
-                return updateStep3(chosen, value, stepRequest, explanationText);
+                return updateStep3(chosen, value, stepRequest, explanationText, codeLine);
             }
         }
     }
@@ -407,7 +408,7 @@ bool PDSAnimation::updateStep2(PNode* chosen, int value, int stepRequest, string
     else taskManagementPointer->updateTime();
     return false;
 }
-bool PDSAnimation::updateStep3(PNode * chosen, int value, int stepRequest, string& explanationText) {
+bool PDSAnimation::updateStep3(PNode * chosen, int value, int stepRequest, string& explanationText, int& codeLine) {
     // 03.     tmp = tmp->pNext
     bool done = (waitRequest == false && taskManagementPointer->getTime() > PConstants::PAnimation::waitTime);
     // Begin algorithm
@@ -422,6 +423,7 @@ bool PDSAnimation::updateStep3(PNode * chosen, int value, int stepRequest, strin
     }
     // Explanation
     explanationText = "Traverse tmp.";
+    codeLine = 3;
     // Skip
     if(stepRequest == goForward || stepRequest == skipForward) {
         done = true;
@@ -440,7 +442,7 @@ bool PDSAnimation::updateStep3(PNode * chosen, int value, int stepRequest, strin
         for(int i = 0; i < 2; i++) taskManagementPointer->prevStep();
         // Skip
         if(stepRequest == skipForward) {
-            return updateStep1(chosen, value, stepRequest, explanationText);
+            return updateStep1(chosen, value, stepRequest, explanationText, codeLine);
         }
     }  
     // Update time

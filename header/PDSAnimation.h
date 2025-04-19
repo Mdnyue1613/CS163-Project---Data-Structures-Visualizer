@@ -94,30 +94,30 @@ struct PDSAnimation {
     bool insertAfterStep11(int position, int value, int stepRequest, string& explanationText, int& codeLine); // Step 11
     
     // Remove animations
-    bool remove(int position, int stepRequest, string& explanationText); // Delete an element at a specified position in the list, Return true if the progress is done
-    bool removeStep0(int position, int stepRequest, string& explanationText); // Step 0
-    bool removeStep1(int position, int stepRequest, string& explanationText); // Step 1
-    bool removeStep2(int position, int stepRequest, string& explanationText); // Step 2
-    bool removeStep3(int position, int stepRequest, string& explanationText); // Step 3
-    bool removeStep4(int position, int stepRequest, string& explanationText); // Step 4
-    bool removeStep5(int position, int stepRequest, string& explanationText); // Step 5
-    bool removeStep6(int position, int stepRequest, string& explanationText); // Step 6
-    bool removeStep7(int position, int stepRequest, string& explanationText); // Step 7
-    bool removeStep8(int position, int stepRequest, string& explanationText); // Step 8
-    bool removeStep9(int position, int stepRequest, string& explanationText); // Step 9
-    bool removeStep10(int position, int stepRequest, string& explanationText); // Step 10
+    bool remove(int position, int stepRequest, string& explanationText, int& codeLine); // Delete an element at a specified position in the list, Return true if the progress is done
+    bool removeStep0(int position, int stepRequest, string& explanationText, int& codeLine); // Step 0
+    bool removeStep1(int position, int stepRequest, string& explanationText, int& codeLine); // Step 1
+    bool removeStep2(int position, int stepRequest, string& explanationText, int& codeLine); // Step 2
+    bool removeStep3(int position, int stepRequest, string& explanationText, int& codeLine); // Step 3
+    bool removeStep4(int position, int stepRequest, string& explanationText, int& codeLine); // Step 4
+    bool removeStep5(int position, int stepRequest, string& explanationText, int& codeLine); // Step 5
+    bool removeStep6(int position, int stepRequest, string& explanationText, int& codeLine); // Step 6
+    bool removeStep7(int position, int stepRequest, string& explanationText, int& codeLine); // Step 7
+    bool removeStep8(int position, int stepRequest, string& explanationText, int& codeLine); // Step 8
+    bool removeStep9(int position, int stepRequest, string& explanationText, int& codeLine); // Step 9
+    bool removeStep10(int position, int stepRequest, string& explanationText, int& codeLine); // Step 10
 
     // Search animations
-    bool search(int value, int stepRequest, string& explanationText); // Search an element at a specified position in the list, Return true if the progress is done
-    bool searchStep0(int value, int stepRequest, string& explanationText); // Step 0
-    bool searchStep1(int value, int stepRequest, string& explanationText); // Step 1
-    bool searchStep2(int value, int stepRequest, string& explanationText); // Step 2
-    bool searchStep3(int value, int stepRequest, string& explanationText); // Step 3
+    bool search(int value, int stepRequest, string& explanationText, int& codeLine); // Search an element at a specified position in the list, Return true if the progress is done
+    bool searchStep0(int value, int stepRequest, string& explanationText, int& codeLine); // Step 0
+    bool searchStep1(int value, int stepRequest, string& explanationText, int& codeLine); // Step 1
+    bool searchStep2(int value, int stepRequest, string& explanationText, int& codeLine); // Step 2
+    bool searchStep3(int value, int stepRequest, string& explanationText, int& codeLine); // Step 3
 
     // Update animations
-    bool update(PNode* chosen, int value, int stepRequest, string& explanationText); // Update an element at a specified position in the list, Return true if the progress is done
-    bool updateStep0(PNode* chosen, int value, int stepRequest, string& explanationText); // Step 0
-    bool updateStep1(PNode* chosen, int value, int stepRequest, string& explanationText); // Step 1
-    bool updateStep2(PNode* chosen, int value, int stepRequest, string& explanationText); // Step 2
-    bool updateStep3(PNode* chosen, int value, int stepRequest, string& explanationText); // Step 3
+    bool update(PNode* chosen, int value, int stepRequest, string& explanationText, int& codeLine); // Update an element at a specified position in the list, Return true if the progress is done
+    bool updateStep0(PNode* chosen, int value, int stepRequest, string& explanationText, int& codeLine); // Step 0
+    bool updateStep1(PNode* chosen, int value, int stepRequest, string& explanationText, int& codeLine); // Step 1
+    bool updateStep2(PNode* chosen, int value, int stepRequest, string& explanationText, int& codeLine); // Step 2
+    bool updateStep3(PNode* chosen, int value, int stepRequest, string& explanationText, int& codeLine); // Step 3
 };

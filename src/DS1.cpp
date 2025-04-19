@@ -237,9 +237,50 @@ bool DS1::operateRemove(vector<string>& request, int stepRequest, string& explan
         return true;
     }
     bool done = true;
-    int value = notificationBox.getOneNum(request[1], 0, 99);
+    int value = notificationBox.getOneNum(request[1], 0, doublyLinkedList->getNumNode() - 1);
     if(notificationBox.notificationText == "Valid") {
-        done = animationManagement.remove(value, stepRequest, explanationText);
+        int codeLine = -1;
+        done = animationManagement.remove(value, stepRequest, explanationText, codeLine);
+        vector<string> codes0 = {
+            "if position < 0 || position >= n : return", // line 0
+            "if position == 0 :", // line 1
+            "    tmp = head", // line 2
+            "    head = head->pNext", // line 3
+            "    if head != nullptr : head->pPrev = nullptr", // line 4
+            "    else tail = nullptr", // line 5
+            "    delete tmp" // line 6
+        };
+        vector<string> codes1 = {
+            "else if position == n - 1 :", // line 7
+            "    tmp = tail", // line 8
+            "    tail = tail->pPrev", // line 9
+            "    if tail != nullptr : tail->pNext = nullptr", // line 10
+            "    else head = nullptr", // line 11
+            "    delete tmp" // line 12
+        };
+        vector<string> codes2 = {
+            "else", // line 13
+            "    prev = head", // line 14
+            "    for int i = 0; i < position - 1 && prev != nullptr; i++ :", // line 15
+            "        prev = prev->pNext", // line 16
+            "    if prev != nullptr && prev->pNext != nullptr :", //  line 17
+            "        tmp = prev->pNext", // line 18
+            "        prev->pNext = tmp->pNext", // line 19
+            "        tmp->pNext->pPrev = prev", // line 20
+            "        delete tmp" // line 21
+        };
+        if(codeLine <= 6) {
+            pseudoCode.setPseudoCode(codes0, 7);
+            pseudoCode.update(codeLine);
+        }
+        else if(codeLine <= 12) {
+            pseudoCode.setPseudoCode(codes1, 6);
+            pseudoCode.update(codeLine - 7);
+        }
+        else {
+            pseudoCode.setPseudoCode(codes2, 9);
+            pseudoCode.update(codeLine - 13);
+        }
         doublyLinkedList = animationManagement.dataStructurePointer;
         notificationBox.notificationText.clear();
     }
@@ -253,7 +294,17 @@ bool DS1::operateSearch(vector<string>& request, int stepRequest, string& explan
     bool done = true;
     int value = notificationBox.getOneNum(request[1], -100, 100);
     if(notificationBox.notificationText == "Valid") {
-        done = animationManagement.search(value, stepRequest, explanationText);
+        int codeLine = -1;
+        done = animationManagement.search(value, stepRequest, explanationText, codeLine);
+        vector<string> codes = {
+            "tmp = head", // line 0
+            "while tmp != nullptr :", // line 1
+            "    if tmp->data == value : return tmp", // line 2
+            "    tmp = tmp->pNext", // line 3
+            "return nullptr" // line 4
+        };
+        pseudoCode.setPseudoCode(codes, 5);
+        pseudoCode.update(codeLine);
         doublyLinkedList = animationManagement.dataStructurePointer;
         notificationBox.notificationText.clear();
     }
@@ -269,7 +320,16 @@ bool DS1::operateUpdate(PNode* chosen, vector<string>& request, int stepRequest,
     chosen->highlight = true;
     chosen->setInformationState(DoublyLinkedList::Chosen, true);
     if(notificationBox.notificationText == "Valid") {
-        done = animationManagement.update(chosen, value, stepRequest, explanationText);
+        int codeLine = -1;
+        done = animationManagement.update(chosen, value, stepRequest, explanationText, codeLine);
+        vector<string> codes = {
+            "tmp = head", // line 0
+            "while tmp != nullptr :", // line 1
+            "    if tmp == chosenNode : tmp->data = value, return", // line 2
+            "    tmp = tmp->pNext" // line 3
+        };
+        pseudoCode.setPseudoCode(codes, 4);
+        pseudoCode.update(codeLine);
         doublyLinkedList = animationManagement.dataStructurePointer;
         notificationBox.notificationText.clear();
     }
