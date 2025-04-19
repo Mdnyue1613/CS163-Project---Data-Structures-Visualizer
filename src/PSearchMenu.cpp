@@ -8,7 +8,7 @@ PSearchMenu::PSearchMenu(float x, float y, float width, float height) :
         {width - 2.f * PConstants::PFunctionArea::spaceX, PConstants::PFunctionArea::boxHeight}, 
         PConstants::PFunctionArea::boxOutlineThickness,
         PConstants::PFunctionArea::boxColor, PConstants::PFunctionArea::outlineBoxColor, 
-        "Input a position", PConstants::PExplanationArea::fontSize),
+        "Input a value", PConstants::PExplanationArea::fontSize),
     GO({x + PConstants::PFunctionArea::spaceX, y + height - PConstants::PFunctionArea::spaceY - PConstants::PFunctionArea::boxHeight}, 
         {width - 2 * PConstants::PFunctionArea::spaceX, PConstants::PFunctionArea::boxHeight}, 
         PConstants::PFunctionArea::boxOutlineThickness, 

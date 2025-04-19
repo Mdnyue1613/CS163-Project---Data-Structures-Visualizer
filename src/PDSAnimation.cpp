@@ -17,14 +17,26 @@ void PDSAnimation::reset(void) {
     while(undoBoolStack.size() > 0) {
         undoBoolStack.pop();
     }
-    while(undoFloatStack.size() > 0) {
-        undoFloatStack.pop();
+    while(undoPNodePointerStack.size() > 0) {
+        undoPNodePointerStack.pop();
+    }
+    while(undoPNodePointerStack2.size() > 0) {
+        undoPNodePointerStack2.pop();
     }
     while(undoIntStack.size() > 0) {
         undoIntStack.pop();
     }
-    while(undoPNodePointerStack.size() > 0) {
-        undoPNodePointerStack.pop();
+    while(undoFloatStack.size() > 0) {
+        undoFloatStack.pop();
+    }
+    while(undoVectorBoolStack.size() > 0) {
+        undoVectorBoolStack.pop();
+    }
+    while(undoDeletePNodePointerStack.size() > 0) {
+        undoDeletePNodePointerStack.pop();
+    }
+    while(undoVector2Stack.size() > 0) {
+        undoVector2Stack.pop();
     }
 }
 
@@ -60,13 +72,16 @@ void PDSAnimation::recordVectorBool(vector<bool> * p) {
     undoStack.push("vector<bool>");
     undoVectorBoolStack.push({p, *p});
 }
+void PDSAnimation::recordVector2(Vector2 * p) {
+    undoStack.push("Vector2");
+    undoVector2Stack.push({p, *p});
+}
 
 bool PDSAnimation::undoVersion(int stepRequest) {
     int cntBegin = 0;
     while(true) {
         if(undoStack.empty()) {
             cerr << "Error: PDSAnimation::undoVersion()\n";
-            exit(0);
         }
         string top = undoStack.top();
         if(top == "Begin")
@@ -98,6 +113,9 @@ bool PDSAnimation::undoVersion(int stepRequest) {
         }
         else if(top == "vector<bool>") {
             undoVectorBool();
+        }
+        else if(top == "Vector2") {
+            undoVector2();
         }
     }
     return false;
@@ -161,4 +179,12 @@ void PDSAnimation::undoVectorBool(void) {
     }
     *undoVectorBoolStack.top().first = undoVectorBoolStack.top().second;
     undoVectorBoolStack.pop();
+}
+void PDSAnimation::undoVector2(void) {
+    if(undoVector2Stack.empty()) {
+        cerr << "Error: PDSAnimation::undoVector2().\n";
+        exit(1);
+    }
+    *undoVector2Stack.top().first = undoVector2Stack.top().second;
+    undoVector2Stack.pop();
 }

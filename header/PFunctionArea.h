@@ -2,10 +2,10 @@
 #include <raylib.h>
 #include "PTitleBox.h"
 #include "PInitializeMenu.h"
-#include "PConstants.h"
 #include "PInsertMenu.h"
 #include "PRemoveMenu.h"
 #include "PSearchMenu.h"
+#include "PUpdateMenu.h"
 #include <string>
 #include <vector>
 using namespace std;
@@ -16,6 +16,7 @@ struct PFunctionArea {
     PInsertMenu menuInsert;
     PRemoveMenu menuRemove;
     PSearchMenu menuSearch;
+    PUpdateMenu menuUpdate;
     PSwitchBox state;
     int currentMode;
 
@@ -23,7 +24,8 @@ struct PFunctionArea {
         Initialize,
         Insert,
         Remove,
-        Search
+        Search,
+        Update
     };
     
     PFunctionArea(void); // initialize

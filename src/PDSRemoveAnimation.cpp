@@ -1,6 +1,7 @@
 #include "../header/PDSAnimation.h"
+#include "../header/PConstants.h"
 
-bool PDSAnimation::remove(int position, int stepRequest, string& explanationText) {
+bool PDSAnimation::remove(int position, int stepRequest, string& explanationText, int& codeLine) {
     /*
     00.    if(position < 0 || position >= n) : return
     01.    if(position == 0) :
@@ -37,43 +38,50 @@ bool PDSAnimation::remove(int position, int stepRequest, string& explanationText
     else if(stepRequest == skipBackward || stepRequest == goBackward || stepRequest == goForward || stepRequest == skipForward) 
         waitRequest = true;
     if(step == 0) {
-        done = forward ? removeStep0(position, stepRequest, explanationText) : false;
+        done = forward ? removeStep0(position, stepRequest, explanationText, codeLine) : false;
     }
     else if(step == 1) {
-        done = forward ? removeStep1(position, stepRequest, explanationText) : undoVersion(stepRequest);
+        done = forward ? removeStep1(position, stepRequest, explanationText, codeLine) : undoVersion(stepRequest);
     }
     else if(step == 2) {
-        done = forward ? removeStep2(position, stepRequest, explanationText) : undoVersion(stepRequest);
+        done = forward ? removeStep2(position, stepRequest, explanationText, codeLine) : undoVersion(stepRequest);
     }
     else if(step == 3) {
-        done = forward ? removeStep3(position, stepRequest, explanationText) : undoVersion(stepRequest);
+        done = forward ? removeStep3(position, stepRequest, explanationText, codeLine) : undoVersion(stepRequest);
     }
     else if(step == 4) {
-        done = forward ? removeStep4(position, stepRequest, explanationText) : undoVersion(stepRequest);
+        done = forward ? removeStep4(position, stepRequest, explanationText, codeLine) : undoVersion(stepRequest);
     }
     else if(step == 5) {
-        done = forward ? removeStep5(position, stepRequest, explanationText) : undoVersion(stepRequest);
+        done = forward ? removeStep5(position, stepRequest, explanationText, codeLine) : undoVersion(stepRequest);
     }
     else if(step == 6) {
-        done = forward ? removeStep6(position, stepRequest, explanationText) : undoVersion(stepRequest);
+        done = forward ? removeStep6(position, stepRequest, explanationText, codeLine) : undoVersion(stepRequest);
     }
     else if(step == 7) {
-        done = forward ? removeStep7(position, stepRequest, explanationText) : undoVersion(stepRequest);
+        done = forward ? removeStep7(position, stepRequest, explanationText, codeLine) : undoVersion(stepRequest);
     }
     else if(step == 8) {
-        done = forward ? removeStep8(position, stepRequest, explanationText) : undoVersion(stepRequest);
+        done = forward ? removeStep8(position, stepRequest, explanationText, codeLine) : undoVersion(stepRequest);
     }
     else if(step == 9) {
-        done = forward ? removeStep9(position, stepRequest, explanationText) : undoVersion(stepRequest);
+        done = forward ? removeStep9(position, stepRequest, explanationText, codeLine) : undoVersion(stepRequest);
     }
     else if(step == 10) {
-        done = forward ? removeStep10(position, stepRequest, explanationText) : undoVersion(stepRequest);
+        done = forward ? removeStep10(position, stepRequest, explanationText, codeLine) : undoVersion(stepRequest);
+    }
+    if(done) {
+        PNode* tmp = dataStructurePointer->head;
+        while(tmp != nullptr) {
+            recordVector2(&tmp->center);
+            tmp = tmp->pNext;
+        }
+        dataStructurePointer->reloadPositions();
     }
     return done;
 }
 
-bool PDSAnimation::removeStep0(int position, int stepRequest, string& explanationText) {
-    cout << "removeStep0\n";
+bool PDSAnimation::removeStep0(int position, int stepRequest, string& explanationText, int& codeLine) {
     // 00.    if(position < 0 || position >= n) : return
     bool done = (waitRequest == false && taskManagementPointer->getTime() > PConstants::PAnimation::waitTime);
     // Begin algorithm
@@ -86,6 +94,7 @@ bool PDSAnimation::removeStep0(int position, int stepRequest, string& explanatio
     }
     // Explanation
     explanationText = "Check if the position is valid.";
+    codeLine = 0;
     // Skip animation
     if(stepRequest == goForward || stepRequest == skipForward) {
         done = true;
@@ -97,15 +106,14 @@ bool PDSAnimation::removeStep0(int position, int stepRequest, string& explanatio
         taskManagementPointer->nextStep();
         // Skip
         if(stepRequest == skipForward) {
-            return removeStep1(position, stepRequest, explanationText);
+            return removeStep1(position, stepRequest, explanationText, codeLine);
         }
     }
     // Update
     else taskManagementPointer->updateTime();
     return false;
 }
-bool PDSAnimation::removeStep1(int position, int stepRequest, string& explanationText) {
-    cout << "removeStep1\n";
+bool PDSAnimation::removeStep1(int position, int stepRequest, string& explanationText, int& codeLine) {
     // 01.    if(position == 0) :
     bool done = (waitRequest == false && taskManagementPointer->getTime() > PConstants::PAnimation::waitTime);
     // Begin algorithm
@@ -117,6 +125,7 @@ bool PDSAnimation::removeStep1(int position, int stepRequest, string& explanatio
     }
     // Explanation
     explanationText = "Check if the position is head's position.";
+    codeLine = 1;
     // Skip animation
     if(stepRequest == goForward || stepRequest == skipForward) {
         done = true;
@@ -128,15 +137,14 @@ bool PDSAnimation::removeStep1(int position, int stepRequest, string& explanatio
         taskManagementPointer->nextStep();
         // Skip
         if(stepRequest == skipForward) {
-            return removeStep2(position, stepRequest, explanationText);
+            return removeStep2(position, stepRequest, explanationText, codeLine);
         }
     }
     // Update
     else taskManagementPointer->updateTime();
     return false;
 }
-bool PDSAnimation::removeStep2(int position, int stepRequest, string& explanationText) {
-    cout << "removeStep2\n";
+bool PDSAnimation::removeStep2(int position, int stepRequest, string& explanationText, int& codeLine) {
     // 02. true : { tmp == head }; false : { if position == n - 1 }
     bool done = (waitRequest == false && taskManagementPointer->getTime() > PConstants::PAnimation::waitTime);
     // Begin algorithm
@@ -158,9 +166,11 @@ bool PDSAnimation::removeStep2(int position, int stepRequest, string& explanatio
     // Explanation
     if(taskManagementPointer->getCondition(0)) {
         explanationText = "tmp points to head.";
+        codeLine = 2;
     }
     else {
         explanationText = "Check if the position is tail's position.";
+        codeLine = 7;
     }
     // Skip animation
     if(stepRequest == goForward || stepRequest == skipForward) {
@@ -178,15 +188,14 @@ bool PDSAnimation::removeStep2(int position, int stepRequest, string& explanatio
         taskManagementPointer->nextStep();
         // Skip
         if(stepRequest == skipForward) {
-            return removeStep3(position, stepRequest, explanationText);
+            return removeStep3(position, stepRequest, explanationText, codeLine);
         }
     }
     // Update
     else taskManagementPointer->updateTime();
     return false;
 }
-bool PDSAnimation::removeStep3(int position, int stepRequest, string& explanationText) {
-    cout << "removeStep3\n";
+bool PDSAnimation::removeStep3(int position, int stepRequest, string& explanationText, int& codeLine) {
     // 03. true : { head = head->pNext }; false : { true : { tmp = tail }; false : { prev = head };};
     bool done = (waitRequest == false && taskManagementPointer->getTime() > PConstants::PAnimation::waitTime);
     // Begin algorithm
@@ -220,12 +229,15 @@ bool PDSAnimation::removeStep3(int position, int stepRequest, string& explanatio
     // Explanation
     if(taskManagementPointer->getCondition(0)) {
         explanationText = "head shifts forward.";
+        codeLine = 3;
     }
     else if(taskManagementPointer->getCondition(1)) {
         explanationText = "tmp points to tail.";
+        codeLine = 8;
     }
     else {
         explanationText = "prev points to head.";
+        codeLine = 14;
     }
     // Skip animation
     if(stepRequest == goForward || stepRequest == skipForward) {
@@ -258,15 +270,14 @@ bool PDSAnimation::removeStep3(int position, int stepRequest, string& explanatio
         taskManagementPointer->nextStep();
         // Skip
         if(stepRequest == skipForward) {
-            return removeStep4(position, stepRequest, explanationText);
+            return removeStep4(position, stepRequest, explanationText, codeLine);
         }
     }
     // Update
     else taskManagementPointer->updateTime();
     return false;
 }
-bool PDSAnimation::removeStep4(int position, int stepRequest, string& explanationText) {
-    cout << "removeStep4\n";
+bool PDSAnimation::removeStep4(int position, int stepRequest, string& explanationText, int& codeLine) {
     // 04. true : { if(head != nullptr) : head->pPrev = nullptr else tail = nullptr } ; false : { true : { tail = tail->pPrev} ; false : { for(int i = 0; i < position - 1 && prev != nullptr; i++) } }
     bool done = (waitRequest == false && taskManagementPointer->getTime() > PConstants::PAnimation::waitTime);
     // Begin algorithm
@@ -308,14 +319,17 @@ bool PDSAnimation::removeStep4(int position, int stepRequest, string& explanatio
     if(taskManagementPointer->getCondition(0)) {
         if(dataStructurePointer->head != nullptr) {
             explanationText = "Set head->pPrev to nullptr.";
+            codeLine = 4;
         }
         else {
             explanationText = "Set tail to nullptr.";
+            codeLine = 5;
         }
     }
     else if(taskManagementPointer->getCondition(1)) {
         if(dataStructurePointer->tail != nullptr) {
             explanationText = "tail shifts backward.";
+            codeLine = 9;
         }
     }
     else {
@@ -328,6 +342,7 @@ bool PDSAnimation::removeStep4(int position, int stepRequest, string& explanatio
             else
                 explanationText = "Reached the position.";
         }
+        codeLine = 15;
     }
     // Skip animation
     if(stepRequest == goForward || stepRequest == skipForward) {
@@ -358,15 +373,14 @@ bool PDSAnimation::removeStep4(int position, int stepRequest, string& explanatio
         taskManagementPointer->nextStep();
         // Skip
         if(stepRequest == skipForward) {
-            return removeStep5(position, stepRequest, explanationText);
+            return removeStep5(position, stepRequest, explanationText, codeLine);
         }
     }
     // Update
     else taskManagementPointer->updateTime();
     return false;
 }
-bool PDSAnimation::removeStep5(int position, int stepRequest, string& explanationText) {
-    cout << "removeStep5\n";
+bool PDSAnimation::removeStep5(int position, int stepRequest, string& explanationText, int& codeLine) {
     // 05. true :
     //      delete tmp
     //     false :
@@ -416,18 +430,22 @@ bool PDSAnimation::removeStep5(int position, int stepRequest, string& explanatio
     // Explanation
     if(taskManagementPointer->getCondition(0)) {
         explanationText = "Delete tmp.";
+        codeLine = 6;
     }
     else if(taskManagementPointer->getCondition(1)) {
         if(dataStructurePointer->tail != nullptr) {
             explanationText = "Set tail->pNext to nullptr.";
+            codeLine = 10;
         }
         else {
             explanationText = "Set head to nullptr.";
+            codeLine = 11;
         }
     }
     else {
         if(taskManagementPointer->getCondition(2)) {
             explanationText = "Traverse prev.";
+            codeLine = 16;
         }
         else {
             explanationText = "Exit the loop.";
@@ -456,7 +474,7 @@ bool PDSAnimation::removeStep5(int position, int stepRequest, string& explanatio
                 taskManagementPointer->nextStep();
                 // Skip
                 if(stepRequest == skipForward) {
-                    return removeStep6(position, stepRequest, explanationText);
+                    return removeStep6(position, stepRequest, explanationText, codeLine);
                 }
             }
             else {
@@ -476,7 +494,7 @@ bool PDSAnimation::removeStep5(int position, int stepRequest, string& explanatio
                     taskManagementPointer->popCondition();
                     // Skip
                     if(stepRequest == skipForward) {
-                        return removeStep4(position, stepRequest, explanationText);
+                        return removeStep4(position, stepRequest, explanationText, codeLine);
                     }
                 }
                 else {
@@ -487,7 +505,7 @@ bool PDSAnimation::removeStep5(int position, int stepRequest, string& explanatio
                     taskManagementPointer->popCondition();
                     // Skip
                     if(stepRequest == skipForward) {
-                        return removeStep6(position, stepRequest, explanationText);
+                        return removeStep6(position, stepRequest, explanationText, codeLine);
                     }
                 }
             }
@@ -497,8 +515,7 @@ bool PDSAnimation::removeStep5(int position, int stepRequest, string& explanatio
     else taskManagementPointer->updateTime();
     return false;
 }
-bool PDSAnimation::removeStep6(int position, int stepRequest, string& explanationText) {
-    cout << "removeStep6\n";
+bool PDSAnimation::removeStep6(int position, int stepRequest, string& explanationText, int& codeLine) {
     /*
     False:
         True: 
@@ -529,6 +546,7 @@ bool PDSAnimation::removeStep6(int position, int stepRequest, string& explanatio
     // Explanation
     if(taskManagementPointer->getCondition(1)) {
         explanationText = "Delete tmp.";
+        codeLine = 12;
     }
     else {
         if(taskManagementPointer->getCondition(2)) {
@@ -537,6 +555,7 @@ bool PDSAnimation::removeStep6(int position, int stepRequest, string& explanatio
         else {
             explanationText = "Couldn't find the node to be removed.";
         }
+        codeLine = 17;
     }
     // Skip
     if(stepRequest == goForward || stepRequest == skipForward) {
@@ -564,7 +583,7 @@ bool PDSAnimation::removeStep6(int position, int stepRequest, string& explanatio
                 taskManagementPointer->nextStep();
                 // Skip
                 if(stepRequest == skipForward) {
-                    return removeStep7(position, stepRequest, explanationText);
+                    return removeStep7(position, stepRequest, explanationText, codeLine);
                 }
             }
             else {
@@ -584,7 +603,7 @@ bool PDSAnimation::removeStep6(int position, int stepRequest, string& explanatio
     else taskManagementPointer->updateTime();
     return false;
 }
-bool PDSAnimation::removeStep7(int position, int stepRequest, string& explanationText) {
+bool PDSAnimation::removeStep7(int position, int stepRequest, string& explanationText, int& codeLine) {
     cout << "removeStep7\n";
     /*
         False:
@@ -603,6 +622,7 @@ bool PDSAnimation::removeStep7(int position, int stepRequest, string& explanatio
     }
     // Explanation
     explanationText = "tmp points to prev->pNext.";
+    codeLine = 18;
     // Skip animation
     if(stepRequest == goForward || stepRequest == skipForward) {
         done = true;
@@ -616,15 +636,14 @@ bool PDSAnimation::removeStep7(int position, int stepRequest, string& explanatio
         taskManagementPointer->nextStep();
         // Skip
         if(stepRequest == skipForward) {
-            return removeStep8(position, stepRequest, explanationText);
+            return removeStep8(position, stepRequest, explanationText, codeLine);
         }
     }
     // Update
     else taskManagementPointer->updateTime();
     return false;
 }
-bool PDSAnimation::removeStep8(int position, int stepRequest, string& explanationText) {
-    cout << "removeStep8\n";
+bool PDSAnimation::removeStep8(int position, int stepRequest, string& explanationText, int& codeLine) {
     /*
         False:
             False:
@@ -644,6 +663,7 @@ bool PDSAnimation::removeStep8(int position, int stepRequest, string& explanatio
     }
     // Explanation
     explanationText = "prev->pNext points to tmp->pNext.";
+    codeLine = 19;
     // Skip animation
     if(stepRequest == goForward || stepRequest == skipForward) {
         done = true;
@@ -659,15 +679,14 @@ bool PDSAnimation::removeStep8(int position, int stepRequest, string& explanatio
         taskManagementPointer->nextStep();
         // Skip
         if(stepRequest == skipForward) {
-            return removeStep9(position, stepRequest, explanationText);
+            return removeStep9(position, stepRequest, explanationText, codeLine);
         }
     }
     // Update
     else taskManagementPointer->updateTime();
     return false;
 }
-bool PDSAnimation::removeStep9(int position, int stepRequest, string& explanationText) {
-    cout << "removeStep9\n";
+bool PDSAnimation::removeStep9(int position, int stepRequest, string& explanationText, int& codeLine) {
     /*
         False:
             False:
@@ -685,6 +704,7 @@ bool PDSAnimation::removeStep9(int position, int stepRequest, string& explanatio
     }
     // Explanation
     explanationText = "tmp->pNext->pPrev points to prev.";
+    codeLine = 20;
     // Skip animation
     if(stepRequest == goForward || stepRequest == skipForward) {
         done = true;
@@ -698,15 +718,14 @@ bool PDSAnimation::removeStep9(int position, int stepRequest, string& explanatio
         taskManagementPointer->nextStep();
         // Skip
         if(stepRequest == skipForward) {
-            return removeStep10(position, stepRequest, explanationText);
+            return removeStep10(position, stepRequest, explanationText, codeLine);
         }
     }
     // Update
     else taskManagementPointer->updateTime();
     return false;
 }
-bool PDSAnimation::removeStep10(int position, int stepRequest, string& explanationText) {
-    cout << "removeStep10\n";
+bool PDSAnimation::removeStep10(int position, int stepRequest, string& explanationText, int& codeLine) {
     /*
         False:
             False:
@@ -723,6 +742,7 @@ bool PDSAnimation::removeStep10(int position, int stepRequest, string& explanati
     }
     // Explanation
     explanationText = "Delete tmp.";
+    codeLine = 21;
     // Skip animation
     if(stepRequest == goForward || stepRequest == skipForward) {
         done = true;

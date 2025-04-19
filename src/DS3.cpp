@@ -1,7 +1,8 @@
 #include "../header/DS3.h"
 
 DS3::DS3() : 
-    functionArea(0, 86, 307, 296, {75, 189, 224, 255}) {
+    functionArea(0, 86, 307, 296, {75, 189, 224, 255}),
+    stepByStepMenu(PConstants::PStepByStepMenu::pos, PConstants::PStepByStepMenu::size) {
     // Title Box
     Color titleBoxColor = {248, 240, 240, 255};
     char titleName[] = "AVL TREE";
@@ -11,6 +12,7 @@ DS3::DS3() :
 
 void DS3::prepare() {
     functionArea.prepare();
+    stepByStepMenu.prepare();
 }
 
 void DS3::draw() {
@@ -18,6 +20,10 @@ void DS3::draw() {
     titleBox.draw();
     // Draw the function area and take request from user
     vector<string> request = functionArea.draw(isAnimation == false);
+    // Draw the step by step menu
+    stepByStepMenu.draw();
+    int stepByStepRequest = stepByStepMenu.getRequest();
+
     // Operate request
     if(request[0] == "initialize" && request[1] == "random") {
         Tree.isInit = 1;
@@ -117,7 +123,9 @@ void DS3::Delete(string num) {
             return;
         }
     }
+    Tree.isDelete = 1;
     val = stoi(num);
+    Tree.findData = val;
     Tree.FindDeleteNode(Tree.TreeRoot, nullptr, val);
 }
 

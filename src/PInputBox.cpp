@@ -1,4 +1,5 @@
 #include "../header/PInputBox.h"
+#include "../header/PConstants.h"
 
 PInputBox::BlinkingCursor::BlinkingCursor(void) {}
 

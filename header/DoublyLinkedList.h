@@ -5,7 +5,6 @@
 #include <random>
 #include <algorithm>
 #include <cstring>
-#include "PConstants.h"
 #include "PRandom.h"
 #include "PNode.h"
 using namespace std;
@@ -17,7 +16,8 @@ struct DoublyLinkedList {
         Head,
         Tail,
         Tmp,
-        Prev
+        Prev,
+        Chosen
     };
     PNode *head, *tail;
     // Animation
@@ -25,6 +25,8 @@ struct DoublyLinkedList {
     PNode *animationTmp;
     // Prev
     PNode *animationPrev;
+    // Chosen node
+    PNode *animationChosen;
     int prevPosition;
 
     // Constructor
@@ -34,16 +36,16 @@ struct DoublyLinkedList {
     ~DoublyLinkedList(void);
 
     // Update
-    void update(void);
-    void updateDataStructure(void); // Update the data structure
+    void update(bool doneTask);
+    void updateDataStructure(bool doneTask); // Update the data structure
     void updateAnimation(void);
     void updateInformation(void);
     void quickUpdateAnimation(void); // Skip animation
     void quickUpdateAnimationTmp(void); // Skip animation of animation tmp
 
     // Draw
-    void draw(void); // draw all
-    void drawDataStructure(void); // Draw data structures
+    void draw(bool doneTask); // draw all
+    void drawDataStructure(bool doneTask); // Draw data structures
     void drawAnimation(void); // draw animations
     void drawAnimationTmp(void);
 

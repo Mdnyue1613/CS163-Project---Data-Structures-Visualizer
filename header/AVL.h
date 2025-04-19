@@ -13,6 +13,7 @@
 #include <set>
 #include <iostream>
 #include"PExplanationArea.h"
+#include"LPseudoCode.h"
 using namespace std;
 
 struct TreeNode{
@@ -26,11 +27,24 @@ struct TreeNode{
     Color color;
 
     TreeNode *left, *right, *parent;
+    TreeNode(TreeNode& other) {
+        val = other.val;
+        height = other.height;
+        isLeft = other.isLeft;
+        isHighlight = other.isHighlight;
+        position = other.position;
+        targetPosition = other.targetPosition;
+        radius = other.radius;
+        color = other.color;
+        left = right = parent = nullptr;
+    }
     TreeNode(int x);
     void setRadius(float radius);
     void setColor(Color color);
 };
-
+/*
+    TreeRootStack.push(new TreeNode(*avl.TreeRoot));
+*/
 struct AVL {
     TreeNode* TreeRoot;
     TreeNode* rotationNode = nullptr;
@@ -51,6 +65,7 @@ struct AVL {
     int animationStep = 0;
     int hightLightNodeIndex = 0;
     PExplanationArea explanationArea;
+    LPseudoCode PseudoCodeArea;
     AVL();
     int getBalance(TreeNode *root);
     void setHeight(TreeNode *&root);
