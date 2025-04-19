@@ -169,6 +169,7 @@ void AVL::random(int n) {
 }
 
 void AVL::vectorIntInit(vector<int> nums) {
+    removeAll();
     for (auto num : nums) {
         insertNodeWithNoAnimation(TreeRoot, nullptr, num);
     }
