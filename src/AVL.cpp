@@ -19,12 +19,13 @@ void TreeNode::setColor(Color color) {
 
 AVL::AVL():
     explanationArea(),
-    PseudoCodeArea({"check balance factor:", 
-                "   case 1: this.rotateRight", 
-                "   case 2: this.rotateLeft", 
-                "   case 3: this.left.rotateLeft, this.rotateRight",
-                "   case 4: this.right.rotateRight, this.rotateLeft",
-                "   this is balance"}, 6) {
+    PseudoCodeArea() {
+    PseudoCodeArea.setPseudoCode({"check balance factor:", 
+        "   case 1: this.rotateRight", 
+        "   case 2: this.rotateLeft", 
+        "   case 3: this.left.rotateLeft, this.rotateRight",
+        "   case 4: this.right.rotateRight, this.rotateLeft",
+        "   this is balance"}, 6);
     TreeRoot = nullptr;
     distance_x = 25;
     distance_y = 40;
