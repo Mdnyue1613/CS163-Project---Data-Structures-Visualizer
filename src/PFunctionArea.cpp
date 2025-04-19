@@ -1,4 +1,5 @@
 #include "../header/PFunctionArea.h"
+#include "../header/PConstants.h"
 
 PFunctionArea::PFunctionArea(void) {
 }

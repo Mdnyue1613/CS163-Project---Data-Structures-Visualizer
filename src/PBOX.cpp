@@ -1,4 +1,6 @@
 #include "../header/PBOX.h"
+#include "../header/PConstants.h"
+
 PBOX::PBOX(void) {
 }
 PBOX::PBOX(int x, int y, int width, int height, int outThickness, Color inColor, Color outColor) {

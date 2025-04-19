@@ -1,4 +1,5 @@
 #include "../header/DSearchMenu.h"
+#include "../header/PConstants.h"
 
 DSearchMenu::DSearchMenu(void) {}
 

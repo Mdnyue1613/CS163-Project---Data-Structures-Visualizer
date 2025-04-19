@@ -1,4 +1,5 @@
 #include "../header/PNode.h"
+#include "../header/PConstants.h"
 
 PNode::PNode(void) :
     data(-1), pNext(nullptr), pPrev(nullptr), highlight(false), lPrev(), lNext(),

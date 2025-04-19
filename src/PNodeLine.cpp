@@ -1,4 +1,5 @@
 #include "../header/PNodeLine.h"
+#include"../header/PConstants.h"
 
 PNodeLine::PNodeLine(void) :
     start{0, 0}, end{0, 0},

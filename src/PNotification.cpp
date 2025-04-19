@@ -1,4 +1,5 @@
 #include "../header/PNotification.h"
+#include "../header/PConstants.h"
 
 PNotification::PNotification(void) {}
 

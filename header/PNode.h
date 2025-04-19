@@ -5,7 +5,6 @@
 #include <cstring>
 #include "PNodeLine.h"
 #include "PRandom.h"
-#include "PConstants.h"
 using namespace std;
 
 struct PNode {

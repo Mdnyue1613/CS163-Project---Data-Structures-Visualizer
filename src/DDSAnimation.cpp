@@ -1,4 +1,5 @@
 #include "../header/DDSAnimation.h"
+#include "../header/PConstants.h"
 
 void DDSAnimation::reset(void) {
     // Reset the animation management

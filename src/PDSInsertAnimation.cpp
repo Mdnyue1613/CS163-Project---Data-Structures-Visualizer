@@ -1,4 +1,5 @@
 #include "../header/PDSAnimation.h"
+#include "../header/PConstants.h"
 
 bool PDSAnimation::insertHead(int value, int stepRequest, string& explanationText, int& codeLine) {
     /*

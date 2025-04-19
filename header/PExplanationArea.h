@@ -1,7 +1,6 @@
 #pragma once
 #include <iostream>
 #include <raylib.h>
-#include "PConstants.h"
 using namespace std;
 
 struct PExplanationArea {

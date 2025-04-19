@@ -1,4 +1,5 @@
 #include "../header/DoublyLinkedList.h"
+#include "../header/PConstants.h"
 
 DoublyLinkedList::DoublyLinkedList(void) {
     // Data structure

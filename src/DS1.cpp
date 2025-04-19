@@ -1,4 +1,5 @@
 #include "../header/DS1.h"
+#include "../header/PConstants.h"
 
 DS1::DS1(void) :
     functionArea(PConstants::PFunctionArea::pos, PConstants::PFunctionArea::size),
@@ -88,7 +89,46 @@ void DS1::update(void) {
     doublyLinkedList->update(taskManagement.doneTask());
 }
 
-void DS1::draw(void) {
+void DS1::draw(bool darkMode) {
+    if(darkMode == false) {
+        PConstants::DS1::backgroundColor = WHITE;
+
+        PConstants::PNode::innerColor = WHITE;
+        PConstants::PNode::outerColor = BLACK;
+        PConstants::PNode::textColor = BLACK;
+        PConstants::PNode::informationTextColor = BLACK;
+
+        PConstants::PNode::innerHighlightColor = {255, 138, 39, 255};
+        PConstants::PNode::outerHighlightColor = {255, 138, 39, 255};
+        PConstants::PNode::textHighlightColor = WHITE;
+
+        PConstants::PNodeLine::color = BLACK;
+        PConstants::PNodeLine::highlightColor = {255, 138, 39, 255};
+    }
+    else {
+        PConstants::DS1::backgroundColor = BLACK;
+
+        PConstants::PNode::innerColor = {58, 58, 58, 255};
+        PConstants::PNode::outerColor = {65, 71, 79, 255};
+        PConstants::PNode::textColor = {204, 204, 204, 255};
+        PConstants::PNode::informationTextColor = {204, 204, 204, 255};
+
+        PConstants::PNode::innerHighlightColor = {155, 89, 182, 255};
+        PConstants::PNode::outerHighlightColor = {224, 255, 255, 255};
+        PConstants::PNode::textHighlightColor = WHITE;
+
+        PConstants::PNodeLine::color = {65, 71, 79, 255};
+        PConstants::PNodeLine::highlightColor = {224, 255, 255, 255};
+    }
+
+    // Draw background
+    float workSpaceX = PConstants::PFunctionArea::size.x;
+    float workSpaceY = PConstants::PTitleBar::size.y;
+    float workSpaceWidth = GetScreenWidth() - workSpaceX;
+    float workSpaceHeight = GetScreenHeight() - workSpaceY;
+    Color backgroundColor = PConstants::DS1::backgroundColor;
+    DrawRectangle(workSpaceX, workSpaceY, workSpaceWidth, workSpaceHeight, backgroundColor);
+
     // Draw the title of Data Structure 1
     titleBox.draw();
 

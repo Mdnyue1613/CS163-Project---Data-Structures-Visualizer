@@ -3,7 +3,6 @@
 #include "PTitleBox.h"
 #include "PFunctionArea.h"
 #include "DoublyLinkedList.h"
-#include "PConstants.h"
 #include "PRandom.h"
 #include "PStepByStepMenu.h"
 #include "PTaskManagement.h"
@@ -47,7 +46,7 @@ struct DS1 {
     void update(void); // update
 
     // Draw
-    void draw(void); // draw
+    void draw(bool lightMode); // draw
 
     // Initialize mode functions
     bool operateInitialize(vector<string>& request, int stepRequest, string& explanationText); // Operate initializing request: return true when done

@@ -1,7 +1,12 @@
 #include"../header/LPseudoCode.h"
+#include"../header/PConstants.h"
 
 LPseudoCode::LPseudoCode() :
-backGround({PConstants::PseudoCodeArea::pos.x, PConstants::PseudoCodeArea::pos.y, PConstants::PseudoCodeArea::size.x, PConstants::PseudoCodeArea::size.y}) {};
+    backGround({PConstants::PseudoCodeArea::pos.x, PConstants::PseudoCodeArea::pos.y, PConstants::PseudoCodeArea::size.x, PConstants::PseudoCodeArea::size.y}),
+    backGroundColor(PConstants::PseudoCodeArea::backgroundColor),
+    highlightCodeColor(PConstants::PseudoCodeArea::highlightCodeColor),
+    textColor(PConstants::PseudoCodeArea::textColor),
+    fontSize(PConstants::PseudoCodeArea::fontSize) {};
 
 LPseudoCode::LPseudoCode(vector<string> pseudoCode, int numLine):
 backGround({PConstants::PseudoCodeArea::pos.x, PConstants::PseudoCodeArea::pos.y, PConstants::PseudoCodeArea::size.x, PConstants::PseudoCodeArea::size.y}) {

@@ -1,4 +1,5 @@
 #include "../header/PIconBox.h"
+#include "../header/PConstants.h"
 
 PIconBox::PIconBox(void) : icon() {}
 

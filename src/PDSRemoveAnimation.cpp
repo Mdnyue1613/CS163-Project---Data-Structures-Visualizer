@@ -1,4 +1,5 @@
 #include "../header/PDSAnimation.h"
+#include "../header/PConstants.h"
 
 bool PDSAnimation::remove(int position, int stepRequest, string& explanationText, int& codeLine) {
     /*
