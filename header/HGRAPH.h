@@ -15,6 +15,8 @@ using namespace std;
 struct Vertex
 {
     bool real;
+    bool isClick;
+    Vector2 lastMousePos;
     Vector2 position;
     Vector2 force;
     Vertex()
@@ -27,6 +29,7 @@ struct Vertex
         real = Real;
         position = Position;
         force = Force;
+        isClick = 0;
     };
 };
 
@@ -54,6 +57,7 @@ struct Graph
     int numEdge;
     vector <vector<Edge>> g;
     vector <Vertex> vertex;
+    vector <vector<int>> connections;
     int realNumVertex;
     float vertexRadius;
     float fontSize;
@@ -62,15 +66,16 @@ struct Graph
     Rectangle workspace;
     void Initialize();
     void DrawGraph();
-    void DrawVertex(int ID);
-    void DrawEdge(Vector2 start, Vector2 end, int weight, int connections);
+    void DrawVertex(int ID, Color color);
+    void DrawEdge(Vector2 start, Vector2 end, int weight, int connections, Color color);
     void ChangeGraphType();
 
+    void MoveVertex();
     void ForceDirectedGraph();
     void ApplyRepulsion(float k);
     void ApplyAttraction(float k);
     void ApplyGravitation(float k);
-    bool Zoom();
+    void Zoom();
     bool IsStable(float threshold);
     void UpdatePosition(float t, float damping);
     void SetInitialPosition();
@@ -89,4 +94,11 @@ struct Graph
     void DeleteVertex(int u);
     void DeleteEdge(int u, int v, int w);
     void SynchronizeData(InputBox &box);  
+
+    Edge FindEdge(int u, int v);
 };
+
+long long Rand(long long l, long long r);
+bool GetNumFromStr(string &s, int &pos, int &num);
+string NumToStr(int num);
+int FindEdgeID(vector <Edge> &g, int v, bool real);

@@ -4,14 +4,20 @@
 #include <queue>
 
 bool GUI::isOpenMenu = true;
-bool GUI::isOpenDS1 = false;
-bool GUI::isOpenDS2 = false;
-bool GUI::isOpenDS3 = false;
-bool GUI::isOpenDS4 = false;
+vector <bool> GUI::isOpenDS = {0, 0, 0, 0};
+Font GUI::font;
+bool GUI::ColorMode = 0;
+ImageButton GUI::BackButton;
+vector <ImageButton> GUI::ColorModeButton;
+vector <Texture2D> GUI::BackGround;
+vector <Color> GUI::BackGroundColor;
+vector <ImageButton> GUI::Menu;
+TextBox GUI::TopicBox;
+vector <TextBox> GUI::Title;
+
 DS1 GUI::linkedListVisualizer;
 DS2 GUI::hashtableVisualizer;
 DS3 GUI::ds3;
-bool GUI::isBackButtonOn = false;
 
 int main() {
     GUI::startProgram();
