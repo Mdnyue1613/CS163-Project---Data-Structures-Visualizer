@@ -93,6 +93,27 @@ namespace PConstants {
         const Color arrowColor2 = {150, 150, 150, 255};
     };
 
+    namespace PseudoCodeArea {
+        // Pos
+        const Vector2 pos = {0, 522.8};
+
+        // Size
+        const Vector2 size = {500, 278.2};
+
+        //Color
+        const Color backgroundColor = {205, 228, 173, 255};
+        const Color highlightCodeColor = {235, 147, 93, 255};
+
+        // Space 
+        const float spaceX = 5.f;
+        const float spaceY = 5.f;
+
+        // Text
+        const float fontSize = 20.f;
+        const Color textColor = BLACK;
+
+    };
+    
     namespace PInputBox {
         // Color
         const Color titleColor = {150, 150, 150, 255};

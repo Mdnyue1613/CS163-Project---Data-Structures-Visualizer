@@ -154,7 +154,7 @@ vector<int> DS2::stringToVectorInt(string& s) {
 
 bool DS2::operateInsert(vector<string>& request, int stepRequest, string& explanationText) {
     bool done = true;
-    int val = stoi(request[2]);
+    int val = stoi(request[1]);
     done = animationManager.insert(val, stepRequest, explanationText);
     return done;
 }
