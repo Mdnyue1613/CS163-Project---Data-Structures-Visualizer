@@ -19,12 +19,14 @@ void TreeNode::setColor(Color color) {
 
 AVL::AVL():
     explanationArea(),
-    PseudoCodeArea({"check balance factor:", 
-                "   case 1: this.rotateRight", 
-                "   case 2: this.rotateLeft", 
-                "   case 3: this.left.rotateLeft, this.rotateRight",
-                "   case 4: this.right.rotateRight, this.rotateLeft",
-                "   this is balance"}, 6) {
+    PseudoCodeArea(),
+    speedSlider(PConstants::PSlider::pos, PConstants::PSlider::size) {
+    PseudoCodeArea.setPseudoCode({"check balance factor:", 
+        "   case 1: this.rotateRight", 
+        "   case 2: this.rotateLeft", 
+        "   case 3: this.left.rotateLeft, this.rotateRight",
+        "   case 4: this.right.rotateRight, this.rotateLeft",
+        "   this is balance"}, 6);
     TreeRoot = nullptr;
     distance_x = 25;
     distance_y = 40;
@@ -169,6 +171,7 @@ void AVL::random(int n) {
 }
 
 void AVL::vectorIntInit(vector<int> nums) {
+    removeAll();
     for (auto num : nums) {
         insertNodeWithNoAnimation(TreeRoot, nullptr, num);
     }

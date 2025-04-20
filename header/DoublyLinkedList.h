@@ -27,6 +27,7 @@ struct DoublyLinkedList {
     PNode *animationPrev;
     // Chosen node
     PNode *animationChosen;
+    PNode *queryUpdate;
     int prevPosition;
 
     // Constructor
@@ -36,16 +37,16 @@ struct DoublyLinkedList {
     ~DoublyLinkedList(void);
 
     // Update
-    void update(bool doneTask);
-    void updateDataStructure(bool doneTask); // Update the data structure
+    void update(void);
+    void updateDataStructure(void); // Update the data structure
     void updateAnimation(void);
     void updateInformation(void);
     void quickUpdateAnimation(void); // Skip animation
     void quickUpdateAnimationTmp(void); // Skip animation of animation tmp
 
     // Draw
-    void draw(bool doneTask); // draw all
-    void drawDataStructure(bool doneTask); // Draw data structures
+    void draw(void); // draw all
+    void drawDataStructure(void); // Draw data structures
     void drawAnimation(void); // draw animations
     void drawAnimationTmp(void);
 
