@@ -142,7 +142,12 @@ void GUI::drawDS2() {
 void GUI::drawDS3() {
     while (GUI::isOpenDS[2]) {
         BeginDrawing();
-        ClearBackground(WHITE);
+        if(ColorMode) {
+            ClearBackground(BLACK);
+        }
+        else {
+            ClearBackground(WHITE);
+        }
         ds3.draw();
         BACK();
         CustomColorMode();

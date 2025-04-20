@@ -157,7 +157,7 @@ void DS3::updateSelectionNode() {
             if(CheckCollisionPointCircle(mouse, Node->position, Node->radius)) {
                 if(Tree.selectionNode != Node) {
                     Tree.selectionNode = Node;
-                    Tree.selectionNode->setColor(DARKBLUE);
+                    Tree.selectionNode->setColor(Tree.selectionNodeColor);
                     return;
                 }
             }
