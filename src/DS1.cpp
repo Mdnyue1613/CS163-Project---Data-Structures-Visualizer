@@ -35,6 +35,9 @@ void DS1::update(void) {
     // Take requests from user and put it into queue, and update the function area
     if(taskManagement.takeRequest(functionArea.update())) {
         animationManagement.reset();
+        if(taskManagement.getTaskType() == Update) {
+            doublyLinkedList->queryUpdate = doublyLinkedList->animationChosen;
+        }
     }
 
     // Update step-by-step menu
@@ -75,7 +78,7 @@ void DS1::update(void) {
         }
     }
     else if(type == Update) {
-        bool done = operateUpdate(doublyLinkedList->animationChosen, request, stepRequest, explanationText);
+        bool done = operateUpdate(doublyLinkedList->queryUpdate, request, stepRequest, explanationText);
         if(done) {
             taskManagement.endTask();
         }
@@ -91,7 +94,7 @@ void DS1::update(void) {
     PConstants::PAnimation::waitTime = 0.5f / speedSlider.getPercentage();
 
     // Update linked list
-    doublyLinkedList->update(taskManagement.doneTask());
+    doublyLinkedList->update();
 }
 
 void DS1::draw(bool darkMode) {
@@ -156,7 +159,7 @@ void DS1::draw(bool darkMode) {
     pseudoCode.draw();
 
     // Draw Data Structure
-    doublyLinkedList->draw(taskManagement.doneTask());
+    doublyLinkedList->draw();
 
     // Draw Speed Slider
     speedSlider.draw();
@@ -371,8 +374,6 @@ bool DS1::operateUpdate(PNode* chosen, vector<string>& request, int stepRequest,
     }
     bool done = true;
     int value = notificationBox.getOneNum(request[1], 0, 99);
-    chosen->highlight = true;
-    chosen->setInformationState(DoublyLinkedList::Chosen, true);
     if(notificationBox.notificationText == "Valid") {
         int codeLine = -1;
         done = animationManagement.update(chosen, value, stepRequest, explanationText, codeLine);
@@ -386,10 +387,6 @@ bool DS1::operateUpdate(PNode* chosen, vector<string>& request, int stepRequest,
         pseudoCode.update(codeLine);
         doublyLinkedList = animationManagement.dataStructurePointer;
         notificationBox.notificationText.clear();
-    }
-    if(done) {
-        chosen->highlight = false;
-        chosen->setInformationState(DoublyLinkedList::Chosen, false);
     }
     return done;
 }

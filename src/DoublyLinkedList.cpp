@@ -12,6 +12,7 @@ DoublyLinkedList::DoublyLinkedList(void) {
     animationPrev = nullptr;
     // chosen node
     animationChosen = nullptr;
+    queryUpdate = nullptr;
     prevPosition = 0;
 }
 
@@ -28,9 +29,9 @@ DoublyLinkedList::~DoublyLinkedList(void) {
     }
 }
 
-void DoublyLinkedList::update(bool doneTask) {
+void DoublyLinkedList::update(void) {
     // Update data structure before rendering
-    updateDataStructure(doneTask);
+    updateDataStructure();
 
     // Update animation before rendering
     updateAnimation();
@@ -39,14 +40,14 @@ void DoublyLinkedList::update(bool doneTask) {
     updateInformation();
 }
 
-void DoublyLinkedList::updateDataStructure(bool doneTask) {
+void DoublyLinkedList::updateDataStructure(void) {
     PNode* tmp = head;
     while(tmp != nullptr) {
         tmp->update();
-        if(doneTask && tmp != animationChosen && CheckCollisionPointCircle(GetMousePosition(), tmp->centerFrom, PConstants::PNode::outerRadius) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+        if(tmp != animationChosen && CheckCollisionPointCircle(GetMousePosition(), tmp->centerFrom, PConstants::PNode::outerRadius) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
             animationChosen = tmp;
         }
-        else if(doneTask && tmp == animationChosen && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+        else if(tmp == animationChosen && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
             animationChosen = nullptr;
         }
         tmp = tmp->pNext;
@@ -91,6 +92,9 @@ void DoublyLinkedList::updateInformation(void) {
     if(animationPrev != nullptr) {
         animationPrev->setInformationState(Prev, true);
     }
+    if(queryUpdate != nullptr) {
+        queryUpdate->setInformationState(Chosen, true);
+    }
 }
 
 void DoublyLinkedList::quickUpdateAnimation(void) {
@@ -101,27 +105,33 @@ void DoublyLinkedList::quickUpdateAnimationTmp(void) {
     animationTmp->quickUpdate();
 }
 
-void DoublyLinkedList::draw(bool doneTask) {
-    drawDataStructure(doneTask);
+void DoublyLinkedList::draw(void) {
+    drawDataStructure();
     drawAnimation();
 }
 
-void DoublyLinkedList::drawDataStructure(bool doneTask) {
+void DoublyLinkedList::drawDataStructure(void) {
     PNode* tmp = head;
     while(tmp) {
         tmp->drawLine();
         tmp = tmp->pNext;
     }
     tmp = head;
-    if(doneTask && animationChosen != nullptr) {
+    if(animationChosen != nullptr) {
         animationChosen->highlight = true;
+    }
+    if(queryUpdate != nullptr) {
+        queryUpdate->highlight = true;
     }
     while(tmp) {
         tmp->drawNode();
         tmp->drawText();
         tmp = tmp->pNext;
     }
-    if(doneTask && animationChosen != nullptr) {
+    if(queryUpdate != nullptr) {
+        queryUpdate->highlight = false;
+    }
+    if(animationChosen != nullptr) {
         animationChosen->highlight = false;
     }
 }
