@@ -9,6 +9,8 @@
 #include "PStepByStepMenu.h"
 #include "PExplanationArea.h"
 #include "DDSAnimation.h"
+#include "LPseudoCode.h"
+#include "PSlider.h"
 #include <string>
 #include <vector>
 #include <random>
@@ -24,6 +26,8 @@ struct DS2 {
     PStepByStepMenu stepByStepMenu;
     DDSAnimation animationManager;
     PExplanationArea explanationArea;
+    LPseudoCode pseudocodeArea;
+    PSlider speedSlider;
 
     string statusMessage;
     float statusMessageTimer;

@@ -35,7 +35,12 @@ struct Hashtable{
     int n;
     int key, originalKey;
 
+    AnimatedSquare * chosenSquare;
+    AnimatedSquare * querySquare;
+
+    Hashtable();
     void draw();
+    void update();
     void random(int number, int size);
     void build(vector<int>& vi);
 

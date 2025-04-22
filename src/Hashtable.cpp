@@ -100,6 +100,12 @@ void AnimatedSquare::draw() {
     //Draw index of the square
     DrawText(index.c_str(), x + (CELL_SIZE - width)/2, y - 5 - NUMBER_SIZE, NUMBER_SIZE*scale, RED);
 }
+
+Hashtable::Hashtable() {
+    chosenSquare = nullptr;
+    querySquare = nullptr;
+}
+
 void Hashtable::random(int number, int size)
 {
     table.clear();
@@ -122,14 +128,13 @@ void Hashtable::random(int number, int size)
             table[key].visited = true;
         }
     }
-        int div = 1, m = 0;
-        for (int i = 0; i < size; i++) {
+    int div = 1, m = 0;
+    for (int i = 0; i < size; i++) {
         int newid = i % 15;
         if (i >= 15 * div) {
             m++;
             div++;
         }
-
         table[i].id = i;
         table[i].setPosition(
             400 + newid * (10 + CELL_SIZE),
@@ -141,9 +146,32 @@ void Hashtable::random(int number, int size)
 
 void Hashtable::draw()
 {
+    if(chosenSquare != nullptr) {
+        chosenSquare->highlight = true;
+    }
+    if(querySquare != nullptr) {
+        querySquare->highlightSearch = true;
+    }
     for (int i=0; i<table.size(); i++){
         table[i].update();
         table[i].draw();
+    }
+    if(querySquare != nullptr) {
+        querySquare->highlightSearch = false;
+    }
+    if(chosenSquare != nullptr) {
+        chosenSquare->highlight = false;
+    }
+}
+
+void Hashtable::update() {
+    for (int i = 0; i < table.size(); i++) {
+        if((chosenSquare == nullptr || chosenSquare != &table[i]) && table[i].isClick()) {
+            chosenSquare = &table[i];
+        }
+        else if(chosenSquare == &table[i] && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+            chosenSquare = nullptr;
+        }
     }
 }
 

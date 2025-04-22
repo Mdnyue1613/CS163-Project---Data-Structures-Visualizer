@@ -110,7 +110,7 @@ void DDSAnimation::undoVectorAnimatedSquare(void) {
     undoVectorAnimatedSquareStack.pop();
 }
 
-bool DDSAnimation::insert(int value, int stepRequest, string& explanationText) {
+bool DDSAnimation::insert(int value, int stepRequest, string& explanationText, int& codeLine) {
     /*
     00. if n == size: return
     01. key = value % mod 
@@ -132,32 +132,32 @@ bool DDSAnimation::insert(int value, int stepRequest, string& explanationText) {
         waitRequest = true;
     }
     int step = taskManagementPointer->getStep();
-    cout << step << '\n';
+    cout << step << ' ' << taskManagementPointer->getNumCondition() << '\n';
     // Step 0
     if(step == 0) {
-        done = forward ? insertStep0(value, stepRequest, explanationText) : false;
+        done = forward ? insertStep0(value, stepRequest, explanationText, codeLine) : false;
     }
     // Step 1
     else if(step == 1) {
-        done = forward ? insertStep1(value, stepRequest, explanationText) : undo(stepRequest);
+        done = forward ? insertStep1(value, stepRequest, explanationText, codeLine) : undo(stepRequest);
     }
     // Step 2
     else if(step == 2) {
-        done = forward ? insertStep2(value, stepRequest, explanationText) : undo(stepRequest);
+        done = forward ? insertStep2(value, stepRequest, explanationText, codeLine) : undo(stepRequest);
     }
     else if(step == 3) {
-        done = forward ? insertStep3(value, stepRequest, explanationText) : undo(stepRequest);
+        done = forward ? insertStep3(value, stepRequest, explanationText, codeLine) : undo(stepRequest);
     }
     else if(step == 4) {
-        done = forward ? insertStep4(value, stepRequest, explanationText) : undo(stepRequest);
+        done = forward ? insertStep4(value, stepRequest, explanationText, codeLine) : undo(stepRequest);
     }
     else if(step == 5) {
-        done = forward ? insertStep5(value, stepRequest, explanationText) : undo(stepRequest);
+        done = forward ? insertStep5(value, stepRequest, explanationText, codeLine) : undo(stepRequest);
     }
     return done;
 }
 
-bool DDSAnimation::insertStep0(int value, int stepRequest, string& explanationText) {
+bool DDSAnimation::insertStep0(int value, int stepRequest, string& explanationText, int& codeLine) {
     // 00. if n == size: return
     bool doneStep = (waitRequest == false && taskManagementPointer->getTime() > PConstants::PAnimation::waitTime);
     // Begin algorithm
@@ -168,6 +168,7 @@ bool DDSAnimation::insertStep0(int value, int stepRequest, string& explanationTe
     }
     // Explanation
     explanationText = "Check if the table is full.";
+    codeLine = 0;
     // Skip
     if(stepRequest == goForward || stepRequest == skipForward) {
         doneStep = true;
@@ -188,14 +189,14 @@ bool DDSAnimation::insertStep0(int value, int stepRequest, string& explanationTe
         }
         // Skip
         if(stepRequest == skipForward) {
-            return insertStep1(value, stepRequest, explanationText);
+            return insertStep1(value, stepRequest, explanationText, codeLine);
         }
     }
     // Update time
     else taskManagementPointer->updateTime();
     return false;
 }
-bool DDSAnimation::insertStep1(int value, int stepRequest, string &explanationText) {
+bool DDSAnimation::insertStep1(int value, int stepRequest, string &explanationText, int& codeLine) {
     // 01. key = value % size
     bool doneStep = (waitRequest == false && taskManagementPointer->getTime() > PConstants::PAnimation::waitTime);
     // Begin algorithm
@@ -208,6 +209,7 @@ bool DDSAnimation::insertStep1(int value, int stepRequest, string &explanationTe
     }
     // Explanation
     explanationText = "Calculate the key as value % size.";
+    codeLine = 1;
     // Skip
     if(stepRequest == goForward || stepRequest == skipForward) {
         doneStep = true;
@@ -220,14 +222,14 @@ bool DDSAnimation::insertStep1(int value, int stepRequest, string &explanationTe
         recordInt(&taskManagementPointer->step);
         taskManagementPointer->nextStep();
         if(stepRequest == skipForward) {
-            return insertStep2(value, stepRequest, explanationText);
+            return insertStep2(value, stepRequest, explanationText, codeLine);
         }
     }
     // Update time
     else taskManagementPointer->updateTime();
     return false;
 }
-bool DDSAnimation::insertStep2(int value, int stepRequest, string &explanationText) {
+bool DDSAnimation::insertStep2(int value, int stepRequest, string &explanationText, int& codeLine) {
     // 02. while (table[key].visited) :
     bool doneStep = (waitRequest == false && taskManagementPointer->getTime() > PConstants::PAnimation::waitTime);
     // Begin algorithm
@@ -244,6 +246,7 @@ bool DDSAnimation::insertStep2(int value, int stepRequest, string &explanationTe
     else {
         explanationText = "Unvisited.\nExit the loop.";
     }
+    codeLine = 2;
     // Skip
     if(stepRequest == goForward || stepRequest == skipForward) {
         doneStep = true;
@@ -258,14 +261,14 @@ bool DDSAnimation::insertStep2(int value, int stepRequest, string &explanationTe
         recordInt(&taskManagementPointer->step);
         taskManagementPointer->nextStep();
         if(stepRequest == skipForward) {
-            return insertStep3(value, stepRequest, explanationText);
+            return insertStep3(value, stepRequest, explanationText, codeLine);
         }
     }
     // Update time
     else taskManagementPointer->updateTime();
     return false;
 }
-bool DDSAnimation::insertStep3(int value, int stepRequest, string &explanationText) {
+bool DDSAnimation::insertStep3(int value, int stepRequest, string &explanationText, int& codeLine) {
     /* 03.
     condition.size() == 1 :
         key = (key + 1) % mod;
@@ -292,9 +295,11 @@ bool DDSAnimation::insertStep3(int value, int stepRequest, string &explanationTe
     // Explanation
     if(taskManagementPointer->getNumCondition() == 1) {
         explanationText = "Traverse the key.";
+        codeLine = 3;
     }
     else {
         explanationText = "Update the cell.";
+        codeLine = 4;
     }
     // Skip
     if(stepRequest == goForward || stepRequest == skipForward) {
@@ -312,7 +317,7 @@ bool DDSAnimation::insertStep3(int value, int stepRequest, string &explanationTe
             recordVectorBool(&taskManagementPointer->conditionStack);
             taskManagementPointer->popCondition();
             if(stepRequest == skipForward) {
-                return insertStep2(value, stepRequest, explanationText);
+                return insertStep2(value, stepRequest, explanationText, codeLine);
             }
         }
         else {
@@ -322,7 +327,7 @@ bool DDSAnimation::insertStep3(int value, int stepRequest, string &explanationTe
             recordInt(&taskManagementPointer->step);
             taskManagementPointer->nextStep();
             if(stepRequest == skipForward) {
-                return insertStep4(value, stepRequest, explanationText);
+                return insertStep4(value, stepRequest, explanationText, codeLine);
             }
         }
     }
@@ -330,7 +335,7 @@ bool DDSAnimation::insertStep3(int value, int stepRequest, string &explanationTe
     else taskManagementPointer->updateTime();
     return false;
 }
-bool DDSAnimation::insertStep4(int value, int stepRequest, string &explanationText) {
+bool DDSAnimation::insertStep4(int value, int stepRequest, string &explanationText, int& codeLine) {
     // 04. table[key].visited = true, table[key].deleted = false;
     bool doneStep = (waitRequest == false && taskManagementPointer->getTime() > PConstants::PAnimation::waitTime);
     // Begin algorithm
@@ -343,6 +348,7 @@ bool DDSAnimation::insertStep4(int value, int stepRequest, string &explanationTe
     }
     // Explanation
     explanationText = "Mark the current key as visited.";
+    codeLine = 5;
     // Skip
     if (stepRequest == goForward || stepRequest == skipForward) {
         doneStep = true;
@@ -353,14 +359,14 @@ bool DDSAnimation::insertStep4(int value, int stepRequest, string &explanationTe
         recordInt(&taskManagementPointer->step);
         taskManagementPointer->nextStep();
         if (stepRequest == skipForward) {
-            return insertStep5(value, stepRequest, explanationText);
+            return insertStep5(value, stepRequest, explanationText, codeLine);
         }
     }
     // Update time
     else taskManagementPointer->updateTime();
     return false;
 }
-bool DDSAnimation::insertStep5(int value, int stepRequest, string &explanationText) {
+bool DDSAnimation::insertStep5(int value, int stepRequest, string &explanationText, int& codeLine) {
     // 05. n++;
     bool doneStep = (waitRequest == false && taskManagementPointer->getTime() > PConstants::PAnimation::waitTime);
     // Begin algorithm
@@ -371,6 +377,7 @@ bool DDSAnimation::insertStep5(int value, int stepRequest, string &explanationTe
     }
     // Explanation
     explanationText = "Increment the number of elements.";
+    codeLine = 6;
     // Skip
     if (stepRequest == goForward || stepRequest == skipForward) {
         doneStep = true;
@@ -380,6 +387,7 @@ bool DDSAnimation::insertStep5(int value, int stepRequest, string &explanationTe
         recordInt(&dataStructurePointer->key);
         recordInt(&dataStructurePointer->originalKey);
         dataStructurePointer->key = dataStructurePointer->originalKey = -1;
+        recordBool(&taskManagementPointer->taskDone);
         return true;
     }
     // Update time
@@ -388,7 +396,7 @@ bool DDSAnimation::insertStep5(int value, int stepRequest, string &explanationTe
 }
 
   // Remove animation
-bool DDSAnimation::remove(int value, int stepRequest, string& explanationText){
+bool DDSAnimation::remove(int value, int stepRequest, string& explanationText, int& codeLine){
     /*
     00. key = value % size, originalKey = key
     01. while (table[key].visited || table[key].deleted):
@@ -409,44 +417,42 @@ bool DDSAnimation::remove(int value, int stepRequest, string& explanationText){
         waitRequest = true;
     }
     int step = taskManagementPointer->getStep();
-    cout << step << '\n';
+    cout << step << ' ' << taskManagementPointer->getNumCondition() << '\n';
     // Step 0
     if(step == 0) {
-        done = forward ? removeStep0(value, stepRequest, explanationText) : false;
+        done = forward ? removeStep0(value, stepRequest, explanationText, codeLine) : false;
     }
     // Step 1
     else if(step == 1) {
-        done = forward ? removeStep1(value, stepRequest, explanationText) : undo(stepRequest);
+        done = forward ? removeStep1(value, stepRequest, explanationText, codeLine) : undo(stepRequest);
     }
     // Step 2
     else if(step == 2) {
-        done = forward ? removeStep2(value, stepRequest, explanationText) : undo(stepRequest);
+        done = forward ? removeStep2(value, stepRequest, explanationText, codeLine) : undo(stepRequest);
     }
     // Step 3
     else if(step == 3) {
-        done = forward ? removeStep3(value, stepRequest, explanationText) : undo(stepRequest);
+        done = forward ? removeStep3(value, stepRequest, explanationText, codeLine) : undo(stepRequest);
     }
     // Step 4
     else if(step == 4) {
-        done = forward ? removeStep4(value, stepRequest, explanationText) : undo(stepRequest);
+        done = forward ? removeStep4(value, stepRequest, explanationText, codeLine) : undo(stepRequest);
     }
     return done;
 }
-bool DDSAnimation::removeStep0(int value, int stepRequest, string& explanationText){
+bool DDSAnimation::removeStep0(int value, int stepRequest, string& explanationText, int& codeLine){
     // 00. key = value % size, originalKey = key
     bool doneStep = (waitRequest == false && taskManagementPointer->getTime() > PConstants::PAnimation::waitTime);
     // Begin algorithm
     if(taskManagementPointer->getTime() == 0.f) {
-        recordInt(&dataStructurePointer->key);
         dataStructurePointer->key = value % (int)dataStructurePointer->table.size();
-        recordBool(&dataStructurePointer->table[dataStructurePointer->key].highlight);
         dataStructurePointer->table[dataStructurePointer->key].highlight = true;
-        recordInt(&dataStructurePointer->originalKey);
         dataStructurePointer->originalKey = dataStructurePointer->key;
         makeVersion();
     }
     // Explanation
     explanationText = "Calculate the key as value % size.";
+    codeLine = 0;
     // Skip animation
     if(stepRequest == goForward || stepRequest == skipForward) {
         doneStep = true;
@@ -460,14 +466,14 @@ bool DDSAnimation::removeStep0(int value, int stepRequest, string& explanationTe
         taskManagementPointer->nextStep();
         // Skip
         if(stepRequest == skipForward) {
-            return removeStep1(value, stepRequest, explanationText);
+            return removeStep1(value, stepRequest, explanationText, codeLine);
         }
     }
     // Update time
     else taskManagementPointer->updateTime();
     return false;
 } // Step 0
-bool DDSAnimation::removeStep1(int value, int stepRequest, string& explanationText){
+bool DDSAnimation::removeStep1(int value, int stepRequest, string& explanationText, int& codeLine){
     // 01. while (table[key].visited || table[key].deleted):
     bool doneStep = (waitRequest == false && taskManagementPointer->getTime() > PConstants::PAnimation::waitTime);
     // Begin algorithm
@@ -484,6 +490,7 @@ bool DDSAnimation::removeStep1(int value, int stepRequest, string& explanationTe
     else {
         explanationText = "Unvisited and not deleted.\nExit the loop.";
     }
+    codeLine = 1;
     // Skip animation
     if(stepRequest == goForward || stepRequest == skipForward) {
         doneStep = true;
@@ -501,14 +508,14 @@ bool DDSAnimation::removeStep1(int value, int stepRequest, string& explanationTe
         taskManagementPointer->nextStep();
         // Skip
         if(stepRequest == skipForward) {
-            return removeStep2(value, stepRequest, explanationText);
+            return removeStep2(value, stepRequest, explanationText, codeLine);
         }
     }
     // Update time
     else taskManagementPointer->updateTime();
     return false;
 } // Step 1
-bool DDSAnimation::removeStep2(int value, int stepRequest, string& explanationText){
+bool DDSAnimation::removeStep2(int value, int stepRequest, string& explanationText, int& codeLine){
     // 02.	if(table[key].visited && table[key].value == value) :
     bool doneStep = (waitRequest == false && taskManagementPointer->getTime() > PConstants::PAnimation::waitTime);
     // Begin algorithm
@@ -525,6 +532,7 @@ bool DDSAnimation::removeStep2(int value, int stepRequest, string& explanationTe
     else {
         explanationText = "Not the wanted cell.";
     }
+    codeLine = 2;
     // Skip animation
     if(stepRequest == goForward || stepRequest == skipForward) {
         doneStep = true;
@@ -540,14 +548,14 @@ bool DDSAnimation::removeStep2(int value, int stepRequest, string& explanationTe
         taskManagementPointer->nextStep();
         // Skip
         if(stepRequest == skipForward) {
-            return removeStep3(value, stepRequest, explanationText);
+            return removeStep3(value, stepRequest, explanationText, codeLine);
         }
     }
     // Update time
     else taskManagementPointer->updateTime();
     return false;
 } // Step 2   
-bool DDSAnimation::removeStep3(int value, int stepRequest, string& explanationText){
+bool DDSAnimation::removeStep3(int value, int stepRequest, string& explanationText, int& codeLine){
     /* 03.
     condition.size() == 2 :
         table[key].visited = false, table[key].deleted = true; n--; return;
@@ -576,9 +584,11 @@ bool DDSAnimation::removeStep3(int value, int stepRequest, string& explanationTe
     // Explanation
     if(taskManagementPointer->getNumCondition() == 2) {
         explanationText = "Found the wanted cell.\nMark it as unvisited and deleted.";
+        codeLine = 3;
     }
     else {
         explanationText = "Traverse the key.";
+        codeLine = 4;
     }
     // Skip animation
     if(stepRequest == goForward || stepRequest == skipForward) {
@@ -589,6 +599,7 @@ bool DDSAnimation::removeStep3(int value, int stepRequest, string& explanationTe
         if (taskManagementPointer->getNumCondition() == 2) {
             recordVectorBool(&taskManagementPointer->conditionStack);
             for(int i = 0; i < 2; i++) taskManagementPointer->popCondition();
+            cout << taskManagementPointer->getNumCondition() << '\n';
             recordBool(&taskManagementPointer->taskDone);
             return true;
         }
@@ -600,7 +611,7 @@ bool DDSAnimation::removeStep3(int value, int stepRequest, string& explanationTe
             taskManagementPointer->nextStep();
             // Skip
             if(stepRequest == skipForward) {
-                return removeStep4(value, stepRequest, explanationText);
+                return removeStep4(value, stepRequest, explanationText, codeLine);
             }
         }
     }
@@ -608,7 +619,7 @@ bool DDSAnimation::removeStep3(int value, int stepRequest, string& explanationTe
     else taskManagementPointer->updateTime();
     return false;
 } // Step 3
-bool DDSAnimation::removeStep4(int value, int stepRequest, string& explanationText){
+bool DDSAnimation::removeStep4(int value, int stepRequest, string& explanationText, int& codeLine){
     // 04. if (key == originalKey) return;
     bool doneStep = (waitRequest == false && taskManagementPointer->getTime() > PConstants::PAnimation::waitTime);
     // Begin algorithm
@@ -618,9 +629,9 @@ bool DDSAnimation::removeStep4(int value, int stepRequest, string& explanationTe
         taskManagementPointer->takeCondition(con1);
         makeVersion();
     }
-    // Explanation
-    
+    // Explanation    
     explanationText = "Check if the current key is the original key again.";
+    codeLine = 5;
     // Skip animation
     if(stepRequest == goForward || stepRequest == skipForward) {
         doneStep = true;
@@ -641,7 +652,7 @@ bool DDSAnimation::removeStep4(int value, int stepRequest, string& explanationTe
             recordBool(&taskManagementPointer->taskDone);
             for(int i = 0; i < 3; i++) taskManagementPointer->prevStep();
             if(stepRequest == skipForward) {
-                return removeStep1(value, stepRequest, explanationText);
+                return removeStep1(value, stepRequest, explanationText, codeLine);
             }
         }
     }
@@ -651,7 +662,7 @@ bool DDSAnimation::removeStep4(int value, int stepRequest, string& explanationTe
 } // Step 4
 
 // Search animation
-bool DDSAnimation::search(int value, int stepRequest, string& explanationText) {
+bool DDSAnimation::search(int value, int stepRequest, string& explanationText, int& codeLine) {
     /*
     00. key = value % size, originalKey = key
     01. while (table[key].visited || table[key].deleted):
@@ -672,31 +683,31 @@ bool DDSAnimation::search(int value, int stepRequest, string& explanationText) {
         waitRequest = true;
     }
     int step = taskManagementPointer->getStep();
-    cout << step << '\n';
+    cout << step << ' ' << taskManagementPointer->getNumCondition() << '\n';
     // Step 0
     if(step == 0) {
-        done = forward ? searchStep0(value, stepRequest, explanationText) : false;
+        done = forward ? searchStep0(value, stepRequest, explanationText, codeLine) : false;
     }
     // Step 1
     else if(step == 1) {
-        done = forward ? searchStep1(value, stepRequest, explanationText) : undo(stepRequest);
+        done = forward ? searchStep1(value, stepRequest, explanationText, codeLine) : undo(stepRequest);
     }
     // Step 2
     else if(step == 2) {
-        done = forward ? searchStep2(value, stepRequest, explanationText) : undo(stepRequest);
+        done = forward ? searchStep2(value, stepRequest, explanationText, codeLine) : undo(stepRequest);
     }
     // Step 3
     else if(step == 3) {
-        done = forward ? searchStep3(value, stepRequest, explanationText) : undo(stepRequest);
+        done = forward ? searchStep3(value, stepRequest, explanationText, codeLine) : undo(stepRequest);
     }
     // Step 4
     else if(step == 4) {
-        done = forward ? searchStep4(value, stepRequest, explanationText) : undo(stepRequest);
+        done = forward ? searchStep4(value, stepRequest, explanationText, codeLine) : undo(stepRequest);
     }
     return done;
 }
 
-bool DDSAnimation::searchStep0(int value, int stepRequest, string& explanationText) {
+bool DDSAnimation::searchStep0(int value, int stepRequest, string& explanationText, int& codeLine) {
     // 00. key = value % size, originalKey = key
     bool doneStep = (waitRequest == false && taskManagementPointer->getTime() > PConstants::PAnimation::waitTime);
     // Begin algorithm
@@ -711,6 +722,7 @@ bool DDSAnimation::searchStep0(int value, int stepRequest, string& explanationTe
     }
     // Explanation
     explanationText = "Calculate the key as value % size.";
+    codeLine = 0;
     // Skip animation
     if(stepRequest == goForward || stepRequest == skipForward) {
         doneStep = true;
@@ -724,14 +736,14 @@ bool DDSAnimation::searchStep0(int value, int stepRequest, string& explanationTe
         taskManagementPointer->nextStep();
         // Skip
         if(stepRequest == skipForward) {
-            return searchStep1(value, stepRequest, explanationText);
+            return searchStep1(value, stepRequest, explanationText, codeLine);
         }
     }
     // Update time
     else taskManagementPointer->updateTime();
     return false;
 } // Step 0
-bool DDSAnimation::searchStep1(int value, int stepRequest, string& explanationText) {
+bool DDSAnimation::searchStep1(int value, int stepRequest, string& explanationText, int& codeLine) {
     // 01. while (table[key].visited || table[key].deleted):
     bool doneStep = (waitRequest == false && taskManagementPointer->getTime() > PConstants::PAnimation::waitTime);
     // Begin algorithm
@@ -748,6 +760,7 @@ bool DDSAnimation::searchStep1(int value, int stepRequest, string& explanationTe
     else {
         explanationText = "Unvisited and not deleted.\nExit the loop.";
     }
+    codeLine = 1;
     // Skip animation
     if(stepRequest == goForward || stepRequest == skipForward) {
         doneStep = true;
@@ -765,14 +778,14 @@ bool DDSAnimation::searchStep1(int value, int stepRequest, string& explanationTe
         taskManagementPointer->nextStep();
         // Skip
         if(stepRequest == skipForward) {
-            return searchStep2(value, stepRequest, explanationText);
+            return searchStep2(value, stepRequest, explanationText, codeLine);
         }
     }
     // Update time
     else taskManagementPointer->updateTime();
     return false;
 } // Step 1
-bool DDSAnimation::searchStep2(int value, int stepRequest, string& explanationText) {
+bool DDSAnimation::searchStep2(int value, int stepRequest, string& explanationText, int& codeLine) {
     // 02.	if(table[key].visited && table[key].value == value) :
     bool doneStep = (waitRequest == false && taskManagementPointer->getTime() > PConstants::PAnimation::waitTime);
     // Begin algorithm
@@ -789,6 +802,7 @@ bool DDSAnimation::searchStep2(int value, int stepRequest, string& explanationTe
     else {
         explanationText = "Not the wanted cell.";
     }
+    codeLine = 2;
     // Skip animation
     if(stepRequest == goForward || stepRequest == skipForward) {
         doneStep = true;
@@ -804,14 +818,14 @@ bool DDSAnimation::searchStep2(int value, int stepRequest, string& explanationTe
         taskManagementPointer->nextStep();
         // Skip
         if(stepRequest == skipForward) {
-            return searchStep3(value, stepRequest, explanationText);
+            return searchStep3(value, stepRequest, explanationText, codeLine);
         }
     }
     // Update time
     else taskManagementPointer->updateTime();
     return false;
 } // Step 2
-bool DDSAnimation::searchStep3(int value, int stepRequest, string& explanationText) {
+bool DDSAnimation::searchStep3(int value, int stepRequest, string& explanationText, int& codeLine) {
     /* 03.
     condition.size() == 2 :
         return true;
@@ -840,9 +854,11 @@ bool DDSAnimation::searchStep3(int value, int stepRequest, string& explanationTe
     // Explanation
     if(taskManagementPointer->getNumCondition() == 2) {
         explanationText = "Found the wanted value.\nReturn true.";
+        codeLine = 3;
     }
     else {
         explanationText = "Traverse the key.";
+        codeLine = 4;
     }
     // Skip animation
     if(stepRequest == goForward || stepRequest == skipForward) {
@@ -866,7 +882,7 @@ bool DDSAnimation::searchStep3(int value, int stepRequest, string& explanationTe
             taskManagementPointer->nextStep();
             // Skip
             if(stepRequest == skipForward) {
-                return searchStep4(value, stepRequest, explanationText);
+                return searchStep4(value, stepRequest, explanationText, codeLine);
             }
         }
     }
@@ -874,7 +890,7 @@ bool DDSAnimation::searchStep3(int value, int stepRequest, string& explanationTe
     else taskManagementPointer->updateTime();
     return false;
 } // Step 3
-bool DDSAnimation::searchStep4(int value, int stepRequest, string& explanationText) {
+bool DDSAnimation::searchStep4(int value, int stepRequest, string& explanationText, int& codeLine) {
     // 04. if (key == originalKey) return false;
     bool doneStep = (waitRequest == false && taskManagementPointer->getTime() > PConstants::PAnimation::waitTime);
     // Begin algorithm
@@ -886,6 +902,7 @@ bool DDSAnimation::searchStep4(int value, int stepRequest, string& explanationTe
     }
     // Explanation
     explanationText = "Check if the current key is the original key again.";
+    codeLine = 5;
     // Skip animation
     if(stepRequest == goForward || stepRequest == skipForward) {
         doneStep = true;
@@ -896,7 +913,7 @@ bool DDSAnimation::searchStep4(int value, int stepRequest, string& explanationTe
             recordVectorBool(&taskManagementPointer->conditionStack);
             for (int i=0; i<2; i++) taskManagementPointer->popCondition();
             recordBool(&taskManagementPointer->taskDone);
-            return false;
+            return true;
         }
         else {
             recordVectorBool(&taskManagementPointer->conditionStack);
@@ -906,7 +923,7 @@ bool DDSAnimation::searchStep4(int value, int stepRequest, string& explanationTe
             recordBool(&taskManagementPointer->taskDone);
             for(int i = 0; i < 3; i++) taskManagementPointer->prevStep();
             if(stepRequest == skipForward) {
-                return searchStep1(value, stepRequest, explanationText);
+                return searchStep1(value, stepRequest, explanationText, codeLine);
             }
         }
     }

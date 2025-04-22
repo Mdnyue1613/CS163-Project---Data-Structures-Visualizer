@@ -39,6 +39,10 @@ vector<string> DRemoveMenu::update(void) {
         res.push_back(InputBox.extract());
         return res;
     }
+    else if(GO.isClick() || (InputBox.isChosen && IsKeyPressed(KEY_ENTER))) {
+        res.push_back("update");
+        return res;
+    }
     InputBox.update();
 
     return {"nothing"};

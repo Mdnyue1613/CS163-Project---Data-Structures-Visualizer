@@ -5,7 +5,9 @@ DS2::DS2(void) :
     titleBox(PConstants::PTitleBar::pos, PConstants::PTitleBar::size, PConstants::PTitleBar::outlineThickness, PConstants::PTitleBar::boxColor, PConstants::PTitleBar::outlineColor, "HASH TABLE LINEAR PROBING", PConstants::PTitleBar::textSize),
     hashtable(),
     explanationArea(),
-    animationManager() {
+    animationManager(),
+    pseudocodeArea(),
+    speedSlider(PConstants::PSlider::pos, PConstants::PSlider::size) {
         animationManager.dataStructurePointer = &hashtable;
         animationManager.taskManagementPointer = &taskManagement;
     }
@@ -41,6 +43,9 @@ void DS2::draw(bool darkMode) {
 
         PConstants::PNodeLine::color = BLACK;
         PConstants::PNodeLine::highlightColor = {255, 138, 39, 255};
+        PConstants::PSlider::barColor = SEASHELL;
+        PConstants::PSlider::thumbColor = BLACK;
+        PConstants::PSlider::thumbHighlightColor = DARKGRAY;
     }
     else {
         PConstants::DS1::backgroundColor = BLACK;
@@ -56,6 +61,9 @@ void DS2::draw(bool darkMode) {
 
         PConstants::PNodeLine::color = {65, 71, 79, 255};
         PConstants::PNodeLine::highlightColor = {224, 255, 255, 255};
+        PConstants::PSlider::barColor = {73, 73, 73, 255};
+        PConstants::PSlider::thumbColor = {204, 204, 204, 255};
+        PConstants::PSlider::thumbHighlightColor = {204, 204, 204, 255};
     }
     // Draw background
     float workSpaceX = PConstants::PFunctionArea::pos.x;
@@ -77,8 +85,14 @@ void DS2::draw(bool darkMode) {
       // Draw the step-by-step menu
       stepByStepMenu.draw();
 
+      // Draw the pseudo-code area
+      pseudocodeArea.draw();
+
       // Draw Data Structure
       hashtable.draw();
+
+      // Draw Speed Slider
+      speedSlider.draw();
 }
 
 void DS2::update(void){
@@ -86,6 +100,13 @@ void DS2::update(void){
     if(taskManagement.takeRequest(functionArea.update())) {
         // Reset animation management
         animationManager.reset();
+        if((int)taskManagement.getTask().size() == 2 && taskManagement.getTask()[1] == "update") {
+            if(hashtable.chosenSquare != nullptr && hashtable.chosenSquare->visited)
+                hashtable.querySquare = hashtable.chosenSquare;
+            else {
+                hashtable.querySquare = nullptr;
+            }
+        }
     }
 
     // Update step-by-step menu
@@ -96,11 +117,9 @@ void DS2::update(void){
     vector<string> request = taskManagement.getTask();
     int taskType = taskManagement.getTaskType();
 
-
     // Explanation
     string explanationText;
 
-    // hashtable.update();
     if(taskType == PTaskManagement::Initilize) {
         if(operateInitialize(request)) {
             taskManagement.endTask();
@@ -112,6 +131,7 @@ void DS2::update(void){
         }
     }
     else if(taskType == PTaskManagement::Delete) {
+
         if(operateRemove(request, stepRequest, explanationText)) {
             taskManagement.endTask();
         }
@@ -121,15 +141,22 @@ void DS2::update(void){
             taskManagement.endTask();
         }
     }
+
+    explanationArea.update(explanationText);
+
+    // Update hash table
+    hashtable.update();
+
+    // Update speed slider
+    speedSlider.update();
+    PConstants::PAnimation::waitTime = 0.5f / speedSlider.getPercentage();
 }
 
 bool DS2::operateInitialize(vector<string>& request) {
     if(taskManagement.doneTask()) {
         return true;
     }
-    for(string& s : request)
-        cout << s << ' ';
-    cout << '\n';
+    
     // Random initializer
     if(request[1] == "random") {
         // No input
@@ -196,23 +223,61 @@ vector<int> DS2::stringToVectorInt(string& s) {
 }
 
 bool DS2::operateInsert(vector<string>& request, int stepRequest, string& explanationText) {
+    if(request[1] == "update" && hashtable.querySquare == nullptr) return true;
+
     bool done = true;
-    int val = stoi(request[1]);
-    done = animationManager.insert(val, stepRequest, explanationText);
+    int val = request[1] == "update" ? hashtable.querySquare->value : stoi(request[1]);
+    int codeLine = -1;
+    done = animationManager.insert(val, stepRequest, explanationText, codeLine);
+    vector<string> codes = {
+        "if n == size: return", // line 0
+        "key = value % mod", // line 1
+        "while table[key].visited == true:", // line 2
+        "    key = key + 1 % mod", // line 3
+        "table[key].value = value", // line 4
+        "table[key].visited = true, table[key].deleted = false", // line 5
+        "n++" // line 6
+    };
+    pseudocodeArea.setPseudoCode(codes, 7);
+    pseudocodeArea.update(codeLine);
     return done;
 }
 
 bool DS2::operateRemove(vector<string>& request, int stepRequest, string& explanationText){
+    if(request[1] == "update" && hashtable.querySquare == nullptr) return true;
     bool done = true;
-    int val = stoi (request[1]);
-    done = animationManager.remove(val, stepRequest, explanationText);
+    int codeLine = -1;
+    int val = request[1] == "update" ? hashtable.querySquare->value : stoi(request[1]);
+    done = animationManager.remove(val, stepRequest, explanationText, codeLine);
+    vector<string> codes = {
+        "key = value % size, originalKey = key", // line 0
+        "while table[key].visited || table[key].deleted :", // line 1
+        "    if table[key].visited && table[key].value == value :", // line 2
+        "        table[key].visited = false, table[key].deleted = true, n--, return", // line 3
+        "    key = (key + 1) % size", // line 4
+        "    if key == originalKey : return" // line 5
+    };
+    pseudocodeArea.setPseudoCode(codes, 6);
+    pseudocodeArea.update(codeLine);
     return done;
 }
 
 bool DS2::operateSearch(vector<string>& request, int stepRequest, string& explanationText) {
+    if(request[1] == "update" && hashtable.querySquare == nullptr) return true;
     bool done = true;
-    int val = stoi(request[1]);
-    done = animationManager.search(val, stepRequest, explanationText);
+    int val = request[1] == "update" ? hashtable.querySquare->value : stoi(request[1]);
+    int codeLine = -1;
+    done = animationManager.search(val, stepRequest, explanationText, codeLine);
+    vector<string> codes = {
+        "key = value % size, originalKey = key", // line 0
+        "while table[key].visited || table[key].deleted :", // line 1
+        "    if table[key].visited && table[key].value == value :", // line 2
+        "        return true", // line 3
+        "    key = (key + 1) % size", // line 4
+        "    if key == originalKey : return false" // line 5
+    };
+    pseudocodeArea.setPseudoCode(codes, 6);
+    pseudocodeArea.update(codeLine);
     return done;
 }
 
