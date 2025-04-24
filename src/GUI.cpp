@@ -8,13 +8,9 @@
 
 void GUI::startProgram() {
     SetConfigFlags(FLAG_MSAA_4X_HINT);
-    InitWindow(1200, 800, "Hello Raylib");
+    InitWindow(1200, 800, "CS163 - Group 2 - Data Structure Visualizer Project");
     SetTargetFPS(60);
-
     Init();
-    linkedListVisualizer.prepare();
-    hashtableVisualizer.prepare();
-    ds3.prepare();
 
     while(isOpenDS[0] || isOpenDS[1] || isOpenDS[2] || isOpenDS[3] || isOpenMenu) {
         drawMenu();
@@ -294,6 +290,13 @@ void GUI::Init()
         Title[i].rec.x = Menu[i].rec.x - (Title[i].rec.width - Menu[i].rec.width)/2;
         Title[i].rec.y = Menu[i].rec.y + Menu[i].rec.height + 15;
     }
+
+    linkedListVisualizer.prepare();
+    hashtableVisualizer.prepare();
+    ds3.prepare();
+
+    WindowIcon = LoadImage("Assets/Images/WindowIcon.png");
+    SetWindowIcon(WindowIcon);
 }
 
 void GUI::UnInit()
@@ -306,4 +309,5 @@ void GUI::UnInit()
     UnloadTexture(BackGround[1]);
     for (int i = 0; i < 4; i++)
         UnloadTexture(Menu[i].img);
+    UnloadImage(WindowIcon);
 }

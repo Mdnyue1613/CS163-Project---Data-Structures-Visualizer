@@ -25,6 +25,7 @@ struct GUI {
     static DS1 linkedListVisualizer;
     static DS2 hashtableVisualizer;
     static DS3 ds3;
+    static Image WindowIcon;
     static void startProgram();
     static void drawMenu();
     static void drawDS1();

@@ -176,17 +176,17 @@ bool DS1::operateInitialize(vector<string>& request, int stepRequest, string& ex
     string requestType = request[1];
     if(requestType == "random") {
         if((int)request.size() == 2) {
-            doublyLinkedList->randomInitializer(randomGenerator.random(1, 35));
+            doublyLinkedList->randomInitializer(randomGenerator.random(1, 20));
         }
         else {
-            int value = notificationBox.getOneNum(request[2], 0, 100);
+            int value = notificationBox.getOneNum(request[2], 0, 20);
             if(notificationBox.notificationText == "Valid") {
                 doublyLinkedList->randomInitializer(value);
             }
         }
     }
     else if(requestType == "input") {
-        vector<int> inputContent = notificationBox.stringToVectorInt(request[2], -100, 100);
+        vector<int> inputContent = notificationBox.stringToVectorInt(request[2], -999, 999);
         if(notificationBox.notificationText == "Valid") {
             vectorIntInitialize(inputContent);
         }
@@ -208,7 +208,7 @@ bool DS1::operateInsert(vector<string>& request, int stepRequest, string& explan
     bool done = true;
     string requestType = request[1];
     if(requestType == "head") {
-        int value = notificationBox.getOneNum(request[2], -100, 100);
+        int value = notificationBox.getOneNum(request[2], -999, 999);
         if(notificationBox.notificationText == "Valid") {
             int codeLine = -1;
             done = animationManagement.insertHead(value, stepRequest, explanationText, codeLine);
@@ -228,7 +228,7 @@ bool DS1::operateInsert(vector<string>& request, int stepRequest, string& explan
         doublyLinkedList = animationManagement.dataStructurePointer;
     }
     else if(requestType == "tail") {
-        int value = notificationBox.getOneNum(request[2], -100, 100);
+        int value = notificationBox.getOneNum(request[2], -999, 999);
         if(notificationBox.notificationText == "Valid") {
             int codeLine = -1;
             done = animationManagement.insertTail(value, stepRequest, explanationText, codeLine);
@@ -252,7 +252,7 @@ bool DS1::operateInsert(vector<string>& request, int stepRequest, string& explan
         if(notificationBox.notificationText != "Valid") {
             return true;
         }
-        int value = notificationBox.getOneNum(request[3], -100, 100);
+        int value = notificationBox.getOneNum(request[3], -999, 999);
         if(notificationBox.notificationText == "Valid") {
             int codeLine = -1;
             done = animationManagement.insertAfter(position, value, stepRequest, explanationText, codeLine);
@@ -349,7 +349,7 @@ bool DS1::operateSearch(vector<string>& request, int stepRequest, string& explan
         return true;
     }
     bool done = true;
-    int value = notificationBox.getOneNum(request[1], -100, 100);
+    int value = notificationBox.getOneNum(request[1], -999, 999);
     if(notificationBox.notificationText == "Valid") {
         int codeLine = -1;
         done = animationManagement.search(value, stepRequest, explanationText, codeLine);
@@ -373,7 +373,7 @@ bool DS1::operateUpdate(PNode* chosen, vector<string>& request, int stepRequest,
         return true;
     }
     bool done = true;
-    int value = notificationBox.getOneNum(request[1], 0, 99);
+    int value = notificationBox.getOneNum(request[1], -999, 999);
     if(notificationBox.notificationText == "Valid") {
         int codeLine = -1;
         done = animationManagement.update(chosen, value, stepRequest, explanationText, codeLine);

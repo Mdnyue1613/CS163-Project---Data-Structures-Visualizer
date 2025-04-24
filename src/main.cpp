@@ -111,6 +111,8 @@ DS1 GUI::linkedListVisualizer;
 DS2 GUI::hashtableVisualizer;
 DS3 GUI::ds3;
 
+Image GUI::WindowIcon;
+
 int main() {
     GUI::startProgram();
     return 0;

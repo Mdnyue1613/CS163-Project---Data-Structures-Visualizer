@@ -5,6 +5,7 @@ PSlider::PSlider(void) {}
 PSlider::PSlider(Vector2 pos, Vector2 size) {
     Slider::bar = Rectangle({pos.x, pos.y, size.x, size.y});
     Slider::thumb = Rectangle({pos.x - size.y, pos.y, size.y * 2, size.y});
+    thumb.x = bar.x + bar.width / 2.f - thumb.width / 2.f;
 }
 void PSlider::update(void) {
     if(Slider::isClick && IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
