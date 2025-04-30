@@ -128,7 +128,7 @@ vector<string> DInitializeMenu::update(void) {
             return {"input", InputBox.extract()};
         }
         // Update InputBox for rendering
-        InputBox.changeTitle(inputBoxTitle[Input]);
+        InputBox.changeTitle(inputBoxTitle[Input]); 
         InputBox.update();
         /*
         When user click on the load input from file box
@@ -136,8 +136,8 @@ vector<string> DInitializeMenu::update(void) {
         */
         if(InputFileBox.isClick()) {
             // Get the directory chosen by user
-            char const * inputTypeFilter[] = {"*.*"};
-            char* fileDestination = tinyfd_openFileDialog("Open file", NULL, 1, inputTypeFilter, NULL, 0);
+            char const * inputTypeFilter[] = {"*.txt", "*.inp", "*.out"};
+            char* fileDestination = tinyfd_openFileDialog("Open file", NULL, 3, inputTypeFilter, NULL, 0);
             // If user chose a valid destination
             if(fileDestination) {
                 // Open the file

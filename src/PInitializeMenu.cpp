@@ -121,8 +121,8 @@ vector<string> PInitializeMenu::update(void) {
         */
         if(InputFileBox.isClick()) {
             // Get the directory chosen by user
-            char const * inputTypeFilter[] = {"*.*"};
-            char* fileDestination = tinyfd_openFileDialog("Open file", NULL, 1, inputTypeFilter, NULL, 0);
+            char const * inputTypeFilter[] = {"*.txt", "*.inp", "*.out"};
+            char* fileDestination = tinyfd_openFileDialog("Open file", NULL, 3, inputTypeFilter, NULL, 0);
             // If user chose a valid destination
             if(fileDestination) {
                 // Open the file

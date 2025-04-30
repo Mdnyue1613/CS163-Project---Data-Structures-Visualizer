@@ -71,8 +71,8 @@ vector<string> LInitializeMenu::draw(bool active) {
             return {"data", inputBox.extract()};
         }
         if(inputFile.isClick()) {
-            char const * inputTypeFilter[] = {"*.*"};
-            char* fileDestination = tinyfd_openFileDialog("Open file", NULL, 1, inputTypeFilter, NULL, 0);
+            char const * inputTypeFilter[] = {"*.txt", "*.inp", "*.out"};
+            char* fileDestination = tinyfd_openFileDialog("Open file", NULL, 3, inputTypeFilter, NULL, 0);
             if(fileDestination) {
                 fstream inp(fileDestination, ios::in | ios::binary | ios::ate);
 
